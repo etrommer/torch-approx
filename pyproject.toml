@@ -8,6 +8,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+torch = "1.12.0"
+torchvision = "*"
+poethepoet = "*"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^0.971"
@@ -16,10 +19,21 @@ pytest = "^7.1.2"
 pytest-benchmark = "^3.4.1"
 pre-commit = "^2.20.0"
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.poe.tasks]
+install-ltt = "python3 -m pip install light-the-torch"
+run-ltt = "python3 -m light_the_torch install --upgrade torch torchaudio torchvision"
+autoinstall-torch-cuda = ["install-ltt", "run-ltt"]
 
 [tool.pylint.main]
 max-line-length = 120
 ignore = 'docs'
+
+[tool.pylint.format]
+good-names = 'i,j,k,x,y,a,b,c'
+
+[tool.pylint.typecheck]
+generated-members=['numpy.*', 'torch.*']
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
