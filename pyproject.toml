@@ -29,7 +29,7 @@ max-line-length = 120
 ignore = 'docs'
 
 [tool.pylint.format]
-good-names = 'i,j,k,x,y,a,b,c'
+good-names = 'i,j,k,x,y,w,a,b,c'
 
 [tool.pylint.typecheck]
 generated-members=['numpy.*', 'torch.*']

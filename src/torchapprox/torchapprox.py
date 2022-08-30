@@ -3,6 +3,7 @@
 TorchApprox Basic Matrix Multiply Functions
 """
 import logging
+import os
 from typing import Optional
 
 import torch
@@ -10,15 +11,18 @@ from torch.utils.cpp_extension import load
 
 logger = logging.getLogger(__name__)
 
-sources = ["src/cpu/approx_mm_cpu.cpp"]
+
+sources = ["../cpu/approx_mm_cpu.cpp"]
 extra_cflags = ["-fopenmp"]
 
 if torch.cuda.is_available():
-    sources += ["src/cuda/approx_mm_wrapper.cpp", "src/cuda/approx_mm_cuda.cu"]
+    sources += ["../cuda/approx_mm_wrapper.cpp", "../cuda/approx_mm_cuda.cu"]
     extra_cflags += ["-DTA_CUDA_EXTENSION"]
 else:
     logger.warning("No CUDA device detected. Running on CPU.")
 
+dirname = os.path.dirname(__file__)
+sources = [os.path.join(dirname, src) for src in sources]
 ta_backend = load(
     name="torchapprox_backend",
     sources=sources,
