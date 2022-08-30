@@ -67,6 +67,8 @@ void approx_mm_cpu_wrapper(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tenso
     }
 }
 
+#ifndef TA_CUDA_EXTENSION
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
-    m.def("matmul_cpu", &approx_mm_cpu_wrapper, "torchapprox (CPU)");
+    m.def("matmul_cpu", &approx_mm_cpu_wrapper, "torchapprox CPU backend");
 }
+#endif

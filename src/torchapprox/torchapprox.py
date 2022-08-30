@@ -10,18 +10,20 @@ from torch.utils.cpp_extension import load
 
 logger = logging.getLogger(__name__)
 
+sources = ["src/cpu/approx_mm_cpu.cpp"]
+extra_cflags = ["-fopenmp"]
+
+if torch.cuda.is_available():
+    sources += ["src/cuda/approx_mm_wrapper.cpp", "src/cuda/approx_mm_cuda.cu"]
+    extra_cflags += ["-DTA_CUDA_EXTENSION"]
+else:
+    logger.warning("No CUDA device detected. Running on CPU.")
+
 ta_backend = load(
     name="torchapprox_backend",
-    sources="src/cpu/approx_mm_cpu.cpp",
-    extra_cflags=["-fopenmp"],
+    sources=sources,
+    extra_cflags=extra_cflags,
 )
-
-# from torchapprox.cpu import torchapprox_cpu
-# try:
-#     from torchapprox.cuda import torchapprox_cuda
-# except ImportError:
-#     logger.warning("CUDA not found, running on CPU")
-#     pass
 
 
 class ApproxMM(torch.autograd.Function):
