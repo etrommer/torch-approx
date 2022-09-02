@@ -2,7 +2,6 @@
 """
 Stateless Min/Max quantizer implementation
 """
-from typing import Optional
 
 import torch
 
@@ -16,12 +15,10 @@ class MinMaxQuant(ApproxQuantizer):
 
     def __init__(self, bitwidth: int = 8):
         ApproxQuantizer.__init__(self, bitwidth)
-        self._scale_factor: Optional[float] = None
+        self._scale_factor: float = 0.0
 
     @property
     def scale_factor(self):
-        if self._scale_factor is None:
-            raise ValueError("Scale Factor not populated. Run Quantizer first.")
         return self._scale_factor
 
     def fake_quant(self, x):

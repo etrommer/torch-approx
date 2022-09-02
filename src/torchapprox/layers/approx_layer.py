@@ -1,94 +1,50 @@
 # pylint: disable=missing-module-docstring
-import dataclasses
+import enum
 import logging
 from abc import ABC, abstractmethod
-from typing import List
+from typing import TYPE_CHECKING, no_type_check
 
 import torch
 
+from torchapprox.quantizers import MinMaxQuant, PACTQuant
+
 from .approx_operator import LUT
+
+if TYPE_CHECKING:
+    from torchapprox.quantizers import ApproxQuantizer
 
 logger = logging.getLogger(__name__)
 
-SUPPORTED_TYPES = [torch.nn.Linear, torch.nn.Conv2d]
 
-
-@dataclasses.dataclass
-class ApproxLayerConfig:
+class InferenceMode(enum.Enum):
     """
-    Contains the mode configuration for the current layer.
-    Several paramters have to be set for inference and not all combinations are valid.
-    This class performs the input sanitization of the supplied mode string
-    and sets the internal parameters accordingly
+    Layer inference mode. Can be any of:
+    - `base`: Run inference as unperturbed FP32 baseline
+    - `quant`: Run inference using the layer's quantizer
+    - `approx`: Run inference using approximate product LUT
+    - `noise`: Run inference that is perturbed with additive Gaussian noise
     """
 
-    quantize: bool = False
-    approximate: bool = False
-    add_noise: bool = False
-    _mode: str = "base"
-
-    @property
-    def mode(self) -> str:
-        """
-        Layer inference mode. Can be any of:
-        - `base`: Run inference as unperturbed FP32 baseline
-        - `quant`: Run inference using the layer's quantizer
-        - `approx`: Run inference using approximate product LUT
-        - `noise`: Run inference that is perturbed with additive Gaussian noise
-        """
-        return self._mode
-
-    @mode.setter
-    def mode(self, new_mode: str):
-        supported_modes: List[str] = ["base", "quant", "approx", "noise"]
-        if not new_mode in supported_modes:
-            raise ValueError(f"Trying to set unsupported mode: {new_mode}")
-        self._mode = new_mode
-
-        # Set correct configuration for current mode
-        # Reset current values to baseline
-        self.quantize = False
-        self.approximate = False
-        self.add_noise = False
-
-        if new_mode == "base":
-            return
-
-        # quantization is implicitly used for all modes
-        # except baseline
-        self.quantize = True
-
-        if new_mode == "noise":
-            self.add_noise = True
-        elif new_mode == "approx":
-            self.approximate = True
+    BASELINE = "Baseline Mode"
+    QUANTIZED = "Quantized Mode"
+    NOISE = "Noise Mode"
+    APPROXIMATE = "Approximate Mode"
 
 
-class ApproxLayer(torch.nn.Module, ABC):
+class ApproxLayer(ABC):
     """
     Derivable Abstract Base Class for implementing Approximate Neural Network layers
     """
 
     def __init__(self):
-        torch.nn.Module.__init__(self)
-        self.alpha_x: torch.nn.Parameter = torch.nn.Parameter(
-            torch.tensor(2.2), requires_grad=True
-        )
-        self.alpha_w: torch.Tensor = torch.Tensor([0.0])
-        self.bitwidth: int = 8
+        self.x_quantizer: "ApproxQuantizer" = PACTQuant()
+        self.w_quantizer: "ApproxQuantizer" = MinMaxQuant()
         self.approx_op: LUT = LUT()
-        self.config: ApproxLayerConfig = ApproxLayerConfig()
+        self.inference_mode: InferenceMode = InferenceMode.BASELINE
 
         self._stdev: torch.nn.Paramter = torch.nn.Parameter(
             torch.tensor(0.0), requires_grad=True
         )
-
-    @property
-    def int_max(self) -> int:
-        """
-        Maximum value for an operand according to currently set layer bitwidth.
-        """
-        return 2 ** (self.bitwidth - 1) - 1
 
     @property
     def stdev(self) -> torch.nn.Parameter:
@@ -102,6 +58,22 @@ class ApproxLayer(torch.nn.Module, ABC):
     @stdev.setter
     def stdev(self, noise_std: float):
         self._stdev = torch.nn.Parameter(torch.tensor(noise_std), requires_grad=True)
+
+    @property
+    @abstractmethod
+    def fan_in(self) -> int:
+        """
+        Number of incoming connections for a neuron in this layer
+        """
+
+    @staticmethod
+    @abstractmethod
+    def from_super(cls_instance):
+        """
+        Create upgraded superclass instance.
+        This constructs an approximate layer instance using the configuration
+        of a vanilla torch layer implementation.
+        """
 
     @abstractmethod
     def baseline_fwd(self, x: torch.Tensor) -> torch.Tensor:
@@ -141,6 +113,28 @@ class ApproxLayer(torch.nn.Module, ABC):
             Layer output
         """
 
+    @no_type_check
+    def noise_fwd(self, x: torch.Tensor) -> torch.Tensor:
+        """Quantized Forward Pass that is perturbed
+        with Gaussian Noise
+
+        The standard deviation of the additive noise
+        is derived from the `stdev`parameter and scaled
+        with the standard deviation of the current batch
+
+        Args:
+            x: Layer input
+
+        Returns:
+            Layer output
+        """
+        y = self.quant_fwd(x)
+        if self.training:
+            noise = torch.randn_like(y) * torch.std(y) * self.stdev
+            y = y + noise
+        return y
+
+    @no_type_check
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass with currently selected mode applied
@@ -151,24 +145,19 @@ class ApproxLayer(torch.nn.Module, ABC):
         Returns:
             Layer output
         """
-        # Calculate weight quantization range
-        self.alpha_w = torch.max(
-            torch.abs(torch.min(self.weight)),  # type ignore
-            torch.abs(torch.max(self.weight)),  # type ignore
-        )
-        if self.config.approximate:
-            # approximate operation (always run in INT8 quant.)
-            y = self.approx_fwd(x)
-        elif self.config.quantize:
-            # INT8 accurate operation
-            y = self.quant_fwd(x)
-        else:
+        if self.inference_mode == InferenceMode.BASELINE:
             # FP32 accurate operation
             y = self.baseline_fwd(x)
+        elif self.inference_mode == InferenceMode.QUANTIZED:
+            # INT8 accurate operation
+            y = self.quant_fwd(x)
+        elif self.inference_mode == InferenceMode.APPROXIMATE:
+            # approximate operation (uses quantization internally)
+            y = self.approx_fwd(x)
+        elif self.inference_mode == InferenceMode.NOISE:
+            y = self.noise_fwd(x)
 
-        if self.config.add_noise and self.training:
-            # Add noise to pre-activation output
-            noise = torch.randn_like(y) * torch.std(y) * self.stdev
-            y = y + noise
+        if self.bias is not None:
+            y = y + self.bias
 
         return y
