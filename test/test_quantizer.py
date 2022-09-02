@@ -3,35 +3,45 @@ import copy
 import pytest
 import torch
 
-from torchapprox.quantizers import PACTQuant
+from torchapprox.quantizers import MinMaxQuant, PACTQuant
 
 
-def test_pact_fake():
-    x = torch.rand([20, 20])
-    dut = PACTQuant()
+@pytest.fixture(scope="module", params=[PACTQuant(), MinMaxQuant()])
+def quantizer(request):
+    yield request.param
+
+
+def test_quant_fake(quantizer):
+    dut = quantizer
+    x = torch.rand([30, 30])
     x_quant = dut.fake_quant(x)
-    assert torch.lt(x_quant, dut.alpha.item()).all()
-    assert torch.gt(x_quant, -dut.alpha.item()).all()
     assert len(torch.unique(x_quant)) <= 2**dut.bitwidth
 
 
-def test_pact_quant():
-    dut = PACTQuant()
-    x1 = torch.rand([20, 20])
+def test_quant_fwd(quantizer):
+    q1 = quantizer
+    q2 = copy.deepcopy(q1)
+
+    x1 = torch.rand([30, 30])
     x2 = copy.deepcopy(x1)
 
-    x1_fakequant = dut.fake_quant(x1)
-    x2_quant = dut.quantize(x2).float()
-    assert torch.allclose(x1_fakequant, x2_quant / dut.scale_factor)
-    assert torch.lt(x2_quant, dut.int_max).all()
-    assert torch.gt(x2_quant, -dut.int_max).all()
+    x1_fakequant = q1.fake_quant(x1)
+    x2_quant = q2.quantize(x2).float()
+
+    assert torch.lt(x2_quant, q1.int_max + 1).all()
+    assert torch.gt(x2_quant, -q1.int_max - 1).all()
+    assert q1.scale_factor == q2.scale_factor
+    assert torch.allclose(x1_fakequant, x2_quant / q2.scale_factor)
 
 
-def test_pact_grad():
-    dut = PACTQuant()
-    x1 = torch.rand([20, 20], requires_grad=True)
+def test_quant_grad(quantizer):
+    q1 = quantizer
+    q2 = copy.deepcopy(q1)
+
+    x1 = torch.rand([30, 30], requires_grad=True)
     x2 = copy.deepcopy(x1)
 
-    dut.fake_quant(x1).sum().backward()
-    torch.div(dut.quantize(x2), dut.scale_factor).sum().backward()
+    q1.fake_quant(x1).sum().backward()
+    torch.div(q2.quantize(x2), q2.scale_factor).sum().backward()
+
     assert torch.allclose(x1.grad, x2.grad)

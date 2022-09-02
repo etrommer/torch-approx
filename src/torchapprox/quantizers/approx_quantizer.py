@@ -26,7 +26,7 @@ class ApproxQuantizer(torch.nn.Module, ABC):
         """
 
     @abstractmethod
-    def quantize(self, x: torch.FloatTensor) -> torch.IntTensor:
+    def quantize(self, x: torch.FloatTensor) -> torch.FloatTensor:
         """
         Apply quantization operation to input tensor
 
@@ -34,7 +34,7 @@ class ApproxQuantizer(torch.nn.Module, ABC):
             x: Floating-point input
 
         Returns:
-            Integer-quantized output
+            Output quantized to Integer range
         """
 
     @property
