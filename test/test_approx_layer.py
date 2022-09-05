@@ -48,6 +48,9 @@ def test_conv2d_from_super(device):
     assert torch.allclose(l.weight, al.weight)
     assert torch.allclose(l.bias, al.bias)
 
+    x = torch.rand(2, 8, 4, 4)
+    assert torch.allclose(l(x), al(x))
+
 
 def test_linear_properties():
     al = ApproxLinear(10, 20, False)
@@ -96,6 +99,27 @@ def test_layer_fwd(lut, device, layer):
 
     layer.approx_op.lut = None
     assert torch.allclose(ref_layer(x), layer(x), atol=5e-8)
+
+
+@pytest.mark.parametrize("layer", layers())
+def test_layer_bwd(lut, device, layer):
+    approx_type, input_dims, layer_args, layer_kwargs = layer
+
+    layer = approx_type(*layer_args, **layer_kwargs, device=device)
+    layer.inference_mode = InferenceMode.APPROXIMATE
+    layer.approx_op.lut = lut
+
+    ref_layer = copy.deepcopy(layer)
+    ref_layer.inference_mode = InferenceMode.QUANTIZED
+
+    x1 = torch.rand(input_dims, device=device, requires_grad=True)
+    x2 = copy.deepcopy(x1)
+    ref_layer(x1).sum().backward()
+    layer(x2).sum().backward()
+
+    assert torch.allclose(x1.grad, x2.grad, atol=1e-7)
+    assert torch.allclose(ref_layer.weight.grad, layer.weight.grad, atol=1e-7)
+    assert torch.allclose(ref_layer.bias.grad, layer.bias.grad, atol=1e-7)
 
 
 @pytest.mark.parametrize("layer", layers())

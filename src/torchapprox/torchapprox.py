@@ -59,8 +59,14 @@ class ApproxMM(torch.autograd.Function):
         Calculate backward pass based on accurate matrix product (Straight-Through-Estimator)
         """
         a, b = ctx.saved_tensors
-        grad_a = torch.matmul(grad, b.T)
-        grad_b = torch.sum(torch.matmul(grad.transpose(1, 2), a), axis=0).T
+        if len(a.size()) == 3:
+            # Batched matrix is a
+            grad_a = torch.matmul(grad, b.T)
+            grad_b = torch.sum(torch.matmul(grad.transpose(1, 2), a), axis=0).T
+        else:
+            # Batched matrix is b
+            grad_a = torch.sum(torch.matmul(grad, b.transpose(1, 2)), axis=0)
+            grad_b = torch.matmul(grad.transpose(1, 2), a).transpose(1, 2)
 
         return grad_a, grad_b, None, None
 

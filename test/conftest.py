@@ -76,10 +76,10 @@ def device(request):
         - 'cpu' (always)
         - 'cuda' (if CUDA is available)
     """
-    yield request.param
+    return request.param
 
 
-sizes = [1, 2, 7, 23, 115]
+sizes = [1, 2, 23, 115]
 
 
 @pytest.fixture(params=product(sizes, sizes, sizes))
@@ -94,4 +94,4 @@ def test_inputs(request, device):
         Test matrices A and B
     """
     dim1, dim2, dim3 = request.param
-    yield make_problem(2, dim1, dim2, dim3, device, torch.int8)
+    return make_problem(2, dim1, dim2, dim3, device, torch.int8)
