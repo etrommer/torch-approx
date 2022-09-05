@@ -93,10 +93,15 @@ def test_linear_properties():
     assert al.opcount == 200
 
 
-@pytest.mark.xfail
 def test_conv2d_properties():
-    al = ApproxConv2d(8, 16, 3)
-    x = torch.rand((4, 8, 4, 4))
+    in_channels = 8
+    out_channels = 16
+    kernel_size = 3
+
+    al = ApproxConv2d(in_channels, out_channels, kernel_size)
+    x = torch.rand((4, in_channels, 4, 4))
     _ = al(x)
-    assert al.fan_in == 8 * 3 * 3
-    assert al.opcount == 4 * 8 * 3 * 3
+    assert al.fan_in == in_channels * kernel_size**2
+
+    input_size = 2 * 2  # 4x4px without padding
+    assert al.opcount == in_channels * input_size * kernel_size**2 * out_channels

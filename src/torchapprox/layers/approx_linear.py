@@ -12,7 +12,7 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
     def __init__(self, *args, **kwargs):
         torch.nn.Linear.__init__(self, *args, **kwargs)
         ApproxLayer.__init__(self)
-        self.opcount = torch.tensor(self.in_features * self.out_features).float()
+        self._opcount = torch.tensor(self.in_features * self.out_features).float()
 
     @staticmethod
     def from_super(cls_instance: torch.nn.Linear):
@@ -40,7 +40,11 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
 
     @property
     def fan_in(self) -> int:
-        return self.in_features
+        return int(self.in_features)
+
+    @property
+    def opcount(self) -> int:
+        return int(self._opcount)
 
     def baseline_fwd(self, x):
         return torch.nn.functional.linear(x, self.weight)
@@ -67,4 +71,4 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
 
     # pylint: disable=arguments-renamed
     def forward(self, x):
-        return ApproxLayer.forward(self, x)
+        return ApproxLayer.forward(self, x, self.bias)
