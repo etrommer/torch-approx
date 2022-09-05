@@ -112,12 +112,11 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         w_q = self.w_quantizer.quantize(self.weight)
 
         out_dims = self.output_dims(x)
+
+        # Pre-allocate output tensor
         y = torch.empty(
             x.size(0), self.out_channels, math.prod(out_dims), device=x.device
         )
-
-        # in_group_size = int(self.in_channels / self.groups)
-        # out_group_size = int(self.out_channels / self.groups)
 
         for group in range(self.groups):
             # Calculate lower and upper channel index for current group
@@ -130,6 +129,7 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
             in_ch_lower, in_ch_upper = limits(group, self.in_channels)
             out_ch_lower, out_ch_upper = limits(group, self.out_channels)
 
+            # Im2Col operation
             x_unfold = torch.nn.functional.unfold(
                 x_q[
                     :,
@@ -139,14 +139,21 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
                 kernel_size=self.kernel_size,
                 padding=self.padding,
                 stride=self.stride,
+                dilation=self.dilation,
             )
 
+            # Reshape weights to 2D
             kernels_flat = w_q[out_ch_lower:out_ch_upper].view(
                 int(self.out_channels / self.groups), -1
             )
+
+            # ApproxGeMM
             y[:, out_ch_lower:out_ch_upper] = self.approx_op(kernels_flat, x_unfold)
 
+        # Reshape to correct output size
         y = y.view(x.size(0), self.out_channels, out_dims[0], out_dims[1])
+
+        # Requantize
         y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
