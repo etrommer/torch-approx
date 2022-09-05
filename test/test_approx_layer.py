@@ -92,10 +92,10 @@ def test_layer_fwd(lut, device, layer):
 
     x = torch.rand(input_dims, device=device)
 
-    assert torch.allclose(ref_layer(x), layer(x))
+    assert torch.allclose(ref_layer(x), layer(x), atol=5e-8)
 
     layer.approx_op.lut = None
-    assert torch.allclose(ref_layer(x), layer(x))
+    assert torch.allclose(ref_layer(x), layer(x), atol=5e-8)
 
 
 @pytest.mark.parametrize("layer", layers())
