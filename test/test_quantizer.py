@@ -3,11 +3,11 @@ import copy
 import pytest
 import torch
 
-from torchapprox.quantizers import MinMaxQuant, PACTQuant
+import torchapprox.quantizers as taq
 
 
 def quantizers():
-    yield from [PACTQuant(), MinMaxQuant()]
+    yield from [taq.PACTQuant(), taq.MinMaxQuant()]
 
 
 @pytest.mark.parametrize("quantizer", quantizers())
