@@ -15,14 +15,14 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
         self.opcount = torch.tensor(self.in_features * self.out_features).float()
 
     @staticmethod
-    def from_super(cls_instance):
+    def from_super(cls_instance: torch.nn.Linear):
         """
         Alias for from_linear
         """
         return ApproxLinear.from_linear(cls_instance)
 
     @staticmethod
-    def from_linear(linear):
+    def from_linear(linear: torch.nn.Linear):
         """
         Construct ApproxLinear from torch.nn.Linear layer
         """
