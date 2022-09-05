@@ -66,6 +66,14 @@ class ApproxLayer(ABC):
         Number of incoming connections for a neuron in this layer
         """
 
+    @property
+    @abstractmethod
+    def opcount(self) -> int:
+        """
+        Number of multiplications for a single
+        forward pass of this layer
+        """
+
     @staticmethod
     @abstractmethod
     def from_super(cls_instance):
@@ -135,7 +143,7 @@ class ApproxLayer(ABC):
         return y
 
     @no_type_check
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, bias: torch.Tensor) -> torch.Tensor:
         """
         Forward pass with currently selected mode applied
 
@@ -157,7 +165,7 @@ class ApproxLayer(ABC):
         elif self.inference_mode == InferenceMode.NOISE:
             y = self.noise_fwd(x)
 
-        if self.bias is not None:
-            y = y + self.bias
+        if bias is not None:
+            y = y + bias
 
         return y
