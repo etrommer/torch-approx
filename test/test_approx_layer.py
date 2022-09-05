@@ -26,12 +26,12 @@ def test_linear_from_super(device):
     assert torch.allclose(l.bias, al.bias)
 
     # Baseline forward pass should yield the same result
-    x = torch.rand(4, 20)
+    x = torch.rand(4, 20, device=device)
     assert torch.allclose(l(x), al(x))
 
 
 def test_conv2d_from_super(device):
-    l = torch.nn.Conv2d(8, 16, 3)
+    l = torch.nn.Conv2d(8, 16, 3, device=device)
     al = ta.layers.ApproxConv2d.from_super(copy.deepcopy(l))
 
     # Check properties
@@ -48,7 +48,7 @@ def test_conv2d_from_super(device):
     assert torch.allclose(l.weight, al.weight)
     assert torch.allclose(l.bias, al.bias)
 
-    x = torch.rand(2, 8, 4, 4)
+    x = torch.rand(2, 8, 4, 4, device=device)
     assert torch.allclose(l(x), al(x))
 
 
