@@ -4,7 +4,7 @@ from typing import Optional, Union
 import numpy as np
 import torch
 
-from torchapprox import ApproxMM
+from torchapprox.torchapprox import ApproxMM
 
 
 class LUT(torch.nn.Module):

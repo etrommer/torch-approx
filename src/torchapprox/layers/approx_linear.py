@@ -13,6 +13,7 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
         torch.nn.Linear.__init__(self, *args, **kwargs)
         ApproxLayer.__init__(self)
         self._opcount = torch.tensor(self.in_features * self.out_features).float()
+        self.to(self.weight.device)
 
     @staticmethod
     def from_super(cls_instance: torch.nn.Linear):

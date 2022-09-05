@@ -28,9 +28,11 @@ class PACTQuant(ApproxQuantizer):
         return self.int_max / self.alpha.item()
 
     def fake_quant(self, x):
+        self.int_max = self.int_max.to(x.device)
         return self.FakeQuant.apply(x, self.alpha, self.int_max)
 
     def quantize(self, x):
+        self.int_max = self.int_max.to(x.device)
         return self.Quant.apply(x, self.alpha, self.int_max)
 
     class FakeQuant(torch.autograd.Function):
@@ -65,7 +67,7 @@ class PACTQuant(ApproxQuantizer):
         @staticmethod
         def forward(ctx, x, alpha, int_max):
             scale_factor = int_max / alpha.item()
-            ctx.save_for_backward(torch.tensor([scale_factor]))
+            ctx.save_for_backward(scale_factor)
             x_quant = torch.clamp((scale_factor * x), min=-int_max, max=int_max)
             x_quant = torch.round(x_quant)
             return x_quant

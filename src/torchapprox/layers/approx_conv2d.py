@@ -15,6 +15,7 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         torch.nn.Conv2d.__init__(self, *args, **kwargs)
         ApproxLayer.__init__(self)
         self._opcount = None
+        self.to(self.weight.device)
 
     @staticmethod
     def from_super(cls_instance: torch.nn.Conv2d):

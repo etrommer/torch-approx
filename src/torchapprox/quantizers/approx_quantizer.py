@@ -12,6 +12,7 @@ class ApproxQuantizer(torch.nn.Module, ABC):
     def __init__(self, bitwidth: int = 8):
         torch.nn.Module.__init__(self)
         self._bitwidth = bitwidth
+        self.int_max = torch.tensor([2 ** (bitwidth - 1) - 1])
 
     @abstractmethod
     def fake_quant(self, x: torch.FloatTensor) -> torch.FloatTensor:
@@ -57,13 +58,3 @@ class ApproxQuantizer(torch.nn.Module, ABC):
             The value with which a float tensor is multiplied
             in order to scale it to Integer numerical range
         """
-
-    @property
-    def int_max(self) -> int:
-        """
-        Highest value of an Integer according for current bitwidth
-
-        Returns:
-            Max Integer value for current bitwidth
-        """
-        return 2 ** (self.bitwidth - 1) - 1

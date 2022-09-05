@@ -23,12 +23,14 @@ class MinMaxQuant(ApproxQuantizer):
 
     def fake_quant(self, x):
         with torch.no_grad():
+            self.int_max = self.int_max.to(x.device)
             minmax = torch.max(torch.abs(x))
             self._scale_factor = self.int_max / minmax
         return self.FakeQuant.apply(x, minmax, self.int_max)
 
     def quantize(self, x):
         with torch.no_grad():
+            self.int_max = self.int_max.to(x.device)
             minmax = torch.max(torch.abs(x))
             self._scale_factor = self.int_max / minmax
         return self.Quant.apply(x, minmax, self.int_max)
@@ -57,7 +59,7 @@ class MinMaxQuant(ApproxQuantizer):
         @staticmethod
         def forward(ctx, x, minmax, int_max):
             scale_factor = int_max / minmax
-            ctx.save_for_backward(torch.tensor([scale_factor]))
+            ctx.save_for_backward(scale_factor)
             x_quant = torch.clamp(x, min=-minmax, max=minmax)
             x_quant = torch.round(x_quant * scale_factor)
             return x_quant

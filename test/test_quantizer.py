@@ -12,15 +12,15 @@ def quantizers():
 
 @pytest.mark.parametrize("quantizer", quantizers())
 def test_quant_fake(quantizer, device):
-    dut = quantizer
+    q = quantizer.to(device)
     x = torch.rand([30, 30], device=device)
-    x_quant = dut.fake_quant(x)
-    assert len(torch.unique(x_quant)) <= 2**dut.bitwidth
+    x_quant = q.fake_quant(x)
+    assert len(torch.unique(x_quant)) <= 2**q.bitwidth
 
 
 @pytest.mark.parametrize("quantizer", quantizers())
 def test_quant_fwd(quantizer, device):
-    q1 = quantizer
+    q1 = quantizer.to(device)
     q2 = copy.deepcopy(q1)
 
     x1 = torch.rand([30, 30], device=device)
@@ -37,7 +37,7 @@ def test_quant_fwd(quantizer, device):
 
 @pytest.mark.parametrize("quantizer", quantizers())
 def test_quant_grad(quantizer, device):
-    q1 = quantizer
+    q1 = quantizer.to(device)
     q2 = copy.deepcopy(q1)
 
     x1 = torch.rand([30, 30], device=device, requires_grad=True)
