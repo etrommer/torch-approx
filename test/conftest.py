@@ -51,7 +51,7 @@ def lut():
     return torch.from_numpy(xx * yy).short()
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(autouse=True)
 def fix_seed():
     """
     Run before every test.
