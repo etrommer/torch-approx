@@ -6,11 +6,11 @@ import torch
 from torchapprox.quantizers import MinMaxQuant, PACTQuant
 
 
-@pytest.fixture(scope="module", params=[PACTQuant(), MinMaxQuant()])
-def quantizer(request):
-    yield request.param
+def quantizers():
+    yield from [PACTQuant(), MinMaxQuant()]
 
 
+@pytest.mark.parametrize("quantizer", quantizers())
 def test_quant_fake(quantizer):
     dut = quantizer
     x = torch.rand([30, 30])
@@ -18,6 +18,7 @@ def test_quant_fake(quantizer):
     assert len(torch.unique(x_quant)) <= 2**dut.bitwidth
 
 
+@pytest.mark.parametrize("quantizer", quantizers())
 def test_quant_fwd(quantizer):
     q1 = quantizer
     q2 = copy.deepcopy(q1)
@@ -34,6 +35,7 @@ def test_quant_fwd(quantizer):
     assert torch.allclose(x1_fakequant, x2_quant / q2.scale_factor)
 
 
+@pytest.mark.parametrize("quantizer", quantizers())
 def test_quant_grad(quantizer):
     q1 = quantizer
     q2 = copy.deepcopy(q1)

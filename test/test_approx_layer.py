@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 import torch
 
-from torchapprox.layers import ApproxLayer, ApproxLinear, InferenceMode
+from torchapprox.layers import *
+
+
+def layers():
+    yield from [(ApproxLinear, (20, 10), (4, 20))]
 
 
 def test_instantiate():
@@ -12,17 +16,75 @@ def test_instantiate():
         al = ApproxLayer()
 
 
-def test_linear_from_super(device):
-    l = torch.nn.Linear(12, 8, device=device)
-    al = ApproxLinear.from_super(l)
+@pytest.mark.parametrize("layer", layers())
+def test_layer_from_super(device, layer):
+    approx_type, layer_dims, input_dims = layer
+    if approx_type == ApproxLinear:
+        l = torch.nn.Linear(*layer_dims, device=device)
+    al = approx_type.from_super(copy.deepcopy(l))
+
+    # Properties should be identical
     assert l.weight.device == al.weight.device
     assert l.in_features == al.in_features
     assert l.out_features == al.out_features
+
+    # Weights and biases should be the same
     assert torch.allclose(l.weight, al.weight)
     assert torch.allclose(l.bias, al.bias)
 
-    x = torch.rand((4, 12))
+    # Baseline forward pass should yield the same result
+    x = torch.rand(input_dims)
     assert torch.allclose(l(x), al(x))
+
+
+@pytest.mark.parametrize("layer", layers())
+def test_layer_fwd(lut, device, layer):
+    approx_type, layer_dims, input_dims = layer
+
+    layer = approx_type(*layer_dims, device=device)
+    layer.inference_mode = InferenceMode.APPROXIMATE
+    layer.approx_op.lut = lut
+
+    ref_layer = copy.deepcopy(layer)
+    ref_layer.inference_mode = InferenceMode.QUANTIZED
+
+    x = torch.rand(input_dims, device=device)
+
+    assert torch.allclose(ref_layer(x), layer(x))
+
+    layer.approx_op.lut = None
+    assert torch.allclose(ref_layer(x), layer(x))
+
+
+@pytest.mark.parametrize("layer", layers())
+def test_layer_empty_lut(device, layer):
+    approx_type, layer_dims, input_dims = layer
+
+    layer = approx_type(*layer_dims, bias=False, device=device)
+    layer.inference_mode = InferenceMode.APPROXIMATE
+    layer.approx_op.lut = np.zeros((256, 256))
+
+    x = torch.rand(input_dims, device=device)
+
+    res = layer(x)
+    assert torch.allclose(torch.zeros_like(res), res)
+
+
+@pytest.mark.parametrize("layer", layers())
+def test_linear_noise(device, layer):
+    approx_type, layer_dims, input_dims = layer
+    layer = approx_type(*layer_dims, device=device)
+    layer.inference_mode = InferenceMode.NOISE
+
+    ref_layer = copy.deepcopy(layer)
+    ref_layer.inference_mode = InferenceMode.QUANTIZED
+
+    x = torch.rand(input_dims, device=device)
+
+    layer.stdev = 0.1
+    assert not torch.allclose(layer(x), ref_layer(x))
+    layer.stdev = 0.0
+    assert torch.allclose(layer(x), ref_layer(x))
 
 
 def test_linear_properties():
@@ -31,43 +93,10 @@ def test_linear_properties():
     assert al.opcount == 200
 
 
-def test_linear_fwd(lut, device):
-    layer = ApproxLinear(20, 10, device=device)
-    layer.inference_mode = InferenceMode.APPROXIMATE
-    layer.approx_op.lut = lut
-
-    ref_layer = copy.deepcopy(layer)
-    ref_layer.inference_mode = InferenceMode.QUANTIZED
-
-    x = torch.rand((4, 20), device=device)
-
-    assert torch.allclose(ref_layer(x), layer(x))
-
-    layer.approx_op.lut = None
-    assert torch.allclose(ref_layer(x), layer(x))
-
-
-def test_linear_empty_lut(device):
-    layer = ApproxLinear(20, 10, bias=False, device=device)
-    layer.inference_mode = InferenceMode.APPROXIMATE
-    layer.approx_op.lut = np.zeros((256, 256))
-
-    x = torch.rand((4, 20), device=device)
-
-    res = layer(x)
-    assert torch.allclose(torch.zeros_like(res), res)
-
-
-def test_linear_noise(device):
-    layer = ApproxLinear(20, 10, device=device)
-    layer.inference_mode = InferenceMode.NOISE
-
-    ref_layer = copy.deepcopy(layer)
-    ref_layer.inference_mode = InferenceMode.QUANTIZED
-
-    x = torch.rand((4, 20), device=device)
-
-    layer.stdev = 0.1
-    assert not torch.allclose(layer(x), ref_layer(x))
-    layer.stdev = 0.0
-    assert torch.allclose(layer(x), ref_layer(x))
+@pytest.mark.xfail
+def test_conv2d_properties():
+    al = ApproxConv2d(8, 16, 3)
+    x = torch.rand((4, 8, 4, 4))
+    _ = al(x)
+    assert al.fan_in == 8 * 3 * 3
+    assert al.opcount == 4 * 8 * 3 * 3
