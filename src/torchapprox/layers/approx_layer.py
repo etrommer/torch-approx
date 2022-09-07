@@ -2,7 +2,7 @@
 import enum
 import logging
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, no_type_check
+from typing import TYPE_CHECKING, Optional, no_type_check
 
 import torch
 
@@ -41,6 +41,7 @@ class ApproxLayer(ABC):
         self.w_quantizer: "ApproxQuantizer" = MinMaxQuant()
         self.approx_op: LUT = LUT()
         self.inference_mode: InferenceMode = InferenceMode.BASELINE
+        self.fast_model: Optional[str] = None
 
         self._stdev: torch.nn.Paramter = torch.nn.Parameter(
             torch.tensor(0.0), requires_grad=True
@@ -121,6 +122,19 @@ class ApproxLayer(ABC):
             Layer output
         """
 
+    @abstractmethod
+    def approx_fwd_fast(self, x: torch.Tensor) -> torch.Tensor:
+        """Approximate Product Forward Pass using Fast Model
+        Performs the layer operation using the currently set
+        fast model.
+
+        Args:
+            x: Layer input
+
+        Returns:
+            Layer output
+        """
+
     @no_type_check
     def noise_fwd(self, x: torch.Tensor) -> torch.Tensor:
         """Quantized Forward Pass that is perturbed
@@ -160,8 +174,12 @@ class ApproxLayer(ABC):
             # INT8 accurate operation
             y = self.quant_fwd(x)
         elif self.inference_mode == InferenceMode.APPROXIMATE:
-            # approximate operation (uses quantization internally)
-            y = self.approx_fwd(x)
+            if self.fast_model is None:
+                # LUT approximate operation (uses quantization internally)
+                y = self.approx_fwd(x)
+            else:
+                # Approximate Fast Model on FP32
+                y = self.approx_fwd_fast(x)
         elif self.inference_mode == InferenceMode.NOISE:
             y = self.noise_fwd(x)
 

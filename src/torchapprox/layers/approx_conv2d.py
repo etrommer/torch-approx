@@ -1,9 +1,10 @@
-# pylint: disable=missing-module-docstring
+# pylint: disable=missing-module-docstring, arguments-differ, abstract-method
 import math
 
 import torch
 
 from .approx_layer import ApproxLayer
+from .fast_models import fast_models
 
 
 class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
@@ -157,6 +158,36 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         # Requantize
         y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
+
+    def approx_fwd_fast(self, x):
+        class FastModelConv2d(torch.autograd.Function):
+            """
+            torch.autograd.Function wrapper for Fast model.
+            uses fast model for forward pass and non-approximate gradients
+            for backward pass (STE)
+            """
+
+            @staticmethod
+            def forward(ctx, x, w, model, kwargs):
+                ctx.save_for_backward(x, w)
+                ctx.conf = kwargs
+                return fast_models[model](torch.nn.functional.conv2d, x, w, kwargs)
+
+            @staticmethod
+            def backward(ctx, grad):
+                x, w = ctx.saved_tensors
+                conf = ctx.conf
+                grad_input = torch.nn.grad.conv2d_input(x.size(), w, grad, **conf)
+                grad_weight = torch.nn.grad.conv2d_weight(x, w.size(), grad, **conf)
+                return grad_input, grad_weight, None, None, None, None, None
+
+        kwargs = {
+            "stride": self.stride,
+            "padding": self.padding,
+            "dilation": self.dilation,
+            "groups": self.groups,
+        }
+        return FastModelConv2d.apply(x, self.weight, self.fast_model, kwargs)
 
     # pylint: disable=arguments-renamed
     def forward(self, x: torch.Tensor) -> torch.Tensor:
