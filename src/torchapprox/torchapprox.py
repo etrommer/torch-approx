@@ -114,10 +114,9 @@ def approx(
         # Validate user-supplied results tensor
         assert res.dtype == torch.int32, "Result needs to be int32"
         assert a.device == res.device, "Results tensor on wrong device"
+        assert len(res.size()) == 3
         assert (
-            res.size(0) == a.size(0)
-            and res.size(1) == a.size(1)
-            and res.size(2) == b.size(1)
+            res.size(0) == batch_dim and res.size(1) == dim_1 and res.size(2) == dim_2
         ), "Results tensor shape does not match"
 
     lut = lut.to(a.device)

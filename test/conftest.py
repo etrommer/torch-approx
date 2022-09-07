@@ -1,35 +1,8 @@
 import os
-from itertools import product
 
 import numpy as np
 import pytest
 import torch
-
-
-def make_problem(batch_dim, dim1, dim2, dim3, device, dtype):
-    """Helper function that constructs a problem of a given size
-
-    Returns multipliable matrices a and b of dimensions:
-
-    - a: batch_dim x dim1 x dim2
-    - b: dim2 x dim3
-
-    Args:
-        batch_dim: Matrix A batch dimension
-        dim1: Matrix A 1st dimension
-        dim2: Matrix A 2nd and Matrix B 1st dimension
-        dim3: Matrix B 2nd dimension
-        device: The device to allocate problem matrices on ['cpu' or 'cuda']
-        dtype: data type of A and B
-
-    Returns:
-        _description_
-    """
-    a = torch.randint(
-        -128, 128, size=(batch_dim, dim1, dim2), device=device, dtype=dtype
-    )
-    b = torch.randint(-128, 128, size=(dim2, dim3), device=device, dtype=dtype)
-    return (a, b)
 
 
 @pytest.fixture
@@ -77,21 +50,3 @@ def device(request):
         - 'cuda' (if CUDA is available)
     """
     return request.param
-
-
-sizes = [1, 2, 23, 115]
-
-
-@pytest.fixture(params=product(sizes, sizes, sizes))
-def test_inputs(request, device):
-    """Generate a range of test matrices
-
-    Args:
-        request: Matrix dimensions
-        device: The device to generate matrices on
-
-    Yields:
-        Test matrices A and B
-    """
-    dim1, dim2, dim3 = request.param
-    return make_problem(2, dim1, dim2, dim3, device, torch.int8)
