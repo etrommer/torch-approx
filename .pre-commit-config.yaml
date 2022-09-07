@@ -29,6 +29,7 @@ repos:
       hooks:
           - id: clang-format
             args: [--style=file]
+            types: ['c', 'c++', 'cuda']
     - repo: local
       hooks:
           - id: pylint

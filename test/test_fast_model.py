@@ -13,7 +13,7 @@ def test_linear():
     x = torch.rand(4, 20)
 
     al.inference_mode = ta.layers.InferenceMode.APPROXIMATE
-    al.fast_model = "accurate"
+    al.fast_model = "mul8s_1KV8"
 
     assert torch.allclose(l(x), al(x))
 
@@ -24,6 +24,6 @@ def test_conv2d():
     x = torch.rand(2, 8, 4, 4)
 
     al.inference_mode = ta.layers.InferenceMode.APPROXIMATE
-    al.fast_model = "accurate"
+    al.fast_model = "mul8s_1KV8"
 
     assert torch.allclose(l(x), al(x))

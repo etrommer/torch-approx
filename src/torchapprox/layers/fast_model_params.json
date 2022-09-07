@@ -1,0 +1,247 @@
+{
+    "mul8s_1KR3": {
+        "coefficients": [
+            -1.0
+        ],
+        "powers": [
+            [
+                1,
+                0,
+                0,
+                1
+            ]
+        ],
+        "expansion": 64.0
+    },
+    "mul8s_1KR6": {
+        "coefficients": [
+            -1.0
+        ],
+        "powers": [
+            [
+                1,
+                0,
+                0,
+                1
+            ]
+        ],
+        "expansion": 2.0
+    },
+    "mul8s_1KR8": {
+        "coefficients": [
+            -1.0
+        ],
+        "powers": [
+            [
+                1,
+                0,
+                0,
+                1
+            ]
+        ],
+        "expansion": 2.0
+    },
+    "mul8s_1KRC": {
+        "coefficients": [
+            -3.0,
+            -1.0
+        ],
+        "powers": [
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                1,
+                0,
+                0,
+                1
+            ]
+        ],
+        "expansion": 2.0
+    },
+    "mul8s_1KTY": {
+        "coefficients": [
+            -1.0
+        ],
+        "powers": [
+            [
+                1,
+                0,
+                0,
+                1
+            ]
+        ],
+        "expansion": 8.0
+    },
+    "mul8s_1KVA": {
+        "coefficients": [
+            -0.3
+        ],
+        "powers": [
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "expansion": 4.0
+    },
+    "mul8s_1KVB": {
+        "coefficients": [
+            -1.0
+        ],
+        "powers": [
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "expansion": 4.0
+    },
+    "mul8s_1KVL": {
+        "coefficients": [
+            -0.6,
+            -1.0,
+            -2.0,
+            -0.1
+        ],
+        "powers": [
+            [
+                0,
+                0,
+                1,
+                0
+            ],
+            [
+                1,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                0,
+                2,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "expansion": 4.0
+    },
+    "mul8s_1KX2": {
+        "coefficients": [
+            -0.1,
+            -0.5,
+            -0.1
+        ],
+        "powers": [
+            [
+                0,
+                0,
+                2,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ],
+            [
+                0,
+                0,
+                0,
+                2
+            ]
+        ],
+        "expansion": 8.0
+    },
+    "mul8s_1L1G": {
+        "coefficients": [
+            -1.0,
+            -1.0,
+            1.0
+        ],
+        "powers": [
+            [
+                1,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                1,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "expansion": 8.0
+    },
+    "mul8s_1L2D": {
+        "coefficients": [
+            -1.0,
+            -1.0,
+            0.9
+        ],
+        "powers": [
+            [
+                1,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                1,
+                1,
+                0
+            ],
+            [
+                0,
+                0,
+                1,
+                1
+            ]
+        ],
+        "expansion": 4.0
+    },
+    "mul8s_1L2H": {
+        "coefficients": [
+            -1.0,
+            -1.0
+        ],
+        "powers": [
+            [
+                1,
+                0,
+                0,
+                1
+            ],
+            [
+                0,
+                1,
+                1,
+                0
+            ]
+        ],
+        "expansion": 2.0
+    }
+}
