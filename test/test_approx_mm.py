@@ -1,3 +1,4 @@
+import copy
 from itertools import product
 
 import pytest
@@ -71,6 +72,29 @@ def test_mm(matrices, lut):
     ).transpose(1, 2)
     assert torch.allclose(ref, res_prealloc)
     assert torch.allclose(ref, res_prealloc_T)
+
+
+def test_mm_grad(device, lut):
+    lut = lut.to(device)
+    a1 = torch.randint(
+        -128,
+        128,
+        size=(1, 10, 10),
+        device=device,
+        dtype=torch.float32,
+        requires_grad=True,
+    )
+    b1 = torch.randint(
+        -128, 128, size=(10, 10), device=device, dtype=torch.float32, requires_grad=True
+    )
+    a2 = copy.deepcopy(a1)
+    b2 = copy.deepcopy(b1)
+
+    ApproxMM.apply(a1, b1, lut).sum().backward()
+    torch.matmul(a2, b2).sum().backward()
+
+    assert torch.allclose(a1.grad, a2.grad)
+    assert torch.allclose(b1.grad, b2.grad)
 
 
 def test_indexing(device):
