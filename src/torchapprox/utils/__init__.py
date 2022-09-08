@@ -1,4 +1,4 @@
 """
 TorchApprox Helper functions
 """
-from .conversion import inplace_conversion
+from .conversion import get_approx_modules, inplace_conversion

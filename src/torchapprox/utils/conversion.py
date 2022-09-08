@@ -1,5 +1,5 @@
 # pylint: disable=missing-module-docstring
-from typing import Dict, Optional, Type
+from typing import Dict, List, Optional, Tuple, Type
 
 import torch
 
@@ -37,5 +37,17 @@ def inplace_conversion(
 
     for base_type, approx_type in layer_mappings.items():
         replace_module(net, base_type, approx_type)
-
     return net
+
+
+def get_approx_modules(net: torch.nn.Module) -> List[Tuple[str, tal.ApproxLayer]]:
+    """
+    Retrieve all approximate layers from a model
+
+    Args:
+        net: PyTorch neural network model
+
+    Returns:
+        A list of tuples with name and reference to each Approximate layer instance in the model
+    """
+    return [(n, m) for n, m in net.named_modules() if isinstance(m, tal.ApproxLayer)]

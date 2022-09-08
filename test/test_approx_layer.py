@@ -26,6 +26,11 @@ def test_conversion():
     assert isinstance(mn.conv, tal.ApproxConv2d)
     assert isinstance(mn.linear, tal.ApproxLinear)
 
+    approx_modules = utils.get_approx_modules(mn)
+    assert len(approx_modules) == 2
+    assert approx_modules[0][0] == "conv"
+    assert approx_modules[1][0] == "linear"
+
 
 def test_linear_from_super(device):
     l = torch.nn.Linear(20, 10, device=device)
