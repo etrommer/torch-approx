@@ -155,7 +155,7 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         # Reshape to correct output size
         y = y.view(x.size(0), self.out_channels, out_dims[0], out_dims[1])
 
-        # Requantize
+        # Dequantize
         y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
@@ -187,7 +187,15 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
             "dilation": self.dilation,
             "groups": self.groups,
         }
-        return FastModelConv2d.apply(x, self.weight, self.fast_model, kwargs)
+
+        x_q = self.x_quantizer.quantize(x, rounded=False)
+        w_q = self.w_quantizer.quantize(self.weight, rounded=False)
+
+        y = FastModelConv2d.apply(x_q, w_q, self.fast_model, kwargs)
+
+        # Dequantize
+        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
+        return y
 
     # pylint: disable=arguments-renamed
     def forward(self, x: torch.Tensor) -> torch.Tensor:

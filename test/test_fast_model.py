@@ -19,9 +19,9 @@ def test_linear():
 
 
 def test_conv2d():
-    l = torch.nn.Conv2d(8, 16, 3)
+    l = torch.nn.Conv2d(4, 4, 3)
     al = ta.layers.ApproxConv2d.from_conv2d(copy.deepcopy(l))
-    x = torch.rand(2, 8, 4, 4)
+    x = torch.rand(2, 4, 4, 4)
 
     al.inference_mode = ta.layers.InferenceMode.APPROXIMATE
     al.fast_model = "mul8s_1KV8"

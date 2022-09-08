@@ -91,7 +91,14 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
                 grad_weight = torch.sum(torch.matmul(grad.transpose(1, 2), x), axis=0).T
                 return grad_input, grad_weight, None
 
-        return FastModelLinear.apply(x, self.weight, self.fast_model)
+        x_q = self.x_quantizer.quantize(x, rounded=False)
+        w_q = self.w_quantizer.quantize(self.weight, rounded=False)
+
+        y = FastModelLinear.apply(x_q, w_q, self.fast_model)
+
+        # Dequantize
+        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
+        return y
 
     # pylint: disable=arguments-renamed
     def forward(self, x):

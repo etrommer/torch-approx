@@ -27,12 +27,14 @@ class ApproxQuantizer(torch.nn.Module, ABC):
         """
 
     @abstractmethod
-    def quantize(self, x: torch.FloatTensor) -> torch.FloatTensor:
+    def quantize(self, x: torch.FloatTensor, rounded: bool = True) -> torch.FloatTensor:
         """
         Apply quantization operation to input tensor
 
         Args:
             x: Floating-point input
+            rounded: Round the rescaled input to Integers
+
 
         Returns:
             Output quantized to Integer range

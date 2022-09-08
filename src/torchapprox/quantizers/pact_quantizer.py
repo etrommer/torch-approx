@@ -31,9 +31,9 @@ class PACTQuant(ApproxQuantizer):
         self.int_max = self.int_max.to(x.device)
         return self.FakeQuant.apply(x, self.alpha, self.int_max)
 
-    def quantize(self, x):
+    def quantize(self, x, rounded=True):
         self.int_max = self.int_max.to(x.device)
-        return self.Quant.apply(x, self.alpha, self.int_max)
+        return self.Quant.apply(x, self.alpha, self.int_max, rounded)
 
     class FakeQuant(torch.autograd.Function):
         """
@@ -59,20 +59,22 @@ class PACTQuant(ApproxQuantizer):
             grad_alpha = torch.sum(grad_x_quant * (~x_range).float()).view(-1)
             return grad_x_quant * x_range.float(), grad_alpha, None, None
 
+    # pylint: disable=duplicate-code
     class Quant(torch.autograd.Function):
         """
         Differentiable Integer Quantization Node
         """
 
         @staticmethod
-        def forward(ctx, x, alpha, int_max):
+        def forward(ctx, x, alpha, int_max, rounded):
             scale_factor = int_max / alpha.item()
             ctx.save_for_backward(scale_factor)
             x_quant = torch.clamp((scale_factor * x), min=-int_max, max=int_max)
-            x_quant = torch.round(x_quant)
+            if rounded:
+                x_quant = torch.round(x_quant)
             return x_quant
 
         @staticmethod
         def backward(ctx, grad_x_quant):
             (scale_factor,) = ctx.saved_tensors
-            return grad_x_quant * scale_factor, None, None
+            return grad_x_quant * scale_factor, None, None, None

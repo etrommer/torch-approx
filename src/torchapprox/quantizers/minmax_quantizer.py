@@ -28,12 +28,12 @@ class MinMaxQuant(ApproxQuantizer):
             self._scale_factor = self.int_max / minmax
         return self.FakeQuant.apply(x, minmax, self.int_max)
 
-    def quantize(self, x):
+    def quantize(self, x, rounded=True):
         with torch.no_grad():
             self.int_max = self.int_max.to(x.device)
             minmax = torch.max(torch.abs(x))
             self._scale_factor = self.int_max / minmax
-        return self.Quant.apply(x, minmax, self.int_max)
+        return self.Quant.apply(x, minmax, self.int_max, rounded)
 
     class FakeQuant(torch.autograd.Function):
         """
@@ -51,20 +51,22 @@ class MinMaxQuant(ApproxQuantizer):
         def backward(ctx, grad_x_quant):
             return grad_x_quant, None, None
 
+    # pylint: disable=duplicate-code
     class Quant(torch.autograd.Function):
         """
         Differentiable Integer Quantization node
         """
 
         @staticmethod
-        def forward(ctx, x, minmax, int_max):
+        def forward(ctx, x, minmax, int_max, rounded):
             scale_factor = int_max / minmax
             ctx.save_for_backward(scale_factor)
-            x_quant = torch.clamp(x, min=-minmax, max=minmax)
-            x_quant = torch.round(x_quant * scale_factor)
+            x_quant = torch.clamp(x, min=-minmax, max=minmax) * scale_factor
+            if rounded:
+                x_quant = torch.round(x_quant)
             return x_quant
 
         @staticmethod
         def backward(ctx, grad_x_quant):
             (scale_factor,) = ctx.saved_tensors
-            return grad_x_quant * scale_factor, None, None
+            return grad_x_quant * scale_factor, None, None, None
