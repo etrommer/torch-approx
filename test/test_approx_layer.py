@@ -5,11 +5,26 @@ import pytest
 import torch
 
 from torchapprox import layers as tal
+from torchapprox import utils
 
 
 def test_instantiate():
     with pytest.raises(TypeError):
         al = tal.ApproxLayer()
+
+
+def test_conversion():
+    class MiniNet(torch.nn.Module):
+        def __init__(self):
+            torch.nn.Module.__init__(self)
+            self.conv = torch.nn.Conv2d(3, 6, 3)
+            self.linear = torch.nn.Linear(20, 10)
+
+    mn = MiniNet()
+    utils.inplace_conversion(mn)
+
+    assert isinstance(mn.conv, tal.ApproxConv2d)
+    assert isinstance(mn.linear, tal.ApproxLinear)
 
 
 def test_linear_from_super(device):
