@@ -6,9 +6,8 @@ from typing import TYPE_CHECKING, Optional, no_type_check
 
 import torch
 
+from torchapprox.operators import LUT
 from torchapprox.quantizers import MinMaxQuant, PACTQuant
-
-from .approx_operator import LUT
 
 if TYPE_CHECKING:
     from torchapprox.quantizers import ApproxQuantizer

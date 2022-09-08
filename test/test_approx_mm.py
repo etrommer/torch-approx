@@ -4,7 +4,8 @@ from itertools import product
 import pytest
 import torch
 
-from torchapprox import ApproxMM, approx
+from torchapprox.operators.approxgemm import ApproxGeMM
+from torchapprox.operators.backend import approx
 
 sizes = [1, 2, 23, 115]
 
@@ -90,7 +91,7 @@ def test_mm_grad(device, lut):
     a2 = copy.deepcopy(a1)
     b2 = copy.deepcopy(b1)
 
-    ApproxMM.apply(a1, b1, lut).sum().backward()
+    ApproxGeMM.apply(a1, b1, lut).sum().backward()
     torch.matmul(a2, b2).sum().backward()
 
     assert torch.allclose(a1.grad, a2.grad)
@@ -105,8 +106,8 @@ def test_indexing(device):
     lut[127, 0] = 42
     lut[0, 127] = -23
 
-    res = ApproxMM.apply(torch.tensor([[[127.0]]]), torch.tensor([[0.0]]), lut)
+    res = ApproxGeMM.apply(torch.tensor([[[127.0]]]), torch.tensor([[0.0]]), lut)
     assert torch.allclose(res, torch.tensor([[[42.0]]]))
 
-    res = ApproxMM.apply(torch.tensor([[[0.0]]]), torch.tensor([[127.0]]), lut)
+    res = ApproxGeMM.apply(torch.tensor([[[0.0]]]), torch.tensor([[127.0]]), lut)
     assert torch.allclose(res, torch.tensor([[[-23.0]]]))

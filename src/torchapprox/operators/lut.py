@@ -4,7 +4,7 @@ from typing import Optional, Union
 import numpy as np
 import torch
 
-from torchapprox.torchapprox import ApproxMM
+from .approxgemm import ApproxGeMM
 
 
 class LUT(torch.nn.Module):
@@ -75,4 +75,4 @@ class LUT(torch.nn.Module):
             w = torch.round(w).float()
             x = torch.round(x).float()
             return x @ w
-        return ApproxMM.apply(x, w, self.lut, res)
+        return ApproxGeMM.apply(x, w, self.lut, res)
