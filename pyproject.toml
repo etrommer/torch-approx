@@ -25,6 +25,10 @@ install-ltt = "python3 -m pip install light-the-torch"
 run-ltt = "python3 -m light_the_torch install --upgrade torch torchaudio torchvision"
 autoinstall-torch-cuda = ["install-ltt", "run-ltt"]
 
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+
 [tool.pylint.main]
 max-line-length = 120
 ignore = 'docs'
