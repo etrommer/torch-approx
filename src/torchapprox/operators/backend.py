@@ -12,11 +12,11 @@ from torch.utils.cpp_extension import load
 logger = logging.getLogger(__name__)
 
 
-sources = ["../../cpu/approx_mm_cpu.cpp"]
+sources = ["../../cpu/ta_gemm_cpu.cpp"]
 extra_cflags = ["-fopenmp"]
 
 if torch.cuda.is_available():
-    sources += ["../../cuda/approx_mm_wrapper.cpp", "../../cuda/approx_mm_cuda.cu"]
+    sources += ["../../cuda/ta_backend.cpp", "../../cuda/ta_gemm_cuda.cu"]
     extra_cflags += ["-DTA_CUDA_EXTENSION"]
 else:
     logger.warning("No CUDA device detected. Running on CPU.")

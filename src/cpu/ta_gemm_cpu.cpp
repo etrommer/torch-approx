@@ -1,11 +1,10 @@
-#include "approx_mm_cpu.h"
+#include "ta_gemm_cpu.h"
 
 #include <stdio.h>
 
 #include <iostream>
 
-template <typename T>
-void approx_mm_cpu(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
+template <typename T> void ta_gemm_cpu(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
     auto a_acc = a.accessor<T, 3>();
     auto b_acc = b.accessor<T, 2>();
 
@@ -29,7 +28,7 @@ void approx_mm_cpu(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
 }
 
 template <typename T>
-void approx_mm_cpu_batch_b(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
+void ta_gemm_cpu_batchb(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
     auto a_acc = a.accessor<T, 2>();
     auto b_acc = b.accessor<T, 3>();
 
@@ -52,15 +51,15 @@ void approx_mm_cpu_batch_b(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tenso
     }
 }
 
-void approx_mm_cpu_wrapper(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
+void ta_gemm_cpu_wrapper(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
     switch (a.scalar_type()) {
     // case torch::ScalarType::Byte:
     //     return torchapprox_cpu<uint8_t>(a,b,lut,res);
     case torch::ScalarType::Char:
         if (a.dim() == 3) {
-            return approx_mm_cpu<int8_t>(a, b, lut, res);
+            return ta_gemm_cpu<int8_t>(a, b, lut, res);
         } else {
-            return approx_mm_cpu_batch_b<int8_t>(a, b, lut, res);
+            return ta_gemm_cpu_batchb<int8_t>(a, b, lut, res);
         }
     default:
         break;
@@ -69,6 +68,6 @@ void approx_mm_cpu_wrapper(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tenso
 
 #ifndef TA_CUDA_EXTENSION
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
-    m.def("matmul_cpu", &approx_mm_cpu_wrapper, "torchapprox CPU backend");
+    m.def("matmul_cpu", &ta_gemm_cpu_wrapper, "torchapprox CPU backend");
 }
 #endif

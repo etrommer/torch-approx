@@ -1,13 +1,13 @@
-#include "approx_mm_cuda.h"
+#include "ta_gemm_cuda.h"
 
 const auto BLOCK_SIZE = 16;
 
 template <typename scalar_t>
 __global__ void
-ta_matmul(cudaTextureObject_t tex,
-          const torch::PackedTensorAccessor32<scalar_t, 3, torch::RestrictPtrTraits> a,
-          const torch::PackedTensorAccessor32<scalar_t, 2, torch::RestrictPtrTraits> b,
-          torch::PackedTensorAccessor32<int32_t, 3, torch::RestrictPtrTraits> res) {
+ta_gemm_kernel(cudaTextureObject_t tex,
+               const torch::PackedTensorAccessor32<scalar_t, 3, torch::RestrictPtrTraits> a,
+               const torch::PackedTensorAccessor32<scalar_t, 2, torch::RestrictPtrTraits> b,
+               torch::PackedTensorAccessor32<int32_t, 3, torch::RestrictPtrTraits> res) {
     __shared__ scalar_t a_shared[BLOCK_SIZE][BLOCK_SIZE];
     __shared__ scalar_t b_shared[BLOCK_SIZE][BLOCK_SIZE];
 
@@ -53,10 +53,10 @@ ta_matmul(cudaTextureObject_t tex,
 
 template <typename scalar_t>
 __global__ void
-ta_matmul_batch_b(cudaTextureObject_t tex,
-                  const torch::PackedTensorAccessor32<scalar_t, 2, torch::RestrictPtrTraits> a,
-                  const torch::PackedTensorAccessor32<scalar_t, 3, torch::RestrictPtrTraits> b,
-                  torch::PackedTensorAccessor32<int32_t, 3, torch::RestrictPtrTraits> res) {
+ta_gemm_kernel_batchb(cudaTextureObject_t tex,
+                      const torch::PackedTensorAccessor32<scalar_t, 2, torch::RestrictPtrTraits> a,
+                      const torch::PackedTensorAccessor32<scalar_t, 3, torch::RestrictPtrTraits> b,
+                      torch::PackedTensorAccessor32<int32_t, 3, torch::RestrictPtrTraits> res) {
     __shared__ scalar_t a_shared[BLOCK_SIZE][BLOCK_SIZE];
     __shared__ scalar_t b_shared[BLOCK_SIZE][BLOCK_SIZE];
 
@@ -100,7 +100,7 @@ ta_matmul_batch_b(cudaTextureObject_t tex,
     }
 }
 
-void approx_mm_cuda_kernel(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
+void ta_gemm_cuda_launch(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
     // prepare the kernel configuration
     const dim3 blocks((res.size(2) + BLOCK_SIZE - 1) / BLOCK_SIZE,
                       (res.size(1) + BLOCK_SIZE - 1) / BLOCK_SIZE, res.size(0));
@@ -124,7 +124,7 @@ void approx_mm_cuda_kernel(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tenso
     if (a.dim() == 3) {
         AT_DISPATCH_ALL_TYPES(
             a.scalar_type(), "torchapprox cuda", ([&] {
-                ta_matmul<scalar_t><<<blocks, threads_per_block>>>(
+                ta_gemm_kernel<scalar_t><<<blocks, threads_per_block>>>(
                     tex, a.packed_accessor32<scalar_t, 3, torch::RestrictPtrTraits>(),
                     b.packed_accessor32<scalar_t, 2, torch::RestrictPtrTraits>(),
                     res.packed_accessor32<int32_t, 3, torch::RestrictPtrTraits>());
@@ -133,7 +133,7 @@ void approx_mm_cuda_kernel(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tenso
     } else {
         AT_DISPATCH_ALL_TYPES(
             a.scalar_type(), "torchapprox cuda", ([&] {
-                ta_matmul_batch_b<scalar_t><<<blocks, threads_per_block>>>(
+                ta_gemm_kernel_batchb<scalar_t><<<blocks, threads_per_block>>>(
                     tex, a.packed_accessor32<scalar_t, 2, torch::RestrictPtrTraits>(),
                     b.packed_accessor32<scalar_t, 3, torch::RestrictPtrTraits>(),
                     res.packed_accessor32<int32_t, 3, torch::RestrictPtrTraits>());
