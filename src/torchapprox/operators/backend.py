@@ -16,7 +16,11 @@ sources = ["../../cpu/ta_gemm_cpu.cpp"]
 extra_cflags = ["-fopenmp"]
 
 if torch.cuda.is_available():
-    sources += ["../../cuda/ta_backend.cpp", "../../cuda/ta_gemm_cuda.cu"]
+    sources += [
+        "../../cuda/ta_backend.cpp",
+        "../../cuda/ta_gemm_cuda.cu",
+        "../../cuda/ta_dwconv.cu",
+    ]
     extra_cflags += ["-DTA_CUDA_EXTENSION"]
 else:
     logger.warning("No CUDA device detected. Running on CPU.")
@@ -28,6 +32,27 @@ ta_backend = load(
     sources=sources,
     extra_cflags=extra_cflags,
 )
+
+
+def dwconv2d(
+    x: torch.Tensor,
+    w: torch.Tensor,
+    stride: int = 1,
+    padding: int = 0,
+):
+    """
+    Approximate 2D Depthwise Convolution
+    """
+    small = ta_backend.use_dwconv2d_small(x, w, 1, 1, stride, stride, padding, padding)
+    if small:
+        out = ta_backend.dwconv2d_small(
+            x, w, 1, 1, stride, stride, padding, padding, True
+        )
+    else:
+        out = ta_backend.dwconv2d(
+            x, w, 1, 1, stride, stride, padding, padding, padding, padding, True
+        )
+    return out
 
 
 def approx(
