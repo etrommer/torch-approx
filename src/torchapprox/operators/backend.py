@@ -54,7 +54,7 @@ def dwconv2d(
     small = ta_backend.use_dwconv2d_small(x, w, 1, 1, stride, stride, padding, padding)
     if small:
         out = ta_backend.dwconv2d_small(
-            x, w, 1, 1, stride, stride, padding, padding, True
+            x, w, lut, 1, 1, stride, stride, padding, padding, True
         )
     else:
         out = ta_backend.dwconv2d(

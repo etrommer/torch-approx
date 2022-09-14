@@ -22,12 +22,12 @@ torch::Tensor ta_dwconv2d_wrapper(const torch::Tensor &input, const torch::Tenso
 }
 
 torch::Tensor ta_dwconv2d_small_wrapper(const torch::Tensor &input, const torch::Tensor &kernel,
-                                        int up_h, int up_w, int down_h, int down_w, int pad_h,
-                                        int pad_w, bool forward) {
+                                        const torch::Tensor &lut, int up_h, int up_w, int down_h,
+                                        int down_w, int pad_h, int pad_w, bool forward) {
     CHECK_CUDA(input);
     CHECK_CUDA(kernel);
 
-    return ta_dwconv2d_small_launch(input, kernel, up_h, up_w, down_h, down_w, pad_h, pad_w,
+    return ta_dwconv2d_small_launch(input, kernel, lut, up_h, up_w, down_h, down_w, pad_h, pad_w,
                                     forward);
 }
 

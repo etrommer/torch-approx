@@ -17,8 +17,8 @@ configs = [
     (BATCH_SIZE, 32, 63, 65, 5, 1, 2),
     (BATCH_SIZE, 32, 63, 65, 3, 2, 1),
     (BATCH_SIZE, 32, 63, 65, 5, 2, 2),
-    # (BATCH_SIZE, 128, 32, 32, 3, 1, 1),
-    # (BATCH_SIZE, 128, 32, 32, 5, 1, 2),
+    (BATCH_SIZE, 128, 32, 32, 3, 1, 1),
+    (BATCH_SIZE, 128, 32, 32, 5, 1, 2),
 ]
 
 

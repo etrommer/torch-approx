@@ -164,8 +164,6 @@ __global__ void dwconv2d_kernel(int32_t *out, const scalar_t *input, const scala
                         auto idx = (i1 << 8) | i2;
                         auto val = tex1Dfetch<int16_t>(lut_tex, idx);
                         v += val;
-                        // v += sx[rel_in_y + y][rel_in_x + x] *
-                        //  sk[kernel_y + y * up_y][kernel_x + x * up_x];
                     }
 
                 if (out_x < p.out_w & out_y < p.out_h) {
@@ -179,11 +177,10 @@ __global__ void dwconv2d_kernel(int32_t *out, const scalar_t *input, const scala
 template <typename scalar_t, DepthwiseConv2dDirection kDirection, int kBlockSlices,
           bool kEvenHeight, int kFilterHeight, int kFilterWidth>
 __global__ void __launch_bounds__(1024, 2)
-    dwconv2d_small_kernel(scalar_t *out, const scalar_t *input, const scalar_t *kernel,
-                          const DWConv2dKernelParams p) {
+    dwconv2d_small_kernel(int32_t *out, const scalar_t *input, const scalar_t *kernel,
+                          const cudaTextureObject_t lut_tex, const DWConv2dKernelParams p) {
     extern __shared__ __align__(sizeof(scalar_t)) unsigned char shared_memory[];
     scalar_t *const shared_data = reinterpret_cast<scalar_t *>(shared_memory);
-    // extern __shared__ __align__(sizeof(scalar_t)) scalar_t shared_data[];
 
     const int in_height = p.in_h;
     const int in_width = p.in_w;
@@ -266,8 +263,8 @@ __global__ void __launch_bounds__(1024, 2)
         __syncthreads();
 
         if (slice_in_range) {
-            scalar_t sum1 = 0;
-            scalar_t sum2 = 0;
+            int32_t sum1 = 0;
+            int32_t sum2 = 0;
             int shared_offset = data_idx;
             const scalar_t *filter_ptr = filter_read_offset + shared_data;
 
@@ -282,8 +279,16 @@ __global__ void __launch_bounds__(1024, 2)
                     const scalar_t filter_value = *filter_ptr;
                     const scalar_t *const tile_ptr = shared_offset + shared_data;
 
-                    sum1 += filter_value * tile_ptr[0];
-                    sum2 += filter_value * tile_ptr[tile_offset];
+                    auto i1 = static_cast<uint8_t>(filter_value);
+                    auto i2 = static_cast<uint8_t>(tile_ptr[0]);
+                    auto i3 = static_cast<uint8_t>(tile_ptr[tile_offset]);
+
+                    auto idx1 = (i1 << 8) | i2;
+                    auto idx2 = (i1 << 8) | i3;
+
+                    sum1 += tex1Dfetch<int16_t>(lut_tex, idx1);
+                    sum2 += tex1Dfetch<int16_t>(lut_tex, idx2);
+
                     ++shared_offset;
 
                     if (kDirection == DIRECTION_FORWARD) {
@@ -294,7 +299,7 @@ __global__ void __launch_bounds__(1024, 2)
                 shared_offset += in_increment;
             }
 
-            scalar_t *const out_ptr = inout_offset + out;
+            int32_t *const out_ptr = inout_offset + out;
 
             out_ptr[0] = sum1;
 
@@ -348,6 +353,7 @@ bool use_dwconv2d_small(const torch::Tensor &input, const torch::Tensor &kernel,
 template <typename scalar_t, DepthwiseConv2dDirection kDirection, int kBlockSlices,
           bool kEvenHeight>
 torch::Tensor ta_dwconv2d_small_launch(const torch::Tensor &input, const torch::Tensor &kernel,
+                                       const cudaTextureObject_t &lut_tex,
                                        const DWConv2dKernelParams p) {
     int curDevice = -1;
     cudaGetDevice(&curDevice);
@@ -364,20 +370,21 @@ torch::Tensor ta_dwconv2d_small_launch(const torch::Tensor &input, const torch::
     int block_count = std::min(num_outputs / (block_dim.x * block_dim.y * block_dim.z),
                                static_cast<unsigned int>(65535));
 
-    auto out = at::empty({p.batch, p.in_channel, p.out_h, p.out_w}, input.options());
+    auto options = input.options().dtype(torch::kI32);
+    auto out = at::empty({p.batch, p.in_channel, p.out_h, p.out_w}, options);
 
     const int shared_memory_size = kBlockSlices * (tile_pixels + filter_pixels) * sizeof(scalar_t);
 
     if (p.kernel_h == 3 && p.kernel_w == 3) {
         dwconv2d_small_kernel<scalar_t, kDirection, kBlockSlices, kEvenHeight, 3, 3>
             <<<block_count, block_dim, shared_memory_size, stream>>>(
-                out.data_ptr<scalar_t>(), input.data_ptr<scalar_t>(), kernel.data_ptr<scalar_t>(),
-                p);
+                out.data_ptr<int32_t>(), input.data_ptr<scalar_t>(), kernel.data_ptr<scalar_t>(),
+                lut_tex, p);
     } else {
         dwconv2d_small_kernel<scalar_t, kDirection, kBlockSlices, kEvenHeight, -1, -1>
             <<<block_count, block_dim, shared_memory_size, stream>>>(
-                out.data_ptr<scalar_t>(), input.data_ptr<scalar_t>(), kernel.data_ptr<scalar_t>(),
-                p);
+                out.data_ptr<int32_t>(), input.data_ptr<scalar_t>(), kernel.data_ptr<scalar_t>(),
+                lut_tex, p);
     }
 
     return out;
@@ -385,21 +392,24 @@ torch::Tensor ta_dwconv2d_small_launch(const torch::Tensor &input, const torch::
 
 template <typename scalar_t, DepthwiseConv2dDirection kDirection, int kBlockSlices>
 torch::Tensor ta_dwconv2d_small_launch(const torch::Tensor &input, const torch::Tensor &kernel,
+                                       const cudaTextureObject_t &lut_tex,
                                        const DWConv2dKernelParams p) {
     torch::Tensor out;
 
     if (p.in_h & 1) {
-        out = ta_dwconv2d_small_launch<scalar_t, kDirection, kBlockSlices, false>(input, kernel, p);
+        out = ta_dwconv2d_small_launch<scalar_t, kDirection, kBlockSlices, false>(input, kernel,
+                                                                                  lut_tex, p);
     } else {
-        out = ta_dwconv2d_small_launch<scalar_t, kDirection, kBlockSlices, true>(input, kernel, p);
+        out = ta_dwconv2d_small_launch<scalar_t, kDirection, kBlockSlices, true>(input, kernel,
+                                                                                 lut_tex, p);
     }
 
     return out;
 }
 
 torch::Tensor ta_dwconv2d_small_launch(const torch::Tensor &input, const torch::Tensor &kernel,
-                                       int up_h, int up_w, int down_h, int down_w, int pad_h,
-                                       int pad_w, bool forward) {
+                                       const torch::Tensor &lut, int up_h, int up_w, int down_h,
+                                       int down_w, int pad_h, int pad_w, bool forward) {
     DWConv2dKernelParams p =
         make_conv2d_params(input, kernel, up_h, up_w, down_h, down_w, pad_h, pad_h, pad_w, pad_w);
 
@@ -411,22 +421,37 @@ torch::Tensor ta_dwconv2d_small_launch(const torch::Tensor &input, const torch::
     const int block_pixels = (p.in_h + 1) / 2 * p.in_w;
     torch::Tensor out;
 
-    AT_DISPATCH_FLOATING_TYPES_AND_HALF(input.scalar_type(), "dwconv2d_small", [&] {
+    // Create resource description
+    struct cudaResourceDesc resDesc = {};
+    resDesc.resType = cudaResourceTypeLinear;
+    resDesc.res.linear.devPtr = lut.data_ptr<int16_t>();
+    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int16_t);
+    resDesc.res.linear.desc = cudaCreateChannelDesc<int16_t>();
+
+    // Create texture description
+    struct cudaTextureDesc texDesc = {};
+    texDesc.readMode = cudaReadModeElementType;
+
+    // Create texture
+    cudaTextureObject_t lut_tex;
+    cudaCreateTextureObject(&lut_tex, &resDesc, &texDesc, NULL);
+
+    AT_DISPATCH_ALL_TYPES(input.scalar_type(), "dwconv2d_small", [&] {
         if (forward) {
             if (block_pixels > 256) {
-                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_FORWARD, 2>(x, k, p);
+                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_FORWARD, 2>(x, k, lut_tex, p);
             } else if (block_pixels > 128) {
-                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_FORWARD, 4>(x, k, p);
+                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_FORWARD, 4>(x, k, lut_tex, p);
             } else {
-                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_FORWARD, 8>(x, k, p);
+                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_FORWARD, 8>(x, k, lut_tex, p);
             }
         } else {
             if (block_pixels > 256) {
-                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_BACKWARD, 2>(x, k, p);
+                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_BACKWARD, 2>(x, k, lut_tex, p);
             } else if (block_pixels > 128) {
-                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_BACKWARD, 4>(x, k, p);
+                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_BACKWARD, 4>(x, k, lut_tex, p);
             } else {
-                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_BACKWARD, 8>(x, k, p);
+                out = ta_dwconv2d_small_launch<scalar_t, DIRECTION_BACKWARD, 8>(x, k, lut_tex, p);
             }
         }
     });
@@ -443,7 +468,7 @@ torch::Tensor ta_dwconv2d_launch(const torch::Tensor &input, const torch::Tensor
     cudaStream_t stream = at::cuda::getCurrentCUDAStream(cur_device);
 
     auto options = input.options().dtype(torch::kI32);
-    auto out = at::zeros({p.batch, p.in_channel, p.out_h, p.out_w}, options);
+    auto out = at::empty({p.batch, p.in_channel, p.out_h, p.out_w}, options);
 
     dim3 block_size;
     dim3 grid_size;
