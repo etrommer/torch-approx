@@ -46,20 +46,25 @@ def dwconv2d(
     """
     assert x.device == w.device
     assert x.is_cuda
-    # assert (
-    #     x.dtype == w.dtype == torch.int8
-    # ), "Input operands need to be 8-Bit signed Integer"
-    # assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
+    assert (
+        x.dtype == w.dtype == torch.int8
+    ), "Input operands need to be 8-Bit signed Integer"
+    assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
 
-    small = ta_backend.use_dwconv2d_small(x, w, 1, 1, stride, stride, padding, padding)
+    def make_tuple(val):
+        if not isinstance(val, tuple):
+            return (val, val)
+        return val
+
+    stride = make_tuple(stride)
+    padding = make_tuple(padding)
+
+    lut = lut.to(x.device)
+    small = ta_backend.use_dwconv2d_small(x, w, 1, 1, *stride, *padding)
     if small:
-        out = ta_backend.dwconv2d_small(
-            x, w, lut, 1, 1, stride, stride, padding, padding, True
-        )
+        out = ta_backend.dwconv2d_small(x, w, lut, 1, 1, *stride, *padding, True)
     else:
-        out = ta_backend.dwconv2d(
-            x, w, lut, 1, 1, stride, stride, padding, padding, padding, padding, True
-        )
+        out = ta_backend.dwconv2d(x, w, lut, 1, 1, *stride, *padding, *padding, True)
     return out
 
 

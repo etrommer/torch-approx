@@ -98,6 +98,8 @@ layer_configs = [
     (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 2}),
     (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 4}),
     (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 8}),
+    (tal.ApproxConv2d, (2, 8, 4, 4), (8, 8, 3), {"groups": 8}),
+    (tal.ApproxConv2d, (2, 16, 32, 32), (16, 16, 3), {"groups": 16}),
 ]
 
 
@@ -114,10 +116,10 @@ def test_layer_fwd(lut, device, layer):
 
     x = torch.rand(input_dims, device=device)
 
-    assert torch.allclose(ref_layer(x), layer(x), atol=5e-8)
+    assert torch.allclose(ref_layer(x), layer(x), atol=5e-7)
 
     layer.approx_op.lut = None
-    assert torch.allclose(ref_layer(x), layer(x), atol=5e-8)
+    assert torch.allclose(ref_layer(x), layer(x), atol=5e-7)
 
 
 @pytest.mark.parametrize("layer", layer_configs)

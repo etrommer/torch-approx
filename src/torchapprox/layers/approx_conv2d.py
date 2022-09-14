@@ -3,6 +3,8 @@ import math
 
 import torch
 
+from torchapprox.operators.dwconv2d import ApproxDWConv2d
+
 from .approx_layer import ApproxLayer
 from .fast_models import fast_models
 
@@ -49,6 +51,29 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
                 approx_instance.bias = conv2d.bias
 
         return approx_instance
+
+    def use_fast_dwconv(self) -> bool:
+        """
+        Determine whether layer can be run using DWConv CUDA kernels
+
+        Returns:
+            - True if layer can be mapped to dwconv2d backend function
+            - False otherwise
+        """
+
+        if not self.weight.is_cuda:
+            return False
+        if self.approx_op.lut is None:
+            return False
+        if self.dilation[0] > 1 or self.dilation[1] > 1:
+            return False
+        if self.groups != self.in_channels:
+            return False
+        if self.in_channels != self.out_channels:
+            return False
+        if self.padding_mode != "zeros":
+            return False
+        return True
 
     def output_dims(self, x):
         """
@@ -112,6 +137,17 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
     def approx_fwd(self, x):
         x_q = self.x_quantizer.quantize(x)
         w_q = self.w_quantizer.quantize(self.weight)
+
+        if self.use_fast_dwconv():
+            kwargs = {
+                "stride": self.stride,
+                "padding": self.padding,
+                "dilation": self.dilation,
+                "groups": self.groups,
+            }
+            y = ApproxDWConv2d.apply(x_q, w_q, self.approx_op.lut, kwargs)
+            y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
+            return y
 
         out_dims = self.output_dims(x)
 
