@@ -9,14 +9,16 @@
     CHECK_CUDA(x);                                                                                 \
     CHECK_CONTIGUOUS(x)
 
-torch::Tensor ta_dwconv2d_wrapper(const torch::Tensor &input, const torch::Tensor &kernel, int up_h,
-                                  int up_w, int down_h, int down_w, int pad_h0, int pad_h1,
-                                  int pad_w0, int pad_w1, bool forward) {
+torch::Tensor ta_dwconv2d_wrapper(const torch::Tensor &input, const torch::Tensor &kernel,
+                                  const torch::Tensor &lut, int up_h, int up_w, int down_h,
+                                  int down_w, int pad_h0, int pad_h1, int pad_w0, int pad_w1,
+                                  bool forward) {
     CHECK_CUDA(input);
     CHECK_CUDA(kernel);
+    CHECK_CUDA(lut);
 
-    return ta_dwconv2d_launch(input, kernel, up_h, up_w, down_h, down_w, pad_h0, pad_h1, pad_w0,
-                              pad_w1, forward);
+    return ta_dwconv2d_launch(input, kernel, lut, up_h, up_w, down_h, down_w, pad_h0, pad_h1,
+                              pad_w0, pad_w1, forward);
 }
 
 torch::Tensor ta_dwconv2d_small_wrapper(const torch::Tensor &input, const torch::Tensor &kernel,

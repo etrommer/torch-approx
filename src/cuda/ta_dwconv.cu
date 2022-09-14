@@ -67,8 +67,8 @@ struct DWConv2dKernelParams {
 
 template <typename scalar_t, DepthwiseConv2dDirection direction, int up_x, int up_y, int down_x,
           int down_y, int kernel_h, int kernel_w, int tile_out_h, int tile_out_w>
-__global__ void dwconv2d_kernel(scalar_t *out, const scalar_t *input, const scalar_t *kernel,
-                                const DWConv2dKernelParams p) {
+__global__ void dwconv2d_kernel(int32_t *out, const scalar_t *input, const scalar_t *kernel,
+                                const cudaTextureObject_t lut_tex, const DWConv2dKernelParams p) {
     const int tile_in_h = ((tile_out_h - 1) * down_y + kernel_h - 1) / up_y + 1;
     const int tile_in_w = ((tile_out_w - 1) * down_x + kernel_w - 1) / up_x + 1;
 
@@ -95,7 +95,7 @@ __global__ void dwconv2d_kernel(scalar_t *out, const scalar_t *input, const scal
         for (int tap_idx = threadIdx.x; tap_idx < kernel_h * kernel_w; tap_idx += blockDim.x) {
             int ky = tap_idx / kernel_w;
             int kx = tap_idx - ky * kernel_w;
-            scalar_t v = 0.0;
+            scalar_t v = 0;
 
             if (kx < p.kernel_w & ky < p.kernel_h) {
                 if (direction == DIRECTION_FORWARD) {
@@ -124,7 +124,7 @@ __global__ void dwconv2d_kernel(scalar_t *out, const scalar_t *input, const scal
                 int in_x = rel_in_x + tile_in_x;
                 int in_y = rel_in_y + tile_in_y;
 
-                scalar_t v = 0.0;
+                scalar_t v = 0;
 
                 if (in_x >= 0 & in_y >= 0 & in_x < p.in_w & in_y < p.in_h) {
                     v = input[((major_idx * p.in_h + in_y) * p.in_w + in_x) + minor_idx];
@@ -151,14 +151,21 @@ __global__ void dwconv2d_kernel(scalar_t *out, const scalar_t *input, const scal
                 int kernel_x = (in_x + 1) * up_x - mid_x - 1;
                 int kernel_y = (in_y + 1) * up_y - mid_y - 1;
 
-                scalar_t v = 0.0;
+                int32_t v = 0;
 
 #pragma unroll
                 for (int y = 0; y < kernel_h / up_y; y++)
 #pragma unroll
                     for (int x = 0; x < kernel_w / up_x; x++) {
-                        v += sx[rel_in_y + y][rel_in_x + x] *
-                             sk[kernel_y + y * up_y][kernel_x + x * up_x];
+                        auto i1 = static_cast<uint8_t>(sx[rel_in_y + y][rel_in_x + x]);
+                        auto i2 =
+                            static_cast<uint8_t>(sk[kernel_y + y * up_y][kernel_x + x * up_x]);
+
+                        auto idx = (i1 << 8) | i2;
+                        auto val = tex1Dfetch<int16_t>(lut_tex, idx);
+                        v += val;
+                        // v += sx[rel_in_y + y][rel_in_x + x] *
+                        //  sk[kernel_y + y * up_y][kernel_x + x * up_x];
                     }
 
                 if (out_x < p.out_w & out_y < p.out_h) {
@@ -430,12 +437,13 @@ torch::Tensor ta_dwconv2d_small_launch(const torch::Tensor &input, const torch::
 template <typename scalar_t, DepthwiseConv2dDirection direction, int up_x, int up_y, int down_x,
           int down_y, int kernel_h, int kernel_w, int tile_out_h, int tile_out_w>
 torch::Tensor ta_dwconv2d_launch(const torch::Tensor &input, const torch::Tensor &kernel,
-                                 DWConv2dKernelParams p) {
+                                 const cudaTextureObject_t &lut_tex, DWConv2dKernelParams p) {
     int cur_device = -1;
     cudaGetDevice(&cur_device);
     cudaStream_t stream = at::cuda::getCurrentCUDAStream(cur_device);
 
-    auto out = at::empty({p.batch, p.in_channel, p.out_h, p.out_w}, input.options());
+    auto options = input.options().dtype(torch::kI32);
+    auto out = at::zeros({p.batch, p.in_channel, p.out_h, p.out_w}, options);
 
     dim3 block_size;
     dim3 grid_size;
@@ -450,56 +458,58 @@ torch::Tensor ta_dwconv2d_launch(const torch::Tensor &input, const torch::Tensor
     }
 
     dwconv2d_kernel<scalar_t, direction, up_x, up_y, down_x, down_y, kernel_h, kernel_w, tile_out_h,
-                    tile_out_w><<<grid_size, block_size, 0, stream>>>(
-        out.data_ptr<scalar_t>(), input.data_ptr<scalar_t>(), kernel.data_ptr<scalar_t>(), p);
+                    tile_out_w>
+        <<<grid_size, block_size, 0, stream>>>(out.data_ptr<int32_t>(), input.data_ptr<scalar_t>(),
+                                               kernel.data_ptr<scalar_t>(), lut_tex, p);
 
     return out;
 }
 
 template <typename scalar_t, DepthwiseConv2dDirection direction>
 torch::Tensor ta_dwconv2d_launch(const torch::Tensor &input, const torch::Tensor &kernel,
-                                 DWConv2dKernelParams p) {
+                                 const cudaTextureObject_t &lut_tex, DWConv2dKernelParams p) {
     if (p.up_x == 1 && p.up_y == 1 && p.down_x == 1 && p.down_y == 1) {
         if (p.kernel_h <= 3 && p.kernel_w <= 3) {
             return ta_dwconv2d_launch<scalar_t, direction, 1, 1, 1, 1, 3, 3, 16, 64>(input, kernel,
-                                                                                     p);
+                                                                                     lut_tex, p);
 
         } else if (p.kernel_h <= 5 && p.kernel_w <= 5) {
             return ta_dwconv2d_launch<scalar_t, direction, 1, 1, 1, 1, 5, 5, 16, 64>(input, kernel,
-                                                                                     p);
+                                                                                     lut_tex, p);
         } else if (p.kernel_h <= 7 && p.kernel_w <= 7) {
             return ta_dwconv2d_launch<scalar_t, direction, 1, 1, 1, 1, 7, 7, 16, 64>(input, kernel,
-                                                                                     p);
+                                                                                     lut_tex, p);
         }
     } else if (p.up_x == 2 && p.up_y == 2) {
         if (p.kernel_h <= 4 && p.kernel_w <= 4) {
             return ta_dwconv2d_launch<scalar_t, direction, 2, 2, 1, 1, 4, 4, 16, 64>(input, kernel,
-                                                                                     p);
+                                                                                     lut_tex, p);
         } else if (p.kernel_h <= 6 && p.kernel_w <= 6) {
             return ta_dwconv2d_launch<scalar_t, direction, 2, 2, 1, 1, 6, 6, 16, 64>(input, kernel,
-                                                                                     p);
+                                                                                     lut_tex, p);
         } else if (p.kernel_h <= 8 && p.kernel_w <= 8) {
             return ta_dwconv2d_launch<scalar_t, direction, 2, 2, 1, 1, 8, 8, 16, 64>(input, kernel,
-                                                                                     p);
+                                                                                     lut_tex, p);
         }
     } else if (p.down_x == 2 && p.down_y == 2) {
         if (p.kernel_h <= 4 && p.kernel_w <= 4) {
             return ta_dwconv2d_launch<scalar_t, direction, 1, 1, 2, 2, 4, 4, 8, 32>(input, kernel,
-                                                                                    p);
+                                                                                    lut_tex, p);
         } else if (p.kernel_h <= 6 && p.kernel_w <= 6) {
             return ta_dwconv2d_launch<scalar_t, direction, 1, 1, 2, 2, 6, 6, 8, 32>(input, kernel,
-                                                                                    p);
+                                                                                    lut_tex, p);
         } else if (p.kernel_h <= 8 && p.kernel_w <= 8) {
             return ta_dwconv2d_launch<scalar_t, direction, 1, 1, 2, 2, 8, 8, 8, 32>(input, kernel,
-                                                                                    p);
+                                                                                    lut_tex, p);
         }
     }
     return torch::empty(1);
 }
 
-torch::Tensor ta_dwconv2d_launch(const torch::Tensor &input, const torch::Tensor &kernel, int up_h,
-                                 int up_w, int down_h, int down_w, int pad_h0, int pad_h1,
-                                 int pad_w0, int pad_w1, bool forward) {
+torch::Tensor ta_dwconv2d_launch(const torch::Tensor &input, const torch::Tensor &kernel,
+                                 const torch::Tensor &lut, int up_h, int up_w, int down_h,
+                                 int down_w, int pad_h0, int pad_h1, int pad_w0, int pad_w1,
+                                 bool forward) {
     DWConv2dKernelParams p = make_conv2d_params(input, kernel, up_h, up_w, down_h, down_w, pad_h0,
                                                 pad_h1, pad_w0, pad_w1);
 
@@ -508,11 +518,26 @@ torch::Tensor ta_dwconv2d_launch(const torch::Tensor &input, const torch::Tensor
 
     torch::Tensor out;
 
-    AT_DISPATCH_FLOATING_TYPES_AND_HALF(x.scalar_type(), "dwconv2d", [&] {
+    // Create resource description
+    struct cudaResourceDesc resDesc = {};
+    resDesc.resType = cudaResourceTypeLinear;
+    resDesc.res.linear.devPtr = lut.data_ptr<int16_t>();
+    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int16_t);
+    resDesc.res.linear.desc = cudaCreateChannelDesc<int16_t>();
+
+    // Create texture description
+    struct cudaTextureDesc texDesc = {};
+    texDesc.readMode = cudaReadModeElementType;
+
+    // Create texture
+    cudaTextureObject_t lut_tex;
+    cudaCreateTextureObject(&lut_tex, &resDesc, &texDesc, NULL);
+
+    AT_DISPATCH_ALL_TYPES(x.scalar_type(), "dwconv2d", [&] {
         if (forward) {
-            out = ta_dwconv2d_launch<scalar_t, DIRECTION_FORWARD>(x, k, p);
+            out = ta_dwconv2d_launch<scalar_t, DIRECTION_FORWARD>(x, k, lut_tex, p);
         } else {
-            out = ta_dwconv2d_launch<scalar_t, DIRECTION_BACKWARD>(x, k, p);
+            out = ta_dwconv2d_launch<scalar_t, DIRECTION_BACKWARD>(x, k, lut_tex, p);
         }
     });
 

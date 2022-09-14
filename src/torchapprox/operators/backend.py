@@ -37,12 +37,20 @@ ta_backend = load(
 def dwconv2d(
     x: torch.Tensor,
     w: torch.Tensor,
+    lut: torch.Tensor,
     stride: int = 1,
     padding: int = 0,
 ):
     """
     Approximate 2D Depthwise Convolution
     """
+    assert x.device == w.device
+    assert x.is_cuda
+    # assert (
+    #     x.dtype == w.dtype == torch.int8
+    # ), "Input operands need to be 8-Bit signed Integer"
+    # assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
+
     small = ta_backend.use_dwconv2d_small(x, w, 1, 1, stride, stride, padding, padding)
     if small:
         out = ta_backend.dwconv2d_small(
@@ -50,7 +58,7 @@ def dwconv2d(
         )
     else:
         out = ta_backend.dwconv2d(
-            x, w, 1, 1, stride, stride, padding, padding, padding, padding, True
+            x, w, lut, 1, 1, stride, stride, padding, padding, padding, padding, True
         )
     return out
 
@@ -66,13 +74,12 @@ def approx(
 
     Expected are two matrices `a` and `b`, one of which needs to be batched
     """
-
     assert a.device == b.device, "Input Operands are on different devices"
 
     # Check input number formats
     assert a.dtype == b.dtype, "Input Operands are of different types"
     assert a.dtype == torch.int8, "Input operands need to be 8 bit signed Integer"
-    assert lut.dtype == torch.int16, "LUT needs to be 32 bit signed Integer"
+    assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
 
     # Check matrix dimensions
     if len(a.size()) == 3:
