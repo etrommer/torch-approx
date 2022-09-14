@@ -77,6 +77,7 @@ def approx(
         assert (
             res.size(0) == batch_dim and res.size(1) == dim_1 and res.size(2) == dim_2
         ), "Results tensor shape does not match"
+        res = res.contiguous()
 
     lut = lut.to(a.device)
     a = a.contiguous()
