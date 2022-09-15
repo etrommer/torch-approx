@@ -1,6 +1,7 @@
 import pytest
 import torch
 import torchvision.models as models
+from conftest import input_sizes
 
 import torchapprox.layers as tal
 from torchapprox.utils import get_approx_modules, inplace_conversion
@@ -19,13 +20,6 @@ def set_bench_type(net, bench_type, lut):
             m.fast_model = "mul8s_1L2D"
         elif bench_type == "baseline":
             m.inference_mode = tal.InferenceMode.QUANTIZED
-
-
-input_sizes = {
-    "mnist": (128, 1, 28, 28),
-    "cifar10": (128, 3, 32, 32),
-    "imagenet": (16, 3, 224, 224),
-}
 
 
 @pytest.fixture()

@@ -1,16 +1,27 @@
+import os
+
 import numpy as np
 import pytest
 import torch
 import torchvision.models as models
 
-networks = [
-    "mobilenet_v2",
-    "effcientnet_b0",
-    "vgg16",
-    "alexnet",
-    "resnet18",
-    "resnet50",
-]
+input_sizes = {
+    "mnist": (128, 1, 28, 28),
+    "cifar10": (128, 3, 32, 32),
+    "imagenet": (1, 3, 224, 224),
+}
+
+
+@pytest.fixture(autouse=True)
+def fix_seed():
+    """
+    Run before every test.
+    - Fixes random seed to make test reproducible
+    - Sets CUDA to blocking to allow for benchmarking of normally asynchronous kernels
+    """
+    os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+    np.random.seed(42)
+    torch.manual_seed(42)
 
 
 @pytest.fixture
@@ -30,6 +41,16 @@ def lut():
     x[x >= 128] -= 256
     xx, yy = np.meshgrid(x, x)
     return torch.from_numpy(xx * yy).short()
+
+
+networks = [
+    "mobilenet_v2",
+    "effcientnet_b0",
+    "vgg16",
+    "alexnet",
+    "resnet18",
+    "resnet50",
+]
 
 
 @pytest.fixture(params=networks)
