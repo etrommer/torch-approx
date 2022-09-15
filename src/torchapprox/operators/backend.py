@@ -16,7 +16,11 @@ sources = ["../../cpu/ta_gemm_cpu.cpp"]
 extra_cflags = ["-fopenmp"]
 
 if torch.cuda.is_available():
-    sources += ["../../cuda/ta_backend.cpp", "../../cuda/ta_gemm_cuda.cu"]
+    sources += [
+        "../../cuda/ta_backend.cpp",
+        "../../cuda/ta_gemm_cuda.cu",
+        "../../cuda/ta_dwconv.cu",
+    ]
     extra_cflags += ["-DTA_CUDA_EXTENSION"]
 else:
     logger.warning("No CUDA device detected. Running on CPU.")
@@ -30,6 +34,40 @@ ta_backend = load(
 )
 
 
+def dwconv2d(
+    x: torch.Tensor,
+    w: torch.Tensor,
+    lut: torch.Tensor,
+    stride: int = 1,
+    padding: int = 0,
+):
+    """
+    Approximate 2D Depthwise Convolution
+    """
+    assert x.device == w.device
+    assert x.is_cuda
+    assert (
+        x.dtype == w.dtype == torch.int8
+    ), "Input operands need to be 8-Bit signed Integer"
+    assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
+
+    def make_tuple(val):
+        if not isinstance(val, tuple):
+            return (val, val)
+        return val
+
+    stride = make_tuple(stride)
+    padding = make_tuple(padding)
+
+    lut = lut.to(x.device)
+    small = ta_backend.use_dwconv2d_small(x, w, 1, 1, *stride, *padding)
+    if small:
+        out = ta_backend.dwconv2d_small(x, w, lut, 1, 1, *stride, *padding, True)
+    else:
+        out = ta_backend.dwconv2d(x, w, lut, 1, 1, *stride, *padding, *padding, True)
+    return out
+
+
 def approx(
     a: torch.Tensor,
     b: torch.Tensor,
@@ -41,13 +79,12 @@ def approx(
 
     Expected are two matrices `a` and `b`, one of which needs to be batched
     """
-
     assert a.device == b.device, "Input Operands are on different devices"
 
     # Check input number formats
     assert a.dtype == b.dtype, "Input Operands are of different types"
     assert a.dtype == torch.int8, "Input operands need to be 8 bit signed Integer"
-    assert lut.dtype == torch.int16, "LUT needs to be 32 bit signed Integer"
+    assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
 
     # Check matrix dimensions
     if len(a.size()) == 3:
