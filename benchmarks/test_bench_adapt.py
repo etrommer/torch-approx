@@ -98,4 +98,5 @@ def test_bench_adapt(benchmark, bench_adapt):
     def benchmark_fn(x):
         y = net(x)
 
-    benchmark(benchmark_fn, dummy_x)
+    with torch.no_grad():
+        benchmark(benchmark_fn, dummy_x)

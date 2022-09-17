@@ -40,8 +40,9 @@ def test_bench_torchapprox(benchmark, bench_torchapprox, bench_type, lut):
     dummy_x = torch.rand(input_sizes["imagenet"], device=torch.device("cuda"))
 
     def benchmark_fn(x):
-        torch.cuda.synchronize()
         y = net(x)
         torch.cuda.synchronize()
 
-    benchmark(benchmark_fn, dummy_x)
+    torch.cuda.synchronize()
+    with torch.no_grad():
+        benchmark(benchmark_fn, dummy_x)
