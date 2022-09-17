@@ -2,28 +2,41 @@ from os import device_encoding
 
 import pytest
 import torch
+from conftest import BATCH_SIZE, CONV2_DIM, channels
 
 import torchapprox.layers as tal
 
-channels = [1, 2, 4, 8, 16, 32, 64]
-multipliers = ["mul8s_1KV8", "mul8s_1KR3", "mul8s_1L2D", "mul8s_1KVL"]
+model = ["lut", "mul8s_1KV8", "mul8s_1KR3", "mul8s_1L2D", "mul8s_1KVL"]
 
 
-@pytest.mark.parametrize("multiplier", multipliers)
+def trace_net(net, x):
+    net(x)
+    return torch.jit.trace(net, x)
+
+
+@pytest.mark.parametrize("model", model)
 @pytest.mark.parametrize("channels", channels)
-def test_bench_torchapprox_conv2d(benchmark, channels, multiplier):
-    dummy_x = torch.rand((128, channels, 224, 224), device=torch.device("cuda"))
+def test_bench_torchapprox_conv2d(benchmark, model, lut, channels):
+    dummy_x = torch.rand(
+        (BATCH_SIZE, channels, CONV2_DIM, CONV2_DIM), device=torch.device("cuda")
+    )
     layer = tal.ApproxConv2d(
         channels, channels, 3, padding=1, device=torch.device("cuda")
     )
-    layer.fast_model = multiplier
     layer.inference_mode = tal.InferenceMode.APPROXIMATE
+    if model == "lut":
+        layer.approx_op.lut = lut
+    else:
+        layer.fast_model = model
 
     def benchmark_fn(x):
-        torch.cuda.synchronize()
         y = layer(x)
         torch.cuda.synchronize()
 
-    benchmark(benchmark_fn, dummy_x)
+    torch.cuda.synchronize()
+    with torch.no_grad():
+        benchmark(benchmark_fn, dummy_x)
+
     del layer
     del dummy_x
+    torch.cuda.empty_cache()

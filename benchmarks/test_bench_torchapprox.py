@@ -50,4 +50,5 @@ def test_bench_torchapprox(benchmark, bench_torchapprox, bench_type, lut):
         y = net(x)
         torch.cuda.synchronize()
 
-    benchmark(benchmark_fn, dummy_x)
+    with torch.no_grad():
+        benchmark(benchmark_fn, dummy_x)

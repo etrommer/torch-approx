@@ -12,6 +12,10 @@ networks = [
     "resnet50",
 ]
 
+BATCH_SIZE = 64
+CONV2_DIM = 128
+channels = [1, 2, 4, 8, 16, 32, 64]
+
 
 @pytest.fixture
 def lut():

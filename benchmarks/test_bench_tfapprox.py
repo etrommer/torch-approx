@@ -1,10 +1,7 @@
 import pytest
 import tensorflow as tf
+from conftest import BATCH_SIZE, CONV2_DIM, channels
 from fake_approx_convolutional import FakeApproxConv2D
-
-print(tf.__version__)
-
-channels = [1, 2, 4, 8, 16, 32, 64]
 
 
 @pytest.mark.parametrize("channels", channels)
@@ -20,7 +17,7 @@ def test_bench_tfapprox(benchmark, channels):
             )
         ]
     )
-    x = tf.random.uniform([128, channels, 224, 224])
+    x = tf.random.uniform([BATCH_SIZE, channels, CONV2_DIM, CONV2_DIM])
 
     def benchmark_fn(x):
         approx_model(x)
