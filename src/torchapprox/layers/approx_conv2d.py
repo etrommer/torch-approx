@@ -1,12 +1,14 @@
 # pylint: disable=missing-module-docstring, arguments-differ, abstract-method
 import math
-from typing import Any, Dict
 
 import torch
 
-from torchapprox.operators.conv2d import (ApproxConv2dOp, Conv2dArgs,
-                                          FastModelConv2d)
-from torchapprox.operators.dwconv2d import ApproxDWConv2d
+from torchapprox.operators.conv2d import (
+    ApproxConv2dOp,
+    ApproxDWConv2dOp,
+    Conv2dArgs,
+    FastApproxConv2dOp,
+)
 
 from .approx_layer import ApproxLayer
 
@@ -115,6 +117,9 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
 
     @property
     def conv_args(self) -> Conv2dArgs:
+        """
+        Wrap layer configuration in dataclass for more convenient passing around
+        """
         args = Conv2dArgs(
             in_channels=self.in_channels,
             out_channels=self.out_channels,
@@ -150,14 +155,25 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         return y
 
     def approx_fwd(self, x):
-        x_q = self.x_quantizer.quantize(x)
-        w_q = self.w_quantizer.quantize(self.weight)
+        if self.fast_model is None:
+            x_q = self.x_quantizer.quantize(x)
+            w_q = self.w_quantizer.quantize(self.weight)
+        else:
+            x_q = self.x_quantizer.quantize(x, rounded=False)
+            w_q = self.w_quantizer.quantize(self.weight, rounded=False)
 
-        if self.use_fast_dwconv():
-            y = ApproxDWConv2d.apply(
+        if self.fast_model is not None:
+            # Use HTP Model
+            y = FastApproxConv2dOp.apply(
+                x_q, w_q, self.fast_model, self.conv_args.backward_args()
+            )
+        elif self.use_fast_dwconv():
+            # Use accelerated DWConv kernels
+            y = ApproxDWConv2dOp.apply(
                 x_q, w_q, self.approx_op.lut, self.conv_args.backward_args()
             )
         else:
+            # Use regular Im2Col/GeMM
             out_dims = self.output_dims(x)
             y = ApproxConv2dOp.apply(
                 x_q,
@@ -166,19 +182,6 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
                 out_dims,
                 self.approx_op.lut,
             )
-
-        # Dequantize
-        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
-        return y
-
-    def approx_fwd_fast(self, x):
-
-        x_q = self.x_quantizer.quantize(x, rounded=False)
-        w_q = self.w_quantizer.quantize(self.weight, rounded=False)
-
-        y = FastModelConv2d.apply(
-            x_q, w_q, self.fast_model, self.conv_args.backward_args()
-        )
 
         # Dequantize
         y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor

@@ -1,7 +1,7 @@
 # pylint: disable=missing-module-docstring, arguments-differ, abstract-method
 import torch
 
-from torchapprox.operators.fast_models import fast_models
+from torchapprox.operators.linear import FastLinearOp
 
 from .approx_layer import ApproxLayer
 
@@ -59,46 +59,20 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
         return y
 
     def approx_fwd(self, x):
-
-        # Quantize to Int8 range
-        x_q = self.x_quantizer.quantize(x)[:, None, :]
-        w_q = self.w_quantizer.quantize(self.weight)
-
-        # ApproxGeMM
-        y = self.approx_op(x_q, w_q.T)
+        if self.fast_model is None:
+            # ApproxGeMM
+            x_q = self.x_quantizer.quantize(x)[:, None, :]
+            w_q = self.w_quantizer.quantize(self.weight)
+            y = self.approx_op(x_q, w_q.T)
+        else:
+            # HTP Model
+            x_q = self.x_quantizer.quantize(x, rounded=False)
+            w_q = self.w_quantizer.quantize(self.weight, rounded=False)
+            y = FastLinearOp.apply(x_q, w_q, self.fast_model)
         # Rescale results
         y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
 
         y = y.view(y.size(0), -1)
-        return y
-
-    def approx_fwd_fast(self, x):
-        class FastModelLinear(torch.autograd.Function):
-            """
-            torch.autograd.Function wrapper for Fast model.
-            uses fast model for forward pass and non-approximate gradients
-            for backward pass (STE)
-            """
-
-            @staticmethod
-            def forward(ctx, x: torch.Tensor, w: torch.Tensor, model: str):
-                ctx.save_for_backward(x, w)
-                return fast_models[model](torch.nn.functional.linear, x, w, {})
-
-            @staticmethod
-            def backward(ctx, grad):
-                x, w = ctx.saved_tensors
-                grad_input = torch.matmul(grad, w.T)
-                grad_weight = torch.sum(torch.matmul(grad.transpose(1, 2), x), axis=0).T
-                return grad_input, grad_weight, None
-
-        x_q = self.x_quantizer.quantize(x, rounded=False)
-        w_q = self.w_quantizer.quantize(self.weight, rounded=False)
-
-        y = FastModelLinear.apply(x_q, w_q, self.fast_model)
-
-        # Dequantize
-        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
     # pylint: disable=arguments-renamed

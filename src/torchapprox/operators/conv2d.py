@@ -1,17 +1,21 @@
-import imp
+# pylint: disable=missing-module-docstring, arguments-differ, abstract-method
 import math
 from dataclasses import dataclass
-from re import I
-from typing import Tuple, Union
+from typing import Any, Dict, Tuple, Union
 
 import torch
 
-from .backend import approx
+from .backend import approx, dwconv2d
 from .fast_models import fast_models
 
 
 @dataclass
 class Conv2dArgs:
+    """
+    Container class to pass convolution parameters
+    around in a convenient way
+    """
+
     in_channels: int
     out_channels: int
     kernel_size: Union[int, Tuple[int, int]]
@@ -20,7 +24,15 @@ class Conv2dArgs:
     dilation: Union[int, Tuple[int, int]]
     groups: int
 
-    def backward_args(self):
+    def backward_args(self) -> Dict[str, Any]:
+        """
+        Generate arguments required by backward pass
+        for gradient calculation
+
+        Returns:
+            Dict populated with parameters required
+            in backward pass
+        """
         bwd_args = {
             "stride": self.stride,
             "padding": self.padding,
@@ -30,7 +42,30 @@ class Conv2dArgs:
         return bwd_args
 
 
+def _conv_bwd_ste(grad, x, w, conf):
+    """
+    Wrapper to reuse Conv2d gradient calculation
+    for several approximate forward functions
+
+    Args:
+        grad: Upstream gradient
+        x: Activations from forward pass
+        w: Weight from forward pass
+        conf: Conv2d parameters
+
+    Returns:
+        Gradients for activations and weights
+    """
+    grad_input = torch.nn.grad.conv2d_input(x.size(), w, grad, **conf)
+    grad_weight = torch.nn.grad.conv2d_weight(x, w.size(), grad, **conf)
+    return grad_input, grad_weight
+
+
 class ApproxConv2dOp(torch.autograd.Function):
+    """
+    Autograd wrapper around Im2Col/ApproxGeMM Conv2d operator
+    """
+
     @staticmethod
     def forward(
         ctx,
@@ -104,21 +139,15 @@ class ApproxConv2dOp(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, grad):
-        grad_input, grad_weight = conv_bwd_ste(ctx, grad)
+        x, w = ctx.saved_tensors
+        conf = ctx.conf
+        grad_input, grad_weight = _conv_bwd_ste(grad, x, w, conf)
         return grad_input, grad_weight, None, None, None
 
 
-def conv_bwd_ste(ctx, grad):
-    x, w = ctx.saved_tensors
-    conf = ctx.conf
-    grad_input = torch.nn.grad.conv2d_input(x.size(), w, grad, **conf)
-    grad_weight = torch.nn.grad.conv2d_weight(x, w.size(), grad, **conf)
-    return grad_input, grad_weight
-
-
-class FastModelConv2d(torch.autograd.Function):
+class FastApproxConv2dOp(torch.autograd.Function):
     """
-    torch.autograd.Function wrapper for Fast model.
+    torch.autograd.Function wrapper for High Througput model of ApproxConv2d operator
     uses fast model for forward pass and non-approximate gradients
     for backward pass (STE)
     """
@@ -131,5 +160,32 @@ class FastModelConv2d(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, grad):
-        grad_input, grad_weight = conv_bwd_ste(ctx, grad)
+        x, w = ctx.saved_tensors
+        conf = ctx.conf
+        grad_input, grad_weight = _conv_bwd_ste(grad, x, w, conf)
+        return grad_input, grad_weight, None, None
+
+
+class ApproxDWConv2dOp(torch.autograd.Function):
+    """
+    torch.autograd.Function wrapper for GPU-accelerated Depthwise Conv
+    """
+
+    @staticmethod
+    def forward(ctx, x, w, lut, kwargs):
+        ctx.save_for_backward(x, w)
+        ctx.conf = kwargs
+
+        x = x.char()
+        w = w.char()
+
+        res = dwconv2d(x, w, lut, kwargs["stride"], kwargs["padding"]).float()
+        res.requires_grad_()
+        return res
+
+    @staticmethod
+    def backward(ctx, grad):
+        x, w = ctx.saved_tensors
+        conf = ctx.conf
+        grad_input, grad_weight = _conv_bwd_ste(grad, x, w, conf)
         return grad_input, grad_weight, None, None
