@@ -11,15 +11,15 @@ def set_bench_type(net, bench_type, lut):
     approx_modules = get_approx_modules(net)
 
     for _, m in approx_modules:
-        if bench_type == "lut":
+        if bench_type == "baseline":
+            m.inference_mode = tal.InferenceMode.QUANTIZED
+        elif bench_type == "lut":
             m.inference_mode = tal.InferenceMode.APPROXIMATE
             m.fast_model = None
             m.approx_op.lut = lut
-        elif bench_type == "fast_model":
+        else:
             m.inference_mode = tal.InferenceMode.APPROXIMATE
-            m.fast_model = "mul8s_1L2D"
-        elif bench_type == "baseline":
-            m.inference_mode = tal.InferenceMode.QUANTIZED
+            m.fast_model = bench_type
 
 
 @pytest.fixture()
@@ -33,7 +33,7 @@ def bench_torchapprox(bench_architecture):
     not torch.cuda.is_available(),
     reason="CUDA not available, skipping networks benchmark",
 )
-@pytest.mark.parametrize("bench_type", ["baseline", "fast_model", "lut"])
+@pytest.mark.parametrize("bench_type", ["baseline", "mul8s_1KVL", "mul8s_1KR3", "lut"])
 def test_bench_torchapprox(benchmark, bench_torchapprox, bench_type, lut):
     net = bench_torchapprox
     set_bench_type(net, bench_type, lut)
