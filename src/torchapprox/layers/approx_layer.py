@@ -121,19 +121,6 @@ class ApproxLayer(ABC):
             Layer output
         """
 
-    @abstractmethod
-    def approx_fwd_fast(self, x: torch.Tensor) -> torch.Tensor:
-        """Approximate Product Forward Pass using Fast Model
-        Performs the layer operation using the currently set
-        fast model.
-
-        Args:
-            x: Layer input
-
-        Returns:
-            Layer output
-        """
-
     @no_type_check
     def noise_fwd(self, x: torch.Tensor) -> torch.Tensor:
         """Quantized Forward Pass that is perturbed
@@ -173,12 +160,7 @@ class ApproxLayer(ABC):
             # INT8 accurate operation
             y = self.quant_fwd(x)
         elif self.inference_mode == InferenceMode.APPROXIMATE:
-            if self.fast_model is None:
-                # LUT approximate operation (uses quantization internally)
-                y = self.approx_fwd(x)
-            else:
-                # Approximate Fast Model on FP32
-                y = self.approx_fwd_fast(x)
+            y = self.approx_fwd(x)
         elif self.inference_mode == InferenceMode.NOISE:
             y = self.noise_fwd(x)
 
