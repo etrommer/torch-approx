@@ -1,12 +1,14 @@
 # pylint: disable=missing-module-docstring, arguments-differ, abstract-method
 import math
+from typing import Any, Dict
 
 import torch
 
+from torchapprox.operators.conv2d import (ApproxConv2dOp, Conv2dArgs,
+                                          FastModelConv2d)
 from torchapprox.operators.dwconv2d import ApproxDWConv2d
 
 from .approx_layer import ApproxLayer
-from .fast_models import fast_models
 
 
 class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
@@ -111,6 +113,19 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         """
         return self.in_channels * math.prod(self.kernel_size)
 
+    @property
+    def conv_args(self) -> Conv2dArgs:
+        args = Conv2dArgs(
+            in_channels=self.in_channels,
+            out_channels=self.out_channels,
+            kernel_size=self.kernel_size,
+            stride=self.stride,
+            padding=self.padding,
+            dilation=self.dilation,
+            groups=self.groups,
+        )
+        return args
+
     def baseline_fwd(self, x):
         return torch.nn.functional.conv2d(
             x,
@@ -139,95 +154,31 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         w_q = self.w_quantizer.quantize(self.weight)
 
         if self.use_fast_dwconv():
-            kwargs = {
-                "stride": self.stride,
-                "padding": self.padding,
-                "dilation": self.dilation,
-                "groups": self.groups,
-            }
-            y = ApproxDWConv2d.apply(x_q, w_q, self.approx_op.lut, kwargs)
-            y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
-            return y
-
-        out_dims = self.output_dims(x)
-
-        # Pre-allocate output tensor
-        y = torch.empty(
-            x.size(0), self.out_channels, math.prod(out_dims), device=x.device
-        )
-
-        for group in range(self.groups):
-            # Calculate lower and upper channel index for current group
-            def limits(group, channels):
-                group_size = int(channels / self.groups)
-                lower = group * group_size
-                upper = (group + 1) * group_size
-                return int(lower), int(upper)
-
-            in_ch_lower, in_ch_upper = limits(group, self.in_channels)
-            out_ch_lower, out_ch_upper = limits(group, self.out_channels)
-
-            # Im2Col operation
-            x_unfold = torch.nn.functional.unfold(
-                x_q[
-                    :,
-                    in_ch_lower:in_ch_upper,
-                    :,
-                ],
-                kernel_size=self.kernel_size,
-                padding=self.padding,
-                stride=self.stride,
-                dilation=self.dilation,
+            y = ApproxDWConv2d.apply(
+                x_q, w_q, self.approx_op.lut, self.conv_args.backward_args()
             )
-
-            # Reshape weights to 2D
-            kernels_flat = w_q[out_ch_lower:out_ch_upper].view(
-                int(self.out_channels / self.groups), -1
+        else:
+            out_dims = self.output_dims(x)
+            y = ApproxConv2dOp.apply(
+                x_q,
+                w_q,
+                self.conv_args,
+                out_dims,
+                self.approx_op.lut,
             )
-
-            # ApproxGeMM
-            y[:, out_ch_lower:out_ch_upper] = self.approx_op(kernels_flat, x_unfold)
-
-        # Reshape to correct output size
-        y = y.view(x.size(0), self.out_channels, out_dims[0], out_dims[1])
 
         # Dequantize
         y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
     def approx_fwd_fast(self, x):
-        class FastModelConv2d(torch.autograd.Function):
-            """
-            torch.autograd.Function wrapper for Fast model.
-            uses fast model for forward pass and non-approximate gradients
-            for backward pass (STE)
-            """
-
-            @staticmethod
-            def forward(ctx, x, w, model, kwargs):
-                ctx.save_for_backward(x, w)
-                ctx.conf = kwargs
-                return fast_models[model](torch.nn.functional.conv2d, x, w, kwargs)
-
-            @staticmethod
-            def backward(ctx, grad):
-                x, w = ctx.saved_tensors
-                conf = ctx.conf
-                grad_input = torch.nn.grad.conv2d_input(x.size(), w, grad, **conf)
-                grad_weight = torch.nn.grad.conv2d_weight(x, w.size(), grad, **conf)
-                return grad_input, grad_weight, None, None, None, None, None
-
-        kwargs = {
-            "stride": self.stride,
-            "padding": self.padding,
-            "dilation": self.dilation,
-            "groups": self.groups,
-        }
 
         x_q = self.x_quantizer.quantize(x, rounded=False)
         w_q = self.w_quantizer.quantize(self.weight, rounded=False)
 
-        y = FastModelConv2d.apply(x_q, w_q, self.fast_model, kwargs)
+        y = FastModelConv2d.apply(
+            x_q, w_q, self.fast_model, self.conv_args.backward_args()
+        )
 
         # Dequantize
         y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor

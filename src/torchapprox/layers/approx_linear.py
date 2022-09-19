@@ -1,8 +1,9 @@
 # pylint: disable=missing-module-docstring, arguments-differ, abstract-method
 import torch
 
+from torchapprox.operators.fast_models import fast_models
+
 from .approx_layer import ApproxLayer
-from .fast_models import fast_models
 
 
 class ApproxLinear(torch.nn.Linear, ApproxLayer):
