@@ -33,7 +33,9 @@ def bench_torchapprox(bench_architecture):
     not torch.cuda.is_available(),
     reason="CUDA not available, skipping networks benchmark",
 )
-@pytest.mark.parametrize("bench_type", ["baseline", "mul8s_1KVL", "mul8s_1KR3", "lut"])
+@pytest.mark.parametrize(
+    "bench_type", ["baseline", "mul8s_1KVL", "mul8s_1KR3", "mul8s_1L2D", "lut"]
+)
 def test_bench_torchapprox(benchmark, bench_torchapprox, bench_type, lut):
     net = bench_torchapprox
     set_bench_type(net, bench_type, lut)
