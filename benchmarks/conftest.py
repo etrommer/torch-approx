@@ -8,7 +8,7 @@ import torchvision.models as models
 input_sizes = {
     "mnist": (128, 1, 28, 28),
     "cifar10": (128, 3, 32, 32),
-    "imagenet": (1, 3, 224, 224),
+    "imagenet": (32, 3, 224, 224),
 }
 
 
