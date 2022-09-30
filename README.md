@@ -1,16 +1,12 @@
-<h1 align="center">
-  <img src="https://github.com/etrommer/torch-approx/raw/main/docs/torchapprox_logo.png" width="400px" height="280px" alt="Torchapprox Logo">
-</h1>
-<h3 align="center">
-TorchApprox
-</h3>
-<h5 align="center">
+<div align="center">
+<img src="https://github.com/etrommer/torch-approx/raw/main/docs/torchapprox_logo.png" width="400px" height="280px" alt="Torchapprox">
+<h4>
 GPU-accelerated Neural Network layers using Approximate Multiplication for PyTorch
-</h5>
+</h4>
 
-<p align="center">
-    TODO: Badges
-</p>
+![Build Docs](https://github.com/etrommer/torch-approx/actions/workflows/docs.yaml/badge.svg)
+![Unit Tests](https://github.com/etrommer/torch-approx/actions/workflows/pytest.yaml/badge.svg)
+</div>
 
 ## Installation
 
@@ -32,6 +28,6 @@ Interested in contributing? Check out the contributing guidelines. Please note t
 
 ## Credits
 
-`torchapprox` was created with [`cookiecutter`](https://cookiecutter.readthedocs.io/en/latest/) and the `py-pkgs-cookiecutter` [template](https://github.com/py-pkgs/py-pkgs-cookiecutter).  
-Depthwise Convolution Kernels based on: [https://github.com/rosinality/depthwise-conv-pytorch](https://github.com/rosinality/depthwise-conv-pytorch)  
-This work was created as part of my Ph.D. research at Infineon Technologies Dresden  
+- `torchapprox` was created with [`cookiecutter`](https://cookiecutter.readthedocs.io/en/latest/) and the `py-pkgs-cookiecutter` [template](https://github.com/py-pkgs/py-pkgs-cookiecutter).  
+- Depthwise Convolution Kernels based on: [https://github.com/rosinality/depthwise-conv-pytorch](https://github.com/rosinality/depthwise-conv-pytorch)  
+- This work was created as part of my Ph.D. research at Infineon Technologies Dresden  
