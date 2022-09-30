@@ -1,0 +1,1064 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+
+    <link rel="shortcut icon" href="_static/torchapprox_icon.png"/><meta name="generator" content="sphinx-5.2.3, furo 2022.09.29"/><title>Index - TorchApprox Documentation</title>
+<link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">TorchApprox Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="_static/torchapprox_logo.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">TorchApprox Documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conduct.html">Code of Conduct</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="autoapi/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/torchapprox/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/torchapprox/layers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/layers/approx_conv2d/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_conv2d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/layers/approx_layer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_layer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/layers/approx_linear/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_linear</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/torchapprox/operators/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/operators/approxgemm/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.approxgemm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/operators/backend/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.backend</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/operators/conv2d/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.conv2d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/operators/fast_models/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.fast_models</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/operators/linear/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.linear</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/operators/lut/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.lut</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/torchapprox/quantizers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.quantizers</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/quantizers/approx_quantizer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.quantizers.approx_quantizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.quantizers.minmax_quantizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/quantizers/pact_quantizer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.quantizers.pact_quantizer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/torchapprox/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/utils/conversion/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          
+<section class="genindex-section">
+  <h1 id="index">Index</h1>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a></div>
+</section>
+<section id="_" class="genindex-section">
+  <h2>_</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/index.html#torchapprox.__version__">__version__ (in module torchapprox)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d._conv_bwd_ste">_conv_bwd_ste() (in module torchapprox.operators.conv2d)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="A" class="genindex-section">
+  <h2>A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/backend/index.html#torchapprox.operators.backend.approx">approx() (in module torchapprox.operators.backend)</a>
+</li>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.approx_fwd">approx_fwd() (torchapprox.layers.approx_conv2d.ApproxConv2d method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer.approx_fwd">(torchapprox.layers.approx_layer.ApproxLayer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#torchapprox.layers.approx_linear.ApproxLinear.approx_fwd">(torchapprox.layers.approx_linear.ApproxLinear method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.approx_fwd">(torchapprox.layers.ApproxConv2d method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer.approx_fwd">(torchapprox.layers.ApproxLayer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear.approx_fwd">(torchapprox.layers.ApproxLinear method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d">ApproxConv2d (class in torchapprox.layers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d">(class in torchapprox.layers.approx_conv2d)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.ApproxConv2dOp">ApproxConv2dOp (class in torchapprox.operators.conv2d)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.ApproxDWConv2dOp">ApproxDWConv2dOp (class in torchapprox.operators.conv2d)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/approxgemm/index.html#torchapprox.operators.approxgemm.ApproxGeMM">ApproxGeMM (class in torchapprox.operators.approxgemm)</a>
+</li>
+        <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.InferenceMode.APPROXIMATE">APPROXIMATE (torchapprox.layers.approx_layer.InferenceMode attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.InferenceMode.APPROXIMATE">(torchapprox.layers.InferenceMode attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer">ApproxLayer (class in torchapprox.layers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer">(class in torchapprox.layers.approx_layer)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear">ApproxLinear (class in torchapprox.layers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#torchapprox.layers.approx_linear.ApproxLinear">(class in torchapprox.layers.approx_linear)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.ApproxQuantizer">ApproxQuantizer (class in torchapprox.quantizers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/approx_quantizer/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer">(class in torchapprox.quantizers.approx_quantizer)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/approxgemm/index.html#torchapprox.operators.approxgemm.ApproxGeMM.backward">backward() (torchapprox.operators.approxgemm.ApproxGeMM static method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.ApproxConv2dOp.backward">(torchapprox.operators.conv2d.ApproxConv2dOp static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.ApproxDWConv2dOp.backward">(torchapprox.operators.conv2d.ApproxDWConv2dOp static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.FastApproxConv2dOp.backward">(torchapprox.operators.conv2d.FastApproxConv2dOp static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/linear/index.html#torchapprox.operators.linear.FastLinearOp.backward">(torchapprox.operators.linear.FastLinearOp static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant.backward">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.Quant.backward">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant.Quant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.FakeQuant.backward">(torchapprox.quantizers.MinMaxQuant.FakeQuant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.Quant.backward">(torchapprox.quantizers.MinMaxQuant.Quant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant.backward">(torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.Quant.backward">(torchapprox.quantizers.pact_quantizer.PACTQuant.Quant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.FakeQuant.backward">(torchapprox.quantizers.PACTQuant.FakeQuant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.Quant.backward">(torchapprox.quantizers.PACTQuant.Quant static method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs.backward_args">backward_args() (torchapprox.operators.conv2d.Conv2dArgs method)</a>
+</li>
+        <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.InferenceMode.BASELINE">BASELINE (torchapprox.layers.approx_layer.InferenceMode attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.InferenceMode.BASELINE">(torchapprox.layers.InferenceMode attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.baseline_fwd">baseline_fwd() (torchapprox.layers.approx_conv2d.ApproxConv2d method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer.baseline_fwd">(torchapprox.layers.approx_layer.ApproxLayer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#torchapprox.layers.approx_linear.ApproxLinear.baseline_fwd">(torchapprox.layers.approx_linear.ApproxLinear method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.baseline_fwd">(torchapprox.layers.ApproxConv2d method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer.baseline_fwd">(torchapprox.layers.ApproxLayer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear.baseline_fwd">(torchapprox.layers.ApproxLinear method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/quantizers/approx_quantizer/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.bitwidth">bitwidth (torchapprox.quantizers.approx_quantizer.ApproxQuantizer property)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.ApproxQuantizer.bitwidth">(torchapprox.quantizers.ApproxQuantizer property)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="C" class="genindex-section">
+  <h2>C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs">Conv2dArgs (class in torchapprox.operators.conv2d)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.conv_args">conv_args (torchapprox.layers.approx_conv2d.ApproxConv2d property)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.conv_args">(torchapprox.layers.ApproxConv2d property)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="D" class="genindex-section">
+  <h2>D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs.dilation">dilation (torchapprox.operators.conv2d.Conv2dArgs attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/backend/index.html#torchapprox.operators.backend.dirname">dirname (in module torchapprox.operators.backend)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/backend/index.html#torchapprox.operators.backend.dwconv2d">dwconv2d() (in module torchapprox.operators.backend)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/backend/index.html#torchapprox.operators.backend.extra_cflags">extra_cflags (in module torchapprox.operators.backend)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/quantizers/approx_quantizer/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.fake_quant">fake_quant() (torchapprox.quantizers.approx_quantizer.ApproxQuantizer method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.ApproxQuantizer.fake_quant">(torchapprox.quantizers.ApproxQuantizer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.fake_quant">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.fake_quant">(torchapprox.quantizers.MinMaxQuant method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.fake_quant">(torchapprox.quantizers.pact_quantizer.PACTQuant method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.fake_quant">(torchapprox.quantizers.PACTQuant method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.fan_in">fan_in (torchapprox.layers.approx_conv2d.ApproxConv2d property)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer.fan_in">(torchapprox.layers.approx_layer.ApproxLayer property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#torchapprox.layers.approx_linear.ApproxLinear.fan_in">(torchapprox.layers.approx_linear.ApproxLinear property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.fan_in">(torchapprox.layers.ApproxConv2d property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer.fan_in">(torchapprox.layers.ApproxLayer property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear.fan_in">(torchapprox.layers.ApproxLinear property)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.fast_models">fast_models (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.FastApproxConv2dOp">FastApproxConv2dOp (class in torchapprox.operators.conv2d)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/linear/index.html#torchapprox.operators.linear.FastLinearOp">FastLinearOp (class in torchapprox.operators.linear)</a>
+</li>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.forward">forward() (torchapprox.layers.approx_conv2d.ApproxConv2d method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer.forward">(torchapprox.layers.approx_layer.ApproxLayer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#torchapprox.layers.approx_linear.ApproxLinear.forward">(torchapprox.layers.approx_linear.ApproxLinear method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.forward">(torchapprox.layers.ApproxConv2d method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer.forward">(torchapprox.layers.ApproxLayer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear.forward">(torchapprox.layers.ApproxLinear method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/approxgemm/index.html#torchapprox.operators.approxgemm.ApproxGeMM.forward">(torchapprox.operators.approxgemm.ApproxGeMM static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.ApproxConv2dOp.forward">(torchapprox.operators.conv2d.ApproxConv2dOp static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.ApproxDWConv2dOp.forward">(torchapprox.operators.conv2d.ApproxDWConv2dOp static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.FastApproxConv2dOp.forward">(torchapprox.operators.conv2d.FastApproxConv2dOp static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/linear/index.html#torchapprox.operators.linear.FastLinearOp.forward">(torchapprox.operators.linear.FastLinearOp static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/index.html#torchapprox.operators.LUT.forward">(torchapprox.operators.LUT method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/lut/index.html#torchapprox.operators.lut.LUT.forward">(torchapprox.operators.lut.LUT method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant.forward">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.Quant.forward">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant.Quant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.FakeQuant.forward">(torchapprox.quantizers.MinMaxQuant.FakeQuant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.Quant.forward">(torchapprox.quantizers.MinMaxQuant.Quant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant.forward">(torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.Quant.forward">(torchapprox.quantizers.pact_quantizer.PACTQuant.Quant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.FakeQuant.forward">(torchapprox.quantizers.PACTQuant.FakeQuant static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.Quant.forward">(torchapprox.quantizers.PACTQuant.Quant static method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.from_conv2d">from_conv2d() (torchapprox.layers.approx_conv2d.ApproxConv2d static method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.from_conv2d">(torchapprox.layers.ApproxConv2d static method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#torchapprox.layers.approx_linear.ApproxLinear.from_linear">from_linear() (torchapprox.layers.approx_linear.ApproxLinear static method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear.from_linear">(torchapprox.layers.ApproxLinear static method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.from_super">from_super() (torchapprox.layers.approx_conv2d.ApproxConv2d static method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer.from_super">(torchapprox.layers.approx_layer.ApproxLayer static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#torchapprox.layers.approx_linear.ApproxLinear.from_super">(torchapprox.layers.approx_linear.ApproxLinear static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.from_super">(torchapprox.layers.ApproxConv2d static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer.from_super">(torchapprox.layers.ApproxLayer static method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear.from_super">(torchapprox.layers.ApproxLinear static method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="G" class="genindex-section">
+  <h2>G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/utils/index.html#torchapprox.utils.get_approx_modules">get_approx_modules() (in module torchapprox.utils)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/utils/conversion/index.html#torchapprox.utils.conversion.get_approx_modules">(in module torchapprox.utils.conversion)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs.groups">groups (torchapprox.operators.conv2d.Conv2dArgs attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs.in_channels">in_channels (torchapprox.operators.conv2d.Conv2dArgs attribute)</a>
+</li>
+        <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.InferenceMode">InferenceMode (class in torchapprox.layers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.InferenceMode">(class in torchapprox.layers.approx_layer)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/utils/index.html#torchapprox.utils.inplace_conversion">inplace_conversion() (in module torchapprox.utils)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/utils/conversion/index.html#torchapprox.utils.conversion.inplace_conversion">(in module torchapprox.utils.conversion)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="K" class="genindex-section">
+  <h2>K</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs.kernel_size">kernel_size (torchapprox.operators.conv2d.Conv2dArgs attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.logger">logger (in module torchapprox.layers.approx_layer)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/backend/index.html#torchapprox.operators.backend.logger">(in module torchapprox.operators.backend)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/operators/index.html#torchapprox.operators.LUT">LUT (class in torchapprox.operators)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/lut/index.html#torchapprox.operators.lut.LUT">(class in torchapprox.operators.lut)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/index.html#torchapprox.operators.LUT.lut">lut (torchapprox.operators.LUT property)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/lut/index.html#torchapprox.operators.lut.LUT.lut">(torchapprox.operators.lut.LUT property)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="M" class="genindex-section">
+  <h2>M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant">MinMaxQuant (class in torchapprox.quantizers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant">(class in torchapprox.quantizers.minmax_quantizer)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.FakeQuant">MinMaxQuant.FakeQuant (class in torchapprox.quantizers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant">(class in torchapprox.quantizers.minmax_quantizer)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.Quant">MinMaxQuant.Quant (class in torchapprox.quantizers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.Quant">(class in torchapprox.quantizers.minmax_quantizer)</a>
+</li>
+        </ul></li>
+        <li>
+    module
+
+        <ul>
+          <li><a href="autoapi/torchapprox/index.html#module-torchapprox">torchapprox</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#module-torchapprox.layers">torchapprox.layers</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#module-torchapprox.layers.approx_conv2d">torchapprox.layers.approx_conv2d</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#module-torchapprox.layers.approx_layer">torchapprox.layers.approx_layer</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#module-torchapprox.layers.approx_linear">torchapprox.layers.approx_linear</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/index.html#module-torchapprox.operators">torchapprox.operators</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/approxgemm/index.html#module-torchapprox.operators.approxgemm">torchapprox.operators.approxgemm</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/backend/index.html#module-torchapprox.operators.backend">torchapprox.operators.backend</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/conv2d/index.html#module-torchapprox.operators.conv2d">torchapprox.operators.conv2d</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/fast_models/index.html#module-torchapprox.operators.fast_models">torchapprox.operators.fast_models</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/linear/index.html#module-torchapprox.operators.linear">torchapprox.operators.linear</a>
+</li>
+          <li><a href="autoapi/torchapprox/operators/lut/index.html#module-torchapprox.operators.lut">torchapprox.operators.lut</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#module-torchapprox.quantizers">torchapprox.quantizers</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/approx_quantizer/index.html#module-torchapprox.quantizers.approx_quantizer">torchapprox.quantizers.approx_quantizer</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#module-torchapprox.quantizers.minmax_quantizer">torchapprox.quantizers.minmax_quantizer</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#module-torchapprox.quantizers.pact_quantizer">torchapprox.quantizers.pact_quantizer</a>
+</li>
+          <li><a href="autoapi/torchapprox/utils/index.html#module-torchapprox.utils">torchapprox.utils</a>
+</li>
+          <li><a href="autoapi/torchapprox/utils/conversion/index.html#module-torchapprox.utils.conversion">torchapprox.utils.conversion</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1kr3">mul8s_1kr3() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1kr6">mul8s_1kr6() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1kr8">mul8s_1kr8() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1krc">mul8s_1krc() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1kty">mul8s_1kty() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1kv8">mul8s_1kv8() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1kva">mul8s_1kva() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1kvb">mul8s_1kvb() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1kvl">mul8s_1kvl() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1kx2">mul8s_1kx2() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1l1g">mul8s_1l1g() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1l2d">mul8s_1l2d() (in module torchapprox.operators.fast_models)</a>
+</li>
+        <li><a href="autoapi/torchapprox/operators/fast_models/index.html#torchapprox.operators.fast_models.mul8s_1l2h">mul8s_1l2h() (in module torchapprox.operators.fast_models)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.InferenceMode.NOISE">NOISE (torchapprox.layers.approx_layer.InferenceMode attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.InferenceMode.NOISE">(torchapprox.layers.InferenceMode attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer.noise_fwd">noise_fwd() (torchapprox.layers.approx_layer.ApproxLayer method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer.noise_fwd">(torchapprox.layers.ApproxLayer method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="O" class="genindex-section">
+  <h2>O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.opcount">opcount (torchapprox.layers.approx_conv2d.ApproxConv2d property)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer.opcount">(torchapprox.layers.approx_layer.ApproxLayer property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#torchapprox.layers.approx_linear.ApproxLinear.opcount">(torchapprox.layers.approx_linear.ApproxLinear property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.opcount">(torchapprox.layers.ApproxConv2d property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer.opcount">(torchapprox.layers.ApproxLayer property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear.opcount">(torchapprox.layers.ApproxLinear property)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs.out_channels">out_channels (torchapprox.operators.conv2d.Conv2dArgs attribute)</a>
+</li>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.output_dims">output_dims() (torchapprox.layers.approx_conv2d.ApproxConv2d method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.output_dims">(torchapprox.layers.ApproxConv2d method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="P" class="genindex-section">
+  <h2>P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant">PACTQuant (class in torchapprox.quantizers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant">(class in torchapprox.quantizers.pact_quantizer)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.FakeQuant">PACTQuant.FakeQuant (class in torchapprox.quantizers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant">(class in torchapprox.quantizers.pact_quantizer)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.Quant">PACTQuant.Quant (class in torchapprox.quantizers)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.Quant">(class in torchapprox.quantizers.pact_quantizer)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs.padding">padding (torchapprox.operators.conv2d.Conv2dArgs attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="Q" class="genindex-section">
+  <h2>Q</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.quant_fwd">quant_fwd() (torchapprox.layers.approx_conv2d.ApproxConv2d method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer.quant_fwd">(torchapprox.layers.approx_layer.ApproxLayer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#torchapprox.layers.approx_linear.ApproxLinear.quant_fwd">(torchapprox.layers.approx_linear.ApproxLinear method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.quant_fwd">(torchapprox.layers.ApproxConv2d method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer.quant_fwd">(torchapprox.layers.ApproxLayer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear.quant_fwd">(torchapprox.layers.ApproxLinear method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/quantizers/approx_quantizer/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.quantize">quantize() (torchapprox.quantizers.approx_quantizer.ApproxQuantizer method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.ApproxQuantizer.quantize">(torchapprox.quantizers.ApproxQuantizer method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.quantize">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.quantize">(torchapprox.quantizers.MinMaxQuant method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.quantize">(torchapprox.quantizers.pact_quantizer.PACTQuant method)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.quantize">(torchapprox.quantizers.PACTQuant method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.InferenceMode.QUANTIZED">QUANTIZED (torchapprox.layers.approx_layer.InferenceMode attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.InferenceMode.QUANTIZED">(torchapprox.layers.InferenceMode attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="S" class="genindex-section">
+  <h2>S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/quantizers/approx_quantizer/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.scale_factor">scale_factor (torchapprox.quantizers.approx_quantizer.ApproxQuantizer property)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.ApproxQuantizer.scale_factor">(torchapprox.quantizers.ApproxQuantizer property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.scale_factor">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.scale_factor">(torchapprox.quantizers.MinMaxQuant property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.scale_factor">(torchapprox.quantizers.pact_quantizer.PACTQuant property)</a>
+</li>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.scale_factor">(torchapprox.quantizers.PACTQuant property)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/backend/index.html#id0">sources (in module torchapprox.operators.backend)</a>, <a href="autoapi/torchapprox/operators/backend/index.html#torchapprox.operators.backend.sources">[1]</a>
+</li>
+        <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer.stdev">stdev (torchapprox.layers.approx_layer.ApproxLayer property)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLayer.stdev">(torchapprox.layers.ApproxLayer property)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs.stride">stride (torchapprox.operators.conv2d.Conv2dArgs attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="T" class="genindex-section">
+  <h2>T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/backend/index.html#torchapprox.operators.backend.ta_backend">ta_backend (in module torchapprox.operators.backend)</a>
+</li>
+        <li>
+    torchapprox
+
+        <ul>
+          <li><a href="autoapi/torchapprox/index.html#module-torchapprox">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.layers
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#module-torchapprox.layers">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.layers.approx_conv2d
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#module-torchapprox.layers.approx_conv2d">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.layers.approx_layer
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#module-torchapprox.layers.approx_layer">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.layers.approx_linear
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/approx_linear/index.html#module-torchapprox.layers.approx_linear">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.operators
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/index.html#module-torchapprox.operators">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.operators.approxgemm
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/approxgemm/index.html#module-torchapprox.operators.approxgemm">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.operators.backend
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/backend/index.html#module-torchapprox.operators.backend">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.operators.conv2d
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/conv2d/index.html#module-torchapprox.operators.conv2d">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    torchapprox.operators.fast_models
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/fast_models/index.html#module-torchapprox.operators.fast_models">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.operators.linear
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/linear/index.html#module-torchapprox.operators.linear">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.operators.lut
+
+        <ul>
+          <li><a href="autoapi/torchapprox/operators/lut/index.html#module-torchapprox.operators.lut">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.quantizers
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/index.html#module-torchapprox.quantizers">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.quantizers.approx_quantizer
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/approx_quantizer/index.html#module-torchapprox.quantizers.approx_quantizer">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.quantizers.minmax_quantizer
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#module-torchapprox.quantizers.minmax_quantizer">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.quantizers.pact_quantizer
+
+        <ul>
+          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#module-torchapprox.quantizers.pact_quantizer">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.utils
+
+        <ul>
+          <li><a href="autoapi/torchapprox/utils/index.html#module-torchapprox.utils">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.utils.conversion
+
+        <ul>
+          <li><a href="autoapi/torchapprox/utils/conversion/index.html#module-torchapprox.utils.conversion">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.use_fast_dwconv">use_fast_dwconv() (torchapprox.layers.approx_conv2d.ApproxConv2d method)</a>
+
+        <ul>
+          <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d.use_fast_dwconv">(torchapprox.layers.ApproxConv2d method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Elias Trommer
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>

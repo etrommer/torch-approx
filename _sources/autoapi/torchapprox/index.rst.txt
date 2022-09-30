@@ -1,0 +1,31 @@
+:py:mod:`torchapprox`
+=====================
+
+.. py:module:: torchapprox
+
+.. autoapi-nested-parse::
+
+   TorchApprox Base package
+
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   layers/index.rst
+   operators/index.rst
+   quantizers/index.rst
+   utils/index.rst
+
+
+Package Contents
+----------------
+
+.. py:data:: __version__
+   
+
+   
+

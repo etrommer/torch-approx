@@ -1,0 +1,90 @@
+:py:mod:`torchapprox.layers.approx_linear`
+==========================================
+
+.. py:module:: torchapprox.layers.approx_linear
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   torchapprox.layers.approx_linear.ApproxLinear
+
+
+
+
+.. py:class:: ApproxLinear(*args, **kwargs)
+
+   Bases: :py:obj:`torch.nn.Linear`, :py:obj:`torchapprox.layers.approx_layer.ApproxLayer`
+
+   Approximate Linear Layer implementation
+
+   .. py:property:: fan_in
+      :type: int
+
+      Number of incoming connections for a neuron in this layer
+
+   .. py:property:: opcount
+      :type: int
+
+      Number of multiplications for a single
+      forward pass of this layer
+
+   .. py:method:: from_super(cls_instance: torch.nn.Linear)
+      :staticmethod:
+
+      Alias for from_linear
+
+
+   .. py:method:: from_linear(linear: torch.nn.Linear)
+      :staticmethod:
+
+      Construct ApproxLinear from torch.nn.Linear layer
+
+
+   .. py:method:: baseline_fwd(x)
+
+      Unperturbed FP32 forward pass
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: quant_fwd(x)
+
+      Quantized Forward Pass
+      Performs the layer operation with an additional pass through the
+      currently configured quantizer
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: approx_fwd(x)
+
+      Approximate Product Forward Pass
+      Performs the layer operation using the currently configured
+      approximate product Lookup Table.
+      Quantization is implicitly applied to the input and weights.
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: forward(x)
+
+      Forward pass with currently selected mode applied
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+

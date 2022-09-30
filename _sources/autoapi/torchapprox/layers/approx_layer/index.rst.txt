@@ -1,0 +1,158 @@
+:py:mod:`torchapprox.layers.approx_layer`
+=========================================
+
+.. py:module:: torchapprox.layers.approx_layer
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   torchapprox.layers.approx_layer.InferenceMode
+   torchapprox.layers.approx_layer.ApproxLayer
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   torchapprox.layers.approx_layer.logger
+
+
+.. py:data:: logger
+   
+
+   
+
+.. py:class:: InferenceMode
+
+   Bases: :py:obj:`enum.Enum`
+
+   Layer inference mode. Can be any of:
+   - `base`: Run inference as unperturbed FP32 baseline
+   - `quant`: Run inference using the layer's quantizer
+   - `approx`: Run inference using approximate product LUT
+   - `noise`: Run inference that is perturbed with additive Gaussian noise
+
+   .. py:attribute:: BASELINE
+      :annotation: = Baseline Mode
+
+      
+
+   .. py:attribute:: QUANTIZED
+      :annotation: = Quantized Mode
+
+      
+
+   .. py:attribute:: NOISE
+      :annotation: = Noise Mode
+
+      
+
+   .. py:attribute:: APPROXIMATE
+      :annotation: = Approximate Mode
+
+      
+
+
+.. py:class:: ApproxLayer
+
+   Bases: :py:obj:`abc.ABC`
+
+   Derivable Abstract Base Class for implementing Approximate Neural Network layers
+
+   .. py:property:: stdev
+      :type: torch.nn.Parameter
+
+      The relative standard deviation of the Additive Gaussian noise that is added
+      to the computation output. Scaling is done relative the current batch's standard devitaion.
+      This is only used when the mode is set to `noise`. It will have no effect in other modes.
+
+   .. py:property:: fan_in
+      :type: int
+      :abstractmethod:
+
+      Number of incoming connections for a neuron in this layer
+
+   .. py:property:: opcount
+      :type: int
+      :abstractmethod:
+
+      Number of multiplications for a single
+      forward pass of this layer
+
+   .. py:method:: from_super(cls_instance)
+      :staticmethod:
+      :abstractmethod:
+
+      Create upgraded superclass instance.
+      This constructs an approximate layer instance using the configuration
+      of a vanilla torch layer implementation.
+
+
+   .. py:method:: baseline_fwd(x: torch.Tensor) -> torch.Tensor
+      :abstractmethod:
+
+      Unperturbed FP32 forward pass
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: quant_fwd(x: torch.Tensor) -> torch.Tensor
+      :abstractmethod:
+
+      Quantized Forward Pass
+      Performs the layer operation with an additional pass through the
+      currently configured quantizer
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: approx_fwd(x: torch.Tensor) -> torch.Tensor
+      :abstractmethod:
+
+      Approximate Product Forward Pass
+      Performs the layer operation using the currently configured
+      approximate product Lookup Table.
+      Quantization is implicitly applied to the input and weights.
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: noise_fwd(x: torch.Tensor) -> torch.Tensor
+
+      Quantized Forward Pass that is perturbed
+      with Gaussian Noise
+
+      The standard deviation of the additive noise
+      is derived from the `stdev`parameter and scaled
+      with the standard deviation of the current batch
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: forward(x: torch.Tensor, bias: torch.Tensor) -> torch.Tensor
+
+      Forward pass with currently selected mode applied
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+

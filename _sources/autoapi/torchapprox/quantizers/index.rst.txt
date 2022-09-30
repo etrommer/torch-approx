@@ -1,0 +1,352 @@
+:py:mod:`torchapprox.quantizers`
+================================
+
+.. py:module:: torchapprox.quantizers
+
+.. autoapi-nested-parse::
+
+   Implementation of quantization algorithms for use with Torchapprox ANN models
+
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   approx_quantizer/index.rst
+   minmax_quantizer/index.rst
+   pact_quantizer/index.rst
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   torchapprox.quantizers.ApproxQuantizer
+   torchapprox.quantizers.MinMaxQuant
+   torchapprox.quantizers.PACTQuant
+
+
+
+
+.. py:class:: ApproxQuantizer(bitwidth: int = 8)
+
+   Bases: :py:obj:`torch.nn.Module`, :py:obj:`abc.ABC`
+
+   Abstract Quantizer interface definition
+
+   .. py:property:: bitwidth
+      :type: int
+
+      The configured bitwidth
+
+      :returns: Currently configured bitwidth
+
+   .. py:property:: scale_factor
+      :type: float
+      :abstractmethod:
+
+      Scale factor of quantizer
+
+      :returns: The value with which a float tensor is multiplied
+                in order to scale it to Integer numerical range
+
+   .. py:method:: fake_quant(x: torch.FloatTensor) -> torch.FloatTensor
+      :abstractmethod:
+
+      Apply Fake Quantization to a tensor of floats
+
+      :param x: Floating-point input
+
+      :returns: Fake-quantized output
+
+
+   .. py:method:: quantize(x: torch.FloatTensor, rounded: bool = True) -> torch.FloatTensor
+      :abstractmethod:
+
+      Apply quantization operation to input tensor
+
+      :param x: Floating-point input
+      :param rounded: Round the rescaled input to Integers
+
+      :returns: Output quantized to Integer range
+
+
+
+.. py:class:: MinMaxQuant(bitwidth: int = 8)
+
+   Bases: :py:obj:`torchapprox.quantizers.approx_quantizer.ApproxQuantizer`
+
+   Min/Max-Quantizer container class
+
+   .. py:class:: FakeQuant(*args, **kwargs)
+
+      Bases: :py:obj:`torch.autograd.Function`
+
+      Differentiable Fake-quantization node
+
+      .. py:method:: forward(ctx, x, minmax, int_max)
+         :staticmethod:
+
+         Performs the operation.
+
+         This function is to be overridden by all subclasses.
+
+         It must accept a context ctx as the first argument, followed by any
+         number of arguments (tensors or other types).
+
+         The context can be used to store arbitrary data that can be then
+         retrieved during the backward pass. Tensors should not be stored
+         directly on `ctx` (though this is not currently enforced for
+         backward compatibility). Instead, tensors should be saved either with
+         :func:`ctx.save_for_backward` if they are intended to be used in
+         ``backward`` (equivalently, ``vjp``) or :func:`ctx.save_for_forward`
+         if they are intended to be used for in ``jvp``.
+
+
+      .. py:method:: backward(ctx, grad_x_quant)
+         :staticmethod:
+
+         Defines a formula for differentiating the operation with backward mode
+         automatic differentiation (alias to the vjp function).
+
+         This function is to be overridden by all subclasses.
+
+         It must accept a context :attr:`ctx` as the first argument, followed by
+         as many outputs as the :func:`forward` returned (None will be passed in
+         for non tensor outputs of the forward function),
+         and it should return as many tensors, as there were inputs to
+         :func:`forward`. Each argument is the gradient w.r.t the given output,
+         and each returned value should be the gradient w.r.t. the
+         corresponding input. If an input is not a Tensor or is a Tensor not
+         requiring grads, you can just pass None as a gradient for that input.
+
+         The context can be used to retrieve tensors saved during the forward
+         pass. It also has an attribute :attr:`ctx.needs_input_grad` as a tuple
+         of booleans representing whether each input needs gradient. E.g.,
+         :func:`backward` will have ``ctx.needs_input_grad[0] = True`` if the
+         first input to :func:`forward` needs gradient computated w.r.t. the
+         output.
+
+
+
+   .. py:class:: Quant(*args, **kwargs)
+
+      Bases: :py:obj:`torch.autograd.Function`
+
+      Differentiable Integer Quantization node
+
+      .. py:method:: forward(ctx, x, minmax, int_max, rounded)
+         :staticmethod:
+
+         Performs the operation.
+
+         This function is to be overridden by all subclasses.
+
+         It must accept a context ctx as the first argument, followed by any
+         number of arguments (tensors or other types).
+
+         The context can be used to store arbitrary data that can be then
+         retrieved during the backward pass. Tensors should not be stored
+         directly on `ctx` (though this is not currently enforced for
+         backward compatibility). Instead, tensors should be saved either with
+         :func:`ctx.save_for_backward` if they are intended to be used in
+         ``backward`` (equivalently, ``vjp``) or :func:`ctx.save_for_forward`
+         if they are intended to be used for in ``jvp``.
+
+
+      .. py:method:: backward(ctx, grad_x_quant)
+         :staticmethod:
+
+         Defines a formula for differentiating the operation with backward mode
+         automatic differentiation (alias to the vjp function).
+
+         This function is to be overridden by all subclasses.
+
+         It must accept a context :attr:`ctx` as the first argument, followed by
+         as many outputs as the :func:`forward` returned (None will be passed in
+         for non tensor outputs of the forward function),
+         and it should return as many tensors, as there were inputs to
+         :func:`forward`. Each argument is the gradient w.r.t the given output,
+         and each returned value should be the gradient w.r.t. the
+         corresponding input. If an input is not a Tensor or is a Tensor not
+         requiring grads, you can just pass None as a gradient for that input.
+
+         The context can be used to retrieve tensors saved during the forward
+         pass. It also has an attribute :attr:`ctx.needs_input_grad` as a tuple
+         of booleans representing whether each input needs gradient. E.g.,
+         :func:`backward` will have ``ctx.needs_input_grad[0] = True`` if the
+         first input to :func:`forward` needs gradient computated w.r.t. the
+         output.
+
+
+
+   .. py:property:: scale_factor
+
+      Scale factor of quantizer
+
+      :returns: The value with which a float tensor is multiplied
+                in order to scale it to Integer numerical range
+
+   .. py:method:: fake_quant(x)
+
+      Apply Fake Quantization to a tensor of floats
+
+      :param x: Floating-point input
+
+      :returns: Fake-quantized output
+
+
+   .. py:method:: quantize(x, rounded=True)
+
+      Apply quantization operation to input tensor
+
+      :param x: Floating-point input
+      :param rounded: Round the rescaled input to Integers
+
+      :returns: Output quantized to Integer range
+
+
+
+.. py:class:: PACTQuant(bitwidth: int = 8)
+
+   Bases: :py:obj:`torchapprox.quantizers.approx_quantizer.ApproxQuantizer`
+
+   ApproxQuantizer implementation container for PACT algorithm
+
+   .. py:class:: FakeQuant(*args, **kwargs)
+
+      Bases: :py:obj:`torch.autograd.Function`
+
+      Differentiable Fake-Quantization Node
+
+      .. py:method:: forward(ctx, x, alpha, int_max)
+         :staticmethod:
+
+         Performs the operation.
+
+         This function is to be overridden by all subclasses.
+
+         It must accept a context ctx as the first argument, followed by any
+         number of arguments (tensors or other types).
+
+         The context can be used to store arbitrary data that can be then
+         retrieved during the backward pass. Tensors should not be stored
+         directly on `ctx` (though this is not currently enforced for
+         backward compatibility). Instead, tensors should be saved either with
+         :func:`ctx.save_for_backward` if they are intended to be used in
+         ``backward`` (equivalently, ``vjp``) or :func:`ctx.save_for_forward`
+         if they are intended to be used for in ``jvp``.
+
+
+      .. py:method:: backward(ctx, grad_x_quant)
+         :staticmethod:
+
+         Defines a formula for differentiating the operation with backward mode
+         automatic differentiation (alias to the vjp function).
+
+         This function is to be overridden by all subclasses.
+
+         It must accept a context :attr:`ctx` as the first argument, followed by
+         as many outputs as the :func:`forward` returned (None will be passed in
+         for non tensor outputs of the forward function),
+         and it should return as many tensors, as there were inputs to
+         :func:`forward`. Each argument is the gradient w.r.t the given output,
+         and each returned value should be the gradient w.r.t. the
+         corresponding input. If an input is not a Tensor or is a Tensor not
+         requiring grads, you can just pass None as a gradient for that input.
+
+         The context can be used to retrieve tensors saved during the forward
+         pass. It also has an attribute :attr:`ctx.needs_input_grad` as a tuple
+         of booleans representing whether each input needs gradient. E.g.,
+         :func:`backward` will have ``ctx.needs_input_grad[0] = True`` if the
+         first input to :func:`forward` needs gradient computated w.r.t. the
+         output.
+
+
+
+   .. py:class:: Quant(*args, **kwargs)
+
+      Bases: :py:obj:`torch.autograd.Function`
+
+      Differentiable Integer Quantization Node
+
+      .. py:method:: forward(ctx, x, alpha, int_max, rounded)
+         :staticmethod:
+
+         Performs the operation.
+
+         This function is to be overridden by all subclasses.
+
+         It must accept a context ctx as the first argument, followed by any
+         number of arguments (tensors or other types).
+
+         The context can be used to store arbitrary data that can be then
+         retrieved during the backward pass. Tensors should not be stored
+         directly on `ctx` (though this is not currently enforced for
+         backward compatibility). Instead, tensors should be saved either with
+         :func:`ctx.save_for_backward` if they are intended to be used in
+         ``backward`` (equivalently, ``vjp``) or :func:`ctx.save_for_forward`
+         if they are intended to be used for in ``jvp``.
+
+
+      .. py:method:: backward(ctx, grad_x_quant)
+         :staticmethod:
+
+         Defines a formula for differentiating the operation with backward mode
+         automatic differentiation (alias to the vjp function).
+
+         This function is to be overridden by all subclasses.
+
+         It must accept a context :attr:`ctx` as the first argument, followed by
+         as many outputs as the :func:`forward` returned (None will be passed in
+         for non tensor outputs of the forward function),
+         and it should return as many tensors, as there were inputs to
+         :func:`forward`. Each argument is the gradient w.r.t the given output,
+         and each returned value should be the gradient w.r.t. the
+         corresponding input. If an input is not a Tensor or is a Tensor not
+         requiring grads, you can just pass None as a gradient for that input.
+
+         The context can be used to retrieve tensors saved during the forward
+         pass. It also has an attribute :attr:`ctx.needs_input_grad` as a tuple
+         of booleans representing whether each input needs gradient. E.g.,
+         :func:`backward` will have ``ctx.needs_input_grad[0] = True`` if the
+         first input to :func:`forward` needs gradient computated w.r.t. the
+         output.
+
+
+
+   .. py:property:: scale_factor
+      :type: float
+
+      Scale factor of quantizer
+
+      :returns: The value with which a float tensor is multiplied
+                in order to scale it to Integer numerical range
+
+   .. py:method:: fake_quant(x)
+
+      Apply Fake Quantization to a tensor of floats
+
+      :param x: Floating-point input
+
+      :returns: Fake-quantized output
+
+
+   .. py:method:: quantize(x, rounded=True)
+
+      Apply quantization operation to input tensor
+
+      :param x: Floating-point input
+      :param rounded: Round the rescaled input to Integers
+
+      :returns: Output quantized to Integer range
+
+
+

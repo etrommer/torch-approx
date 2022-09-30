@@ -1,0 +1,55 @@
+:py:mod:`torchapprox.utils`
+===========================
+
+.. py:module:: torchapprox.utils
+
+.. autoapi-nested-parse::
+
+   TorchApprox Helper functions
+
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   conversion/index.rst
+
+
+Package Contents
+----------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   torchapprox.utils.get_approx_modules
+   torchapprox.utils.inplace_conversion
+
+
+
+.. py:function:: get_approx_modules(net: torch.nn.Module) -> List[Tuple[str, torchapprox.layers.ApproxLayer]]
+
+   Retrieve all approximate layers from a model
+
+   :param net: PyTorch neural network model
+
+   :returns: A list of tuples with name and reference to each Approximate layer instance in the model
+
+
+.. py:function:: inplace_conversion(net: torch.nn.Module, layer_mappings: Optional[Dict[Type[torch.nn.Module], Type[torchapprox.layers.ApproxLayer]]] = None) -> torch.nn.Module
+
+   Performs in-place upgrade of layers in a vanilla PyTorch network to TorchApprox
+   approximate layer implementations
+
+   :param net: PyTorch neural network model
+   :param layer_mappings: Mapping Dict where the keys correspond to regular PyTorch layers and
+                          values correspond to TorchApprox layers they are replaced with
+
+   :returns: An identical model with target layers replaced by Approximate Layer implementations
+
+

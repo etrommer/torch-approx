@@ -1,0 +1,510 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="torchapprox.operators.linear" href="../linear/index.html" /><link rel="prev" title="torchapprox.operators.conv2d" href="../conv2d/index.html" />
+
+    <link rel="shortcut icon" href="../../../../_static/torchapprox_icon.png"/><meta name="generator" content="sphinx-5.2.3, furo 2022.09.29"/>
+        <title>torchapprox.operators.fast_models - TorchApprox Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../index.html"><div class="brand">TorchApprox Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/torchapprox_logo.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">TorchApprox Documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../conduct.html">Code of Conduct</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../layers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../layers/approx_conv2d/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_conv2d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../layers/approx_layer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_layer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../layers/approx_linear/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_linear</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../approxgemm/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.approxgemm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../backend/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.backend</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../conv2d/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.conv2d</span></code></a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.fast_models</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linear/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.linear</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lut/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.lut</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../quantizers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.quantizers</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../quantizers/approx_quantizer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.quantizers.approx_quantizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../quantizers/minmax_quantizer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.quantizers.minmax_quantizer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../quantizers/pact_quantizer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.quantizers.pact_quantizer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/conversion/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-torchapprox.operators.fast_models">
+<span id="torchapprox-operators-fast-models"></span><h1><a class="reference internal" href="#module-torchapprox.operators.fast_models" title="torchapprox.operators.fast_models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.fast_models</span></code></a><a class="headerlink" href="#module-torchapprox.operators.fast_models" title="Permalink to this heading">#</a></h1>
+<p>Template implementation for approximate multiplier fast models</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">#</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">#</a></h3>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kv8" title="torchapprox.operators.fast_models.mul8s_1kv8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1kv8</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication accurate fast model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kr3" title="torchapprox.operators.fast_models.mul8s_1kr3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1kr3</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1KR3</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kr6" title="torchapprox.operators.fast_models.mul8s_1kr6"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1kr6</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1KR6</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kr8" title="torchapprox.operators.fast_models.mul8s_1kr8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1kr8</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1KR8</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1krc" title="torchapprox.operators.fast_models.mul8s_1krc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1krc</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1KRC</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kty" title="torchapprox.operators.fast_models.mul8s_1kty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1kty</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1KTY</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kva" title="torchapprox.operators.fast_models.mul8s_1kva"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1kva</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1KVA</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kvb" title="torchapprox.operators.fast_models.mul8s_1kvb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1kvb</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1KVB</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kvl" title="torchapprox.operators.fast_models.mul8s_1kvl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1kvl</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1KVL</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kx2" title="torchapprox.operators.fast_models.mul8s_1kx2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1kx2</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1KX2</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1l1g" title="torchapprox.operators.fast_models.mul8s_1l1g"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1l1g</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1L1G</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1l2d" title="torchapprox.operators.fast_models.mul8s_1l2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1l2d</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1L2D</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1l2h" title="torchapprox.operators.fast_models.mul8s_1l2h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mul8s_1l2h</span></code></a>(base_func, op1, op2, kwargs)</p></td>
+<td><p>Approximate Multiplication Fast Model for mul8s_1L2H</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.fast_models.fast_models" title="torchapprox.operators.fast_models.fast_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_models</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1kv8">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1kv8</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1kv8" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication accurate fast model.
+This yields the same output as the baseline layer.
+Primarily useful for testing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_func</strong> – Basic layer function</p></li>
+<li><p><strong>op1</strong> – 1st operand</p></li>
+<li><p><strong>op2</strong> – 2nd operand</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments passed to basic layer function
+(i.e. configuration parameters for Conv2d)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Accurate Layer operation result</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1kr3">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1kr3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1kr3" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1KR3</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1kr6">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1kr6</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1kr6" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1KR6</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1kr8">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1kr8</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1kr8" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1KR8</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1krc">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1krc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1krc" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1KRC</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1kty">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1kty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1kty" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1KTY</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1kva">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1kva</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1kva" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1KVA</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1kvb">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1kvb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1kvb" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1KVB</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1kvl">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1kvl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1kvl" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1KVL</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1kx2">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1kx2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1kx2" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1KX2</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1l1g">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1l1g</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1l1g" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1L1G</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1l2d">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1l2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1l2d" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1L2D</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.mul8s_1l2h">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">mul8s_1l2h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.fast_models.mul8s_1l2h" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate Multiplication Fast Model for mul8s_1L2H</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="torchapprox.operators.fast_models.fast_models">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.fast_models.</span></span><span class="sig-name descname"><span class="pre">fast_models</span></span><a class="headerlink" href="#torchapprox.operators.fast_models.fast_models" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../linear/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.linear</span></code></div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../conv2d/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.conv2d</span></code></div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Elias Trommer
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.fast_models</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kv8"><code class="docutils literal notranslate"><span class="pre">mul8s_1kv8()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kr3"><code class="docutils literal notranslate"><span class="pre">mul8s_1kr3()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kr6"><code class="docutils literal notranslate"><span class="pre">mul8s_1kr6()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kr8"><code class="docutils literal notranslate"><span class="pre">mul8s_1kr8()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1krc"><code class="docutils literal notranslate"><span class="pre">mul8s_1krc()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kty"><code class="docutils literal notranslate"><span class="pre">mul8s_1kty()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kva"><code class="docutils literal notranslate"><span class="pre">mul8s_1kva()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kvb"><code class="docutils literal notranslate"><span class="pre">mul8s_1kvb()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kvl"><code class="docutils literal notranslate"><span class="pre">mul8s_1kvl()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kx2"><code class="docutils literal notranslate"><span class="pre">mul8s_1kx2()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1l1g"><code class="docutils literal notranslate"><span class="pre">mul8s_1l1g()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1l2d"><code class="docutils literal notranslate"><span class="pre">mul8s_1l2d()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1l2h"><code class="docutils literal notranslate"><span class="pre">mul8s_1l2h()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.fast_models"><code class="docutils literal notranslate"><span class="pre">fast_models</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kv8">mul8s_1kv8</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kr3">mul8s_1kr3</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kr6">mul8s_1kr6</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kr8">mul8s_1kr8</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1krc">mul8s_1krc</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kty">mul8s_1kty</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kva">mul8s_1kva</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kvb">mul8s_1kvb</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kvl">mul8s_1kvl</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1kx2">mul8s_1kx2</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1l1g">mul8s_1l1g</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1l2d">mul8s_1l2d</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.mul8s_1l2h">mul8s_1l2h</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.fast_models.fast_models">fast_models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/scripts/furo.js"></script>
+    </body>
+</html>

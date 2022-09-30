@@ -1,0 +1,40 @@
+:py:mod:`torchapprox.operators.approxgemm`
+==========================================
+
+.. py:module:: torchapprox.operators.approxgemm
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   torchapprox.operators.approxgemm.ApproxGeMM
+
+
+
+
+.. py:class:: ApproxGeMM(*args, **kwargs)
+
+   Bases: :py:obj:`torch.autograd.Function`
+
+   `torch.autograd.Function` wrapper for Approximate Matrix Multiplication
+   This creates a differentiable graph node for the ApproxGeMM that uses
+   the Straight-Through-Estimator to derive valid gradients
+
+   .. py:method:: forward(ctx, a: torch.Tensor, b: torch.Tensor, lut: torch.Tensor, res: Optional[torch.Tensor] = None) -> torch.Tensor
+      :staticmethod:
+
+      Approximate forward operation
+
+
+   .. py:method:: backward(ctx, grad)
+      :staticmethod:
+
+      Calculate backward pass based on accurate matrix product (Straight-Through-Estimator)
+
+
+

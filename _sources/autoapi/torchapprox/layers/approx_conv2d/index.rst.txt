@@ -1,0 +1,110 @@
+:py:mod:`torchapprox.layers.approx_conv2d`
+==========================================
+
+.. py:module:: torchapprox.layers.approx_conv2d
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   torchapprox.layers.approx_conv2d.ApproxConv2d
+
+
+
+
+.. py:class:: ApproxConv2d(*args, **kwargs)
+
+   Bases: :py:obj:`torch.nn.Conv2d`, :py:obj:`torchapprox.layers.approx_layer.ApproxLayer`
+
+   Approximate 2D Convolution layer implementation
+
+   .. py:property:: opcount
+      :type: int
+
+      Number of multiplications for a single
+      forward pass of this layer
+
+   .. py:property:: fan_in
+      :type: int
+
+      Number of incoming connection for a single neuron
+
+   .. py:property:: conv_args
+      :type: torchapprox.operators.conv2d.Conv2dArgs
+
+      Wrap layer configuration in dataclass for more convenient passing around
+
+   .. py:method:: from_super(cls_instance: torch.nn.Conv2d)
+      :staticmethod:
+
+      Alias for from_conv2d
+
+
+   .. py:method:: from_conv2d(conv2d: torch.nn.Conv2d)
+      :staticmethod:
+
+      Construct ApproxConv2d from torch.nn.Conv2d layer
+
+
+   .. py:method:: use_fast_dwconv() -> bool
+
+      Determine whether layer can be run using DWConv CUDA kernels
+
+      :returns:
+
+                - True if layer can be mapped to dwconv2d backend function
+                - False otherwise
+
+
+   .. py:method:: output_dims(x)
+
+      Output width and height
+
+
+   .. py:method:: baseline_fwd(x)
+
+      Unperturbed FP32 forward pass
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: quant_fwd(x)
+
+      Quantized Forward Pass
+      Performs the layer operation with an additional pass through the
+      currently configured quantizer
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: approx_fwd(x)
+
+      Approximate Product Forward Pass
+      Performs the layer operation using the currently configured
+      approximate product Lookup Table.
+      Quantization is implicitly applied to the input and weights.
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+      Forward pass with currently selected mode applied
+
+      :param x: Layer input
+
+      :returns: Layer output
+
+
+
