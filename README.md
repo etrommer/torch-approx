@@ -1,6 +1,13 @@
-# torchapprox
+<h1 align="center">
+  <img src="agnapprox_logo.png" width="400px" height="280px" alt="Torchapprox Logo">
+</h1>
+<h3 align="center">
+TorchApprox: GPU-accelerated Neural Network layers using Approximate Multiplication for PyTorch
+</h3>
 
-GPU-accelerated Neural Network layers using Approximate Multiplication for PyTorch
+<p align="center">
+    TODO: Badges
+</p>
 
 ## Installation
 
@@ -22,4 +29,6 @@ Interested in contributing? Check out the contributing guidelines. Please note t
 
 ## Credits
 
-`torchapprox` was created with [`cookiecutter`](https://cookiecutter.readthedocs.io/en/latest/) and the `py-pkgs-cookiecutter` [template](https://github.com/py-pkgs/py-pkgs-cookiecutter).
+`torchapprox` was created with [`cookiecutter`](https://cookiecutter.readthedocs.io/en/latest/) and the `py-pkgs-cookiecutter` [template](https://github.com/py-pkgs/py-pkgs-cookiecutter).  
+Depthwise Convolution Kernels based on: [https://github.com/rosinality/depthwise-conv-pytorch](https://github.com/rosinality/depthwise-conv-pytorch)  
+This work was created as part of my Ph.D. research at Infineon Technologies Dresden  

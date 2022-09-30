@@ -6,9 +6,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = u"torchapprox"
-copyright = u"2022, Elias Trommer"
-author = u"Elias Trommer"
+project = "torchapprox"
+copyright = "2022, Elias Trommer"
+author = "Elias Trommer"
 
 # -- General configuration ---------------------------------------------------
 
@@ -18,6 +18,7 @@ author = u"Elias Trommer"
 extensions = [
     "myst_nb",
     "autoapi.extension",
+    "sphinx.ext.githubpages",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
 ]
@@ -33,4 +34,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
+html_title = "TorchApprox Documentation"
+html_logo = "torchapprox_logo.png"
+html_favicon = "torchapprox_icon.png"

@@ -20,6 +20,13 @@ pytest-benchmark = "^3.4.1"
 pre-commit = "^2.20.0"
 pytest-cov = "^3.0.0"
 
+
+[tool.poetry.group.extras.dependencies]
+furo = "^2022.9.29"
+myst-nb = "^0.17.1"
+sphinx-autoapi = "^2.0.0"
+sphinx-paramlinks = "^0.5.4"
+
 [tool.poe.tasks]
 install-ltt = "python3 -m pip install light-the-torch"
 run-ltt = "python3 -m light_the_torch install --upgrade torch torchaudio torchvision"
