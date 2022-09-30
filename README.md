@@ -1,9 +1,12 @@
 <h1 align="center">
-  <img src="agnapprox_logo.png" width="400px" height="280px" alt="Torchapprox Logo">
+  <img src="https://github.com/etrommer/torch-approx/raw/main/docs/torchapprox_logo.png" width="400px" height="280px" alt="Torchapprox Logo">
 </h1>
 <h3 align="center">
-TorchApprox: GPU-accelerated Neural Network layers using Approximate Multiplication for PyTorch
+TorchApprox
 </h3>
+<h5 align="center">
+GPU-accelerated Neural Network layers using Approximate Multiplication for PyTorch
+</h5>
 
 <p align="center">
     TODO: Badges
