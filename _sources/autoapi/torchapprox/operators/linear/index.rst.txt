@@ -25,7 +25,7 @@ Classes
    uses fast model for forward pass and non-approximate gradients
    for backward pass (STE)
 
-   .. py:method:: forward(ctx, x: torch.Tensor, w: torch.Tensor, model: str)
+   .. py:method:: forward(ctx, x, w, model)
       :staticmethod:
 
       Performs the operation.

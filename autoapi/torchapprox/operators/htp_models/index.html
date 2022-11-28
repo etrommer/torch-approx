@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="torchapprox.operators.conv2d" href="../conv2d/index.html" /><link rel="prev" title="torchapprox.operators.approxgemm" href="../approxgemm/index.html" />
+<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="torchapprox.operators.htp_models.htp_models_mul12s" href="htp_models_mul12s/index.html" /><link rel="prev" title="torchapprox.operators" href="../index.html" />
 
     <link rel="shortcut icon" href="../../../../_static/torchapprox_icon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>torchapprox.operators.backend - TorchApprox Documentation</title>
+        <title>torchapprox.operators.htp_models - TorchApprox Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -172,14 +172,14 @@
 </ul>
 </li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l4 has-children"><a class="reference internal" href="../htp_models/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../htp_models/htp_models_mul12s/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul12s</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="../htp_models/htp_models_mul16s/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul16s</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="../htp_models/htp_models_mul8s/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul8s</span></code></a></li>
+<li class="toctree-l4 current has-children current-page"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="htp_models_mul12s/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul12s</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="htp_models_mul16s/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul16s</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="htp_models_mul8s/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul8s</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../approxgemm/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.approxgemm</span></code></a></li>
-<li class="toctree-l4 current current-page"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.backend</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../backend/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.backend</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../conv2d/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.conv2d</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../linear/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.linear</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lut/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.lut</span></code></a></li>
@@ -233,96 +233,36 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-torchapprox.operators.backend">
-<span id="torchapprox-operators-backend"></span><h1><a class="reference internal" href="#module-torchapprox.operators.backend" title="torchapprox.operators.backend"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.backend</span></code></a><a class="headerlink" href="#module-torchapprox.operators.backend" title="Permalink to this heading">#</a></h1>
-<p>TorchApprox Accelerated Backend Functions</p>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">#</a></h2>
-<section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">#</a></h3>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.backend.dwconv2d" title="torchapprox.operators.backend.dwconv2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dwconv2d</span></code></a>(x, w, lut[, stride, padding])</p></td>
-<td><p>Approximate 2D Depthwise Convolution</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.operators.backend.approx" title="torchapprox.operators.backend.approx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">approx</span></code></a>(→ torch.Tensor)</p></td>
-<td><p>Input validation wrapper for Approximate GeMM</p></td>
-</tr>
-</tbody>
-</table>
+          <section id="module-torchapprox.operators.htp_models">
+<span id="torchapprox-operators-htp-models"></span><h1><a class="reference internal" href="#module-torchapprox.operators.htp_models" title="torchapprox.operators.htp_models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models</span></code></a><a class="headerlink" href="#module-torchapprox.operators.htp_models" title="Permalink to this heading">#</a></h1>
+<p>High-Througput Floating Point Models for EvoApprox Signed Multipliers</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="htp_models_mul12s/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul12s</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="htp_models_mul16s/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul16s</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="htp_models_mul8s/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul8s</span></code></a></li>
+</ul>
 </div>
 </section>
-<section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.backend.logger" title="torchapprox.operators.backend.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#id0" title="torchapprox.operators.backend.sources"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sources</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.operators.backend.extra_cflags" title="torchapprox.operators.backend.extra_cflags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extra_cflags</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.operators.backend.dirname" title="torchapprox.operators.backend.dirname"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dirname</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="torchapprox.operators.backend.sources"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sources</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.operators.backend.ta_backend" title="torchapprox.operators.backend.ta_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ta_backend</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Permalink to this heading">#</a></h2>
 <dl class="py data">
-<dt class="sig sig-object py" id="torchapprox.operators.backend.logger">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.backend.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#torchapprox.operators.backend.logger" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="torchapprox.operators.htp_models.htp_models_mul8s">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.htp_models.</span></span><span class="sig-name descname"><span class="pre">htp_models_mul8s</span></span><a class="headerlink" href="#torchapprox.operators.htp_models.htp_models_mul8s" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="torchapprox.operators.backend.sources">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.backend.</span></span><span class="sig-name descname"><span class="pre">sources</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">['../../cpu/ta_gemm_cpu.cpp']</span></em><a class="headerlink" href="#torchapprox.operators.backend.sources" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="torchapprox.operators.htp_models.htp_models_mul12s">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.htp_models.</span></span><span class="sig-name descname"><span class="pre">htp_models_mul12s</span></span><a class="headerlink" href="#torchapprox.operators.htp_models.htp_models_mul12s" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="torchapprox.operators.backend.extra_cflags">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.backend.</span></span><span class="sig-name descname"><span class="pre">extra_cflags</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">['-fopenmp']</span></em><a class="headerlink" href="#torchapprox.operators.backend.extra_cflags" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="torchapprox.operators.htp_models.htp_models_mul16s">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.htp_models.</span></span><span class="sig-name descname"><span class="pre">htp_models_mul16s</span></span><a class="headerlink" href="#torchapprox.operators.htp_models.htp_models_mul16s" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="torchapprox.operators.backend.dirname">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.backend.</span></span><span class="sig-name descname"><span class="pre">dirname</span></span><a class="headerlink" href="#torchapprox.operators.backend.dirname" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.backend.</span></span><span class="sig-name descname"><span class="pre">sources</span></span><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="torchapprox.operators.backend.ta_backend">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.backend.</span></span><span class="sig-name descname"><span class="pre">ta_backend</span></span><a class="headerlink" href="#torchapprox.operators.backend.ta_backend" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="torchapprox.operators.backend.dwconv2d">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.backend.</span></span><span class="sig-name descname"><span class="pre">dwconv2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.operators.backend.dwconv2d" title="Permalink to this definition">#</a></dt>
-<dd><p>Approximate 2D Depthwise Convolution</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="torchapprox.operators.backend.approx">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.operators.backend.</span></span><span class="sig-name descname"><span class="pre">approx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="headerlink" href="#torchapprox.operators.backend.approx" title="Permalink to this definition">#</a></dt>
-<dd><p>Input validation wrapper for Approximate GeMM</p>
-<p>Expected are two matrices <cite>a</cite> and <cite>b</cite>, one of which needs to be batched</p>
-</dd></dl>
-
-</section>
 </section>
 </section>
 
@@ -331,23 +271,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../conv2d/index.html">
+          <a class="next-page" href="htp_models_mul12s/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.conv2d</span></code></div>
+                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models.htp_models_mul12s</span></code></div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../approxgemm/index.html">
+          <a class="prev-page" href="../index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.approxgemm</span></code></div>
+                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators</span></code></div>
                 
               </div>
             </a>
@@ -383,28 +323,15 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.backend</span></code></a><ul>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#attributes">Attributes</a><ul>
-<li><a class="reference internal" href="#torchapprox.operators.backend.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.sources"><code class="docutils literal notranslate"><span class="pre">sources</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.extra_cflags"><code class="docutils literal notranslate"><span class="pre">extra_cflags</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.dirname"><code class="docutils literal notranslate"><span class="pre">dirname</span></code></a></li>
-<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">sources</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.ta_backend"><code class="docutils literal notranslate"><span class="pre">ta_backend</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.dwconv2d"><code class="docutils literal notranslate"><span class="pre">dwconv2d()</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.approx"><code class="docutils literal notranslate"><span class="pre">approx()</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.logger">logger</a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.sources">sources</a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.extra_cflags">extra_cflags</a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.dirname">dirname</a></li>
-<li><a class="reference internal" href="#id0">sources</a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.ta_backend">ta_backend</a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.dwconv2d">dwconv2d</a></li>
-<li><a class="reference internal" href="#torchapprox.operators.backend.approx">approx</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators.htp_models</span></code></a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
+<li><a class="reference internal" href="#torchapprox.operators.htp_models.htp_models_mul8s"><code class="docutils literal notranslate"><span class="pre">htp_models_mul8s</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.htp_models.htp_models_mul12s"><code class="docutils literal notranslate"><span class="pre">htp_models_mul12s</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.htp_models.htp_models_mul16s"><code class="docutils literal notranslate"><span class="pre">htp_models_mul16s</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.operators.htp_models.htp_models_mul8s">htp_models_mul8s</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.htp_models.htp_models_mul12s">htp_models_mul12s</a></li>
+<li><a class="reference internal" href="#torchapprox.operators.htp_models.htp_models_mul16s">htp_models_mul16s</a></li>
 </ul>
 </li>
 </ul>

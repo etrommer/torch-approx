@@ -9,6 +9,15 @@
 
 
 
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   htp_models/index.rst
+
+
 Submodules
 ----------
 .. toctree::
@@ -18,7 +27,6 @@ Submodules
    approxgemm/index.rst
    backend/index.rst
    conv2d/index.rst
-   fast_models/index.rst
    linear/index.rst
    lut/index.rst
 
