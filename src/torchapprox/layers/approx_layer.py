@@ -2,7 +2,7 @@
 import enum
 import logging
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, no_type_check
+from typing import TYPE_CHECKING, Callable, Optional, no_type_check
 
 import torch
 
@@ -40,7 +40,7 @@ class ApproxLayer(ABC):
         self.w_quantizer: "ApproxQuantizer" = MinMaxQuant()
         self.approx_op: LUT = LUT()
         self.inference_mode: InferenceMode = InferenceMode.BASELINE
-        self.fast_model: Optional[str] = None
+        self.fast_model: Optional[Callable] = None
 
         self._stdev: torch.nn.Paramter = torch.nn.Parameter(
             torch.tensor(0.0), requires_grad=True
