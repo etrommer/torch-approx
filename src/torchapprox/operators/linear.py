@@ -1,8 +1,6 @@
 # pylint: disable=missing-module-docstring, arguments-differ, abstract-method
 import torch
 
-from .fast_models import fast_models
-
 
 class FastLinearOp(torch.autograd.Function):
     """
@@ -12,9 +10,9 @@ class FastLinearOp(torch.autograd.Function):
     """
 
     @staticmethod
-    def forward(ctx, x: torch.Tensor, w: torch.Tensor, model: str):
+    def forward(ctx, x, w, model):
         ctx.save_for_backward(x, w)
-        return fast_models[model](torch.nn.functional.linear, x, w, {})
+        return model(torch.nn.functional.linear, x, w, {})
 
     @staticmethod
     def backward(ctx, grad):

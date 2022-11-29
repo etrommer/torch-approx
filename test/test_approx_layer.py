@@ -95,11 +95,8 @@ def test_conv2d_properties():
 layer_configs = [
     (tal.ApproxLinear, (4, 20), (20, 10), {}),
     (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 1}),
-    # Gradient Calculation is currently broken in upstream PyTorch
-    # but should be fixed in next release
-    # https://github.com/pytorch/pytorch/issues/51430
-    # (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 2}),
-    # (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 4}),
+    (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 2}),
+    (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 4}),
     (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 8}),
     (tal.ApproxConv2d, (2, 8, 4, 4), (8, 8, 3), {"groups": 8}),
     (tal.ApproxConv2d, (2, 16, 32, 32), (16, 16, 3), {"groups": 16}),
