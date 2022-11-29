@@ -10,13 +10,28 @@ GPU-accelerated Neural Network layers using Approximate Multiplication for PyTor
 
 ## Installation
 
+### via pip
 ```bash
 $ pip install torchapprox
+```
+### via Github
+```bash
+git clone https://github.com/etrommer/torch-approx
+cd torch-approx
+poetry install
 ```
 
 ## Usage
 
-- TODO
+### Unit Test
+Run Unit Tests with
+```bash
+poetry run pytest
+```
+### Benchmarking
+```bash
+poetry run pytest benchmarks
+```
 
 ## Contributing
 
