@@ -1,4 +1,4 @@
-name: pytest
+name: Unit Tests
 on:
     push:
         paths:
@@ -15,11 +15,11 @@ jobs:
             - name: Install dependencies
               run: sudo apt-get install -y ninja-build libomp-dev
             - name: Install poetry
-              run: pipx install poetry==1.2.0rc2
+              run: pipx install poetry==1.2.1
             - name: Setup Python
               uses: actions/setup-python@v4
               with:
-                  python-version: '3.9'
+                  python-version: '3.8'
                   cache: 'poetry'
             - run: poetry install
             - run: poetry run pytest

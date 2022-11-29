@@ -6,7 +6,6 @@ from typing import Any, Dict, Tuple, Union
 import torch
 
 from .backend import approx, dwconv2d
-from .fast_models import fast_models
 
 
 @dataclass
@@ -156,7 +155,7 @@ class FastApproxConv2dOp(torch.autograd.Function):
     def forward(ctx, x, w, model, kwargs):
         ctx.save_for_backward(x, w)
         ctx.conf = kwargs
-        return fast_models[model](torch.nn.functional.conv2d, x, w, kwargs)
+        return model(torch.nn.functional.conv2d, x, w, kwargs)
 
     @staticmethod
     def backward(ctx, grad):
