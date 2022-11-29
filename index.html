@@ -136,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -227,7 +227,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -243,15 +243,36 @@ GPU-accelerated Neural Network layers using Approximate Multiplication for PyTor
 </div>
 <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h1>
+<section id="via-pip">
+<h2>via pip<a class="headerlink" href="#via-pip" title="Permalink to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install torchapprox
 </pre></div>
 </div>
 </section>
+<section id="via-github">
+<h2>via Github<a class="headerlink" href="#via-github" title="Permalink to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/etrommer/torch-approx
+<span class="nb">cd</span> torch-approx
+poetry install
+</pre></div>
+</div>
+</section>
+</section>
 <section id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">#</a></h1>
-<ul class="simple">
-<li><p>TODO</p></li>
-</ul>
+<section id="unit-test">
+<h2>Unit Test<a class="headerlink" href="#unit-test" title="Permalink to this heading">#</a></h2>
+<p>Run Unit Tests with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run pytest
+</pre></div>
+</div>
+</section>
+<section id="benchmarking">
+<h2>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run pytest benchmarks
+</pre></div>
+</div>
+</section>
 </section>
 <section id="contributing">
 <h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">#</a></h1>
@@ -307,8 +328,36 @@ GPU-accelerated Neural Network layers using Approximate Multiplication for PyTor
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#via-pip">via pip</a></li>
+<li><a class="reference internal" href="#via-github">via Github</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#unit-test">Unit Test</a></li>
+<li><a class="reference internal" href="#benchmarking">Benchmarking</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contributing">Contributing</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+<li><a class="reference internal" href="#credits">Credits</a></li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
