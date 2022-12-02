@@ -23,7 +23,7 @@ poetry install
 
 ## Usage
 
-### Unit Test
+### Unit Tests
 Run Unit Tests with
 ```bash
 poetry run pytest
@@ -32,6 +32,12 @@ poetry run pytest
 ```bash
 poetry run pytest benchmarks
 ```
+### EvoApproxLib
+The [EvoApprox Library of Approximate Circuits](https://github.com/ehw-fit/evoapproxlib/tree/v2022) is used as a reference and for testing in several places throughout this package. Because downloading and compiling the library is relatively time-consuming, it is not part of the automated package install. Instead, it needs to be installed by hand if required. To install it, run:
+```bash
+poetry run bash install_evoapprox.sh
+```
+this compiles and installs the library into the poetry environment of the project.
 
 ## Contributing
 
