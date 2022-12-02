@@ -260,8 +260,8 @@ poetry install
 </section>
 <section id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">#</a></h1>
-<section id="unit-test">
-<h2>Unit Test<a class="headerlink" href="#unit-test" title="Permalink to this heading">#</a></h2>
+<section id="unit-tests">
+<h2>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this heading">#</a></h2>
 <p>Run Unit Tests with</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run pytest
 </pre></div>
@@ -270,6 +270,13 @@ poetry install
 <section id="benchmarking">
 <h2>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run pytest benchmarks
+</pre></div>
+</div>
+</section>
+<section id="evoapproxlib">
+<h2>EvoApproxLib<a class="headerlink" href="#evoapproxlib" title="Permalink to this heading">#</a></h2>
+<p>The <a class="reference external" href="https://github.com/ehw-fit/evoapproxlib/tree/v2022">EvoApprox Library of Approximate Circuits</a> is used as a reference and for testing in several places throughout this package. Because downloading and compiling the library is relatively time-consuming, it is not part of the automated package install. Instead, it needs to be installed by hand if required. To install it, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run bash install_evoapprox.sh
 </pre></div>
 </div>
 </section>
@@ -346,8 +353,9 @@ poetry install
 </ul>
 </li>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#unit-test">Unit Test</a></li>
+<li><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
 <li><a class="reference internal" href="#benchmarking">Benchmarking</a></li>
+<li><a class="reference internal" href="#evoapproxlib">EvoApproxLib</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
