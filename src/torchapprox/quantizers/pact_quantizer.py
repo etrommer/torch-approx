@@ -27,54 +27,24 @@ class PACTQuant(ApproxQuantizer):
     def scale_factor(self) -> float:
         return self.int_max / self.alpha.item()
 
-    def fake_quant(self, x):
+    def quantize(self, x):
         self.int_max = self.int_max.to(x.device)
-        return self.FakeQuant.apply(x, self.alpha, self.int_max)
+        return self.Quant.apply(x, self.alpha, self.int_max)
 
-    def quantize(self, x, rounded=True):
-        self.int_max = self.int_max.to(x.device)
-        return self.Quant.apply(x, self.alpha, self.int_max, rounded)
-
-    class FakeQuant(torch.autograd.Function):
-        """
-        Differentiable Fake-Quantization Node
-        """
-
-        @staticmethod
-        def forward(ctx, x, alpha, int_max):
-            alpha = torch.abs(alpha)
-            scale_factor = int_max / alpha
-            ctx.save_for_backward(x, alpha)
-
-            x_quant = torch.clamp(x, min=-alpha.item(), max=alpha.item())
-            x_quant = torch.round(x_quant * scale_factor) / scale_factor
-            return x_quant
-
-        @staticmethod
-        def backward(ctx, grad_x_quant):
-            x, alpha = ctx.saved_tensors
-            lower_bound = x < -alpha
-            upper_bound = x > alpha
-            x_range = ~(lower_bound | upper_bound)
-            grad_alpha = torch.sum(grad_x_quant * (~x_range).float()).view(-1)
-            return grad_x_quant * x_range.float(), grad_alpha, None, None
-
-    # pylint: disable=duplicate-code
     class Quant(torch.autograd.Function):
         """
         Differentiable Integer Quantization Node
         """
 
         @staticmethod
-        def forward(ctx, x, alpha, int_max, rounded):
+        def forward(ctx, x, alpha, int_max):
             scale_factor = int_max / alpha.item()
             ctx.save_for_backward(scale_factor)
             x_quant = torch.clamp((scale_factor * x), min=-int_max, max=int_max)
-            if rounded:
-                x_quant = torch.round(x_quant)
+            x_quant = torch.round(x_quant)
             return x_quant
 
         @staticmethod
         def backward(ctx, grad_x_quant):
             (scale_factor,) = ctx.saved_tensors
-            return grad_x_quant * scale_factor, None, None, None
+            return grad_x_quant * scale_factor, None, None

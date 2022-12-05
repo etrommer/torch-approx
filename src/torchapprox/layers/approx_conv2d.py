@@ -142,8 +142,8 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         )
 
     def quant_fwd(self, x):
-        x_q = self.x_quantizer.fake_quant(x)
-        w_q = self.w_quantizer.fake_quant(self.weight)
+        x_q = self.x_quantizer.quantize(x)
+        w_q = self.w_quantizer.quantize(self.weight)
         y = torch.nn.functional.conv2d(
             x_q,
             w_q,
@@ -152,6 +152,7 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
             dilation=self.dilation,
             groups=self.groups,
         )
+        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
     def approx_fwd(self, x):
