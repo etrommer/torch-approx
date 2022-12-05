@@ -3,7 +3,12 @@ import torch
 import torchvision.models as models
 
 import torchapprox.layers as tal
-from torchapprox.utils import get_approx_modules, inplace_conversion
+from torchapprox.operators.htp_models import (
+    htp_models_mul8s,
+    htp_models_mul12s,
+    htp_models_mul16s,
+)
+from torchapprox.utils.conversion import get_approx_modules, inplace_conversion
 
 
 def set_bench_type(net, bench_type, lut):
@@ -14,11 +19,11 @@ def set_bench_type(net, bench_type, lut):
             m.inference_mode = tal.InferenceMode.APPROXIMATE
             m.fast_model = None
             m.approx_op.lut = lut
-        elif bench_type == "fast_model":
-            m.inference_mode = tal.InferenceMode.APPROXIMATE
-            m.fast_model = "mul8s_1L2D"
         elif bench_type == "baseline":
             m.inference_mode = tal.InferenceMode.QUANTIZED
+        else:
+            m.inference_mode = tal.InferenceMode.APPROXIMATE
+            m.fast_model = bench_type[1]
 
 
 input_sizes = {
@@ -35,11 +40,23 @@ def bench_torchapprox(bench_architecture):
     return model
 
 
+base_models = ["baseline", "lut"]
+fast_models = (
+    list(htp_models_mul8s.items())
+    + list(htp_models_mul12s.items())
+    + list(htp_models_mul16s.items())
+)
+
+
 @pytest.mark.skipif(
     not torch.cuda.is_available(),
     reason="CUDA not available, skipping networks benchmark",
 )
-@pytest.mark.parametrize("bench_type", ["baseline", "fast_model", "lut"])
+@pytest.mark.parametrize(
+    "bench_type",
+    base_models + fast_models,
+    ids=base_models + [f[0] for f in fast_models],
+)
 def test_bench_torchapprox(benchmark, bench_torchapprox, bench_type, lut):
     net = bench_torchapprox
     set_bench_type(net, bench_type, lut)

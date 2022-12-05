@@ -88,7 +88,7 @@ ta_gemm_kernel_batchb(cudaTextureObject_t tex,
             auto i1 = static_cast<uint8_t>(a_shared[threadIdx.y][n]);
             auto i2 = static_cast<uint8_t>(b_shared[threadIdx.x][n]);
 
-            auto idx = (i1 << 8) | i2;
+            auto idx = (i2 << 8) | i1;
             auto val = tex1Dfetch<int16_t>(tex, idx);
             acc += val;
         }
