@@ -39,17 +39,7 @@ Classes
       :returns: The value with which a float tensor is multiplied
                 in order to scale it to Integer numerical range
 
-   .. py:method:: fake_quant(x: torch.FloatTensor) -> torch.FloatTensor
-      :abstractmethod:
-
-      Apply Fake Quantization to a tensor of floats
-
-      :param x: Floating-point input
-
-      :returns: Fake-quantized output
-
-
-   .. py:method:: quantize(x: torch.FloatTensor, rounded: bool = True) -> torch.FloatTensor
+   .. py:method:: quantize(x: torch.FloatTensor) -> torch.FloatTensor
       :abstractmethod:
 
       Apply quantization operation to input tensor

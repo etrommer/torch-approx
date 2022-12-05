@@ -1,0 +1,55 @@
+:py:mod:`torchapprox.utils.evoapprox`
+=====================================
+
+.. py:module:: torchapprox.utils.evoapprox
+
+.. autoapi-nested-parse::
+
+   Utilities for working with the EvoApprox Libray
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   torchapprox.utils.evoapprox.approx_multiplication
+   torchapprox.utils.evoapprox.lut
+
+
+
+.. py:function:: approx_multiplication(multiplier, range_x, range_y, signed, bitwidth)
+
+   Calculate approximate multiplication result of supplied
+   approximate multiplier along a given range.
+
+   :param multiplier: The `evoapprox` class to evaluate
+   :param range_x: Iterable of first operand range
+   :param range_y: Iterable of second operand range
+   :param signed: Signed or unsigned multiplication
+   :param bitwidth: Bitwidth of approximate multiplier
+
+   :returns: Array of the approximate multiplication result across the
+             Cartesian product of the supplied input operand ranges
+
+
+.. py:function:: lut(multiplier_name: str, bitwidth: Optional[int] = None, signed: Optional[bool] = None)
+
+   Generate Lookup-Table for supplied EvoApprox multiplier
+
+   :param multiplier_name: Name of the desired multiplier, e.g. `mul8s_1KV6`
+   :param bitwidth: Bitwidth of the multiplier.
+                    If not supplied, this is inferred from the `multiplier_name`. Defaults to None.
+   :param signed: Signedness of the multiplier.
+                  If not supplied, this is inferred from the `multiplier_name`. Defaults to None.
+
+   :raises ImportError: Raised if the supplied multiplier name could not be loaded from the evoapprox library.
+
+   :returns: Lookup table of the Approximate Multiplication result across the input operand range.
+
+

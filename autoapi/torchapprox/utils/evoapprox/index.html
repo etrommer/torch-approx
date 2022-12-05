@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="torchapprox.operators" href="../../operators/index.html" /><link rel="prev" title="torchapprox.layers.approx_layer" href="../approx_layer/index.html" />
+<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="prev" title="torchapprox.utils.conversion" href="../conversion/index.html" />
 
     <link rel="shortcut icon" href="../../../../_static/torchapprox_icon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>torchapprox.layers.approx_linear - TorchApprox Documentation</title>
+        <title>torchapprox.utils.evoapprox - TorchApprox Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -165,10 +165,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../conduct.html">Code of Conduct</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="../approx_conv2d/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_conv2d</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../approx_layer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_layer</span></code></a></li>
-<li class="toctree-l4 current current-page"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_linear</span></code></a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../layers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../layers/approx_conv2d/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_conv2d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../layers/approx_layer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_layer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../layers/approx_linear/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_linear</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../operators/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -191,9 +191,9 @@
 <li class="toctree-l4"><a class="reference internal" href="../../quantizers/pact_quantizer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.quantizers.pact_quantizer</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../utils/conversion/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../utils/evoapprox/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a></li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../conversion/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -234,112 +234,68 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-torchapprox.layers.approx_linear">
-<span id="torchapprox-layers-approx-linear"></span><h1><a class="reference internal" href="#module-torchapprox.layers.approx_linear" title="torchapprox.layers.approx_linear"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_linear</span></code></a><a class="headerlink" href="#module-torchapprox.layers.approx_linear" title="Permalink to this heading">#</a></h1>
+          <section id="module-torchapprox.utils.evoapprox">
+<span id="torchapprox-utils-evoapprox"></span><h1><a class="reference internal" href="#module-torchapprox.utils.evoapprox" title="torchapprox.utils.evoapprox"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a><a class="headerlink" href="#module-torchapprox.utils.evoapprox" title="Permalink to this heading">#</a></h1>
+<p>Utilities for working with the EvoApprox Libray</p>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">#</a></h2>
-<section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">#</a></h3>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear" title="torchapprox.layers.approx_linear.ApproxLinear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproxLinear</span></code></a></p></td>
-<td><p>Approximate Linear Layer implementation</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.approx_multiplication" title="torchapprox.utils.evoapprox.approx_multiplication"><code class="xref py py-obj docutils literal notranslate"><span class="pre">approx_multiplication</span></code></a>(multiplier, range_x, range_y, ...)</p></td>
+<td><p>Calculate approximate multiplication result of supplied</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.lut" title="torchapprox.utils.evoapprox.lut"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lut</span></code></a>(multiplier_name[, bitwidth, signed])</p></td>
+<td><p>Generate Lookup-Table for supplied EvoApprox multiplier</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<dl class="py class">
-<dt class="sig sig-object py" id="torchapprox.layers.approx_linear.ApproxLinear">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torchapprox.layers.approx_linear.</span></span><span class="sig-name descname"><span class="pre">ApproxLinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.layers.approx_linear.ApproxLinear" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Linear</span></code>, <a class="reference internal" href="../approx_layer/index.html#torchapprox.layers.approx_layer.ApproxLayer" title="torchapprox.layers.approx_layer.ApproxLayer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torchapprox.layers.approx_layer.ApproxLayer</span></code></a></p>
-<p>Approximate Linear Layer implementation</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="torchapprox.layers.approx_linear.ApproxLinear.fan_in">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fan_in</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#torchapprox.layers.approx_linear.ApproxLinear.fan_in" title="Permalink to this definition">#</a></dt>
-<dd><p>Number of incoming connections for a neuron in this layer</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torchapprox.layers.approx_linear.ApproxLinear.opcount">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">opcount</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#torchapprox.layers.approx_linear.ApproxLinear.opcount" title="Permalink to this definition">#</a></dt>
-<dd><p>Number of multiplications for a single
-forward pass of this layer</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.layers.approx_linear.ApproxLinear.from_super">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_super</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Linear</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.layers.approx_linear.ApproxLinear.from_super" title="Permalink to this definition">#</a></dt>
-<dd><p>Alias for from_linear</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.layers.approx_linear.ApproxLinear.from_linear">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Linear</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.layers.approx_linear.ApproxLinear.from_linear" title="Permalink to this definition">#</a></dt>
-<dd><p>Construct ApproxLinear from torch.nn.Linear layer</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.layers.approx_linear.ApproxLinear.baseline_fwd">
-<span class="sig-name descname"><span class="pre">baseline_fwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.layers.approx_linear.ApproxLinear.baseline_fwd" title="Permalink to this definition">#</a></dt>
-<dd><p>Unperturbed FP32 forward pass</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.utils.evoapprox.approx_multiplication">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">approx_multiplication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitwidth</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.utils.evoapprox.approx_multiplication" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate approximate multiplication result of supplied
+approximate multiplier along a given range.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> – Layer input</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>multiplier</strong> – The <cite>evoapprox</cite> class to evaluate</p></li>
+<li><p><strong>range_x</strong> – Iterable of first operand range</p></li>
+<li><p><strong>range_y</strong> – Iterable of second operand range</p></li>
+<li><p><strong>signed</strong> – Signed or unsigned multiplication</p></li>
+<li><p><strong>bitwidth</strong> – Bitwidth of approximate multiplier</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Layer output</p>
+<dd class="field-even"><p>Array of the approximate multiplication result across the
+Cartesian product of the supplied input operand ranges</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.layers.approx_linear.ApproxLinear.quant_fwd">
-<span class="sig-name descname"><span class="pre">quant_fwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.layers.approx_linear.ApproxLinear.quant_fwd" title="Permalink to this definition">#</a></dt>
-<dd><p>Quantized Forward Pass
-Performs the layer operation with an additional pass through the
-currently configured quantizer</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.utils.evoapprox.lut">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.utils.evoapprox.lut" title="Permalink to this definition">#</a></dt>
+<dd><p>Generate Lookup-Table for supplied EvoApprox multiplier</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> – Layer input</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>multiplier_name</strong> – Name of the desired multiplier, e.g. <cite>mul8s_1KV6</cite></p></li>
+<li><p><strong>bitwidth</strong> – Bitwidth of the multiplier.
+If not supplied, this is inferred from the <cite>multiplier_name</cite>. Defaults to None.</p></li>
+<li><p><strong>signed</strong> – Signedness of the multiplier.
+If not supplied, this is inferred from the <cite>multiplier_name</cite>. Defaults to None.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Layer output</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ImportError</strong> – Raised if the supplied multiplier name could not be loaded from the evoapprox library.</p>
 </dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.layers.approx_linear.ApproxLinear.approx_fwd">
-<span class="sig-name descname"><span class="pre">approx_fwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.layers.approx_linear.ApproxLinear.approx_fwd" title="Permalink to this definition">#</a></dt>
-<dd><p>Approximate Product Forward Pass
-Performs the layer operation using the currently configured
-approximate product Lookup Table.
-Quantization is implicitly applied to the input and weights.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> – Layer input</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Layer output</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lookup table of the Approximate Multiplication result across the input operand range.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.layers.approx_linear.ApproxLinear.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.layers.approx_linear.ApproxLinear.forward" title="Permalink to this definition">#</a></dt>
-<dd><p>Forward pass with currently selected mode applied</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> – Layer input</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Layer output</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 </section>
@@ -351,23 +307,15 @@ Quantization is implicitly applied to the input and weights.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../../operators/index.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.operators</span></code></div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="../approx_layer/index.html">
+          
+          <a class="prev-page" href="../conversion/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_layer</span></code></div>
+                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></div>
                 
               </div>
             </a>
@@ -403,31 +351,13 @@ Quantization is implicitly applied to the input and weights.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.layers.approx_linear</span></code></a><ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a><ul>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a><ul>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear"><code class="docutils literal notranslate"><span class="pre">ApproxLinear</span></code></a><ul>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.fan_in"><code class="docutils literal notranslate"><span class="pre">ApproxLinear.fan_in</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.opcount"><code class="docutils literal notranslate"><span class="pre">ApproxLinear.opcount</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.from_super"><code class="docutils literal notranslate"><span class="pre">ApproxLinear.from_super()</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.from_linear"><code class="docutils literal notranslate"><span class="pre">ApproxLinear.from_linear()</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.baseline_fwd"><code class="docutils literal notranslate"><span class="pre">ApproxLinear.baseline_fwd()</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.quant_fwd"><code class="docutils literal notranslate"><span class="pre">ApproxLinear.quant_fwd()</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.approx_fwd"><code class="docutils literal notranslate"><span class="pre">ApproxLinear.approx_fwd()</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.forward"><code class="docutils literal notranslate"><span class="pre">ApproxLinear.forward()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear">ApproxLinear</a><ul>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.fan_in">fan_in</a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.opcount">opcount</a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.from_super">from_super</a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.from_linear">from_linear</a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.baseline_fwd">baseline_fwd</a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.quant_fwd">quant_fwd</a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.approx_fwd">approx_fwd</a></li>
-<li><a class="reference internal" href="#torchapprox.layers.approx_linear.ApproxLinear.forward">forward</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.approx_multiplication"><code class="docutils literal notranslate"><span class="pre">approx_multiplication()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.lut"><code class="docutils literal notranslate"><span class="pre">lut()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.approx_multiplication">approx_multiplication</a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.lut">lut</a></li>
 </ul>
 </li>
 </ul>

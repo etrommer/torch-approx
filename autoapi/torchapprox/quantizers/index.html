@@ -193,6 +193,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../utils/conversion/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/evoapprox/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -294,22 +295,8 @@ in order to scale it to Integer numerical range</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.quantizers.ApproxQuantizer.fake_quant">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fake_quant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.FloatTensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.FloatTensor</span></span></span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/approx_quantizer.html#ApproxQuantizer.fake_quant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.ApproxQuantizer.fake_quant" title="Permalink to this definition">#</a></dt>
-<dd><p>Apply Fake Quantization to a tensor of floats</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> – Floating-point input</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Fake-quantized output</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="torchapprox.quantizers.ApproxQuantizer.quantize">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quantize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.FloatTensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.FloatTensor</span></span></span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/approx_quantizer.html#ApproxQuantizer.quantize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.ApproxQuantizer.quantize" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quantize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.FloatTensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.FloatTensor</span></span></span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/approx_quantizer.html#ApproxQuantizer.quantize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.ApproxQuantizer.quantize" title="Permalink to this definition">#</a></dt>
 <dd><p>Apply quantization operation to input tensor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -332,58 +319,13 @@ in order to scale it to Integer numerical range</p>
 <dd><p>Bases: <a class="reference internal" href="approx_quantizer/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer" title="torchapprox.quantizers.approx_quantizer.ApproxQuantizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torchapprox.quantizers.approx_quantizer.ApproxQuantizer</span></code></a></p>
 <p>Min/Max-Quantizer container class</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="torchapprox.quantizers.MinMaxQuant.FakeQuant">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FakeQuant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/minmax_quantizer.html#MinMaxQuant.FakeQuant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.autograd.Function</span></code></p>
-<p>Differentiable Fake-quantization node</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.quantizers.MinMaxQuant.FakeQuant.forward">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/minmax_quantizer.html#MinMaxQuant.FakeQuant.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.forward" title="Permalink to this definition">#</a></dt>
-<dd><p>Performs the operation.</p>
-<p>This function is to be overridden by all subclasses.</p>
-<p>It must accept a context ctx as the first argument, followed by any
-number of arguments (tensors or other types).</p>
-<p>The context can be used to store arbitrary data that can be then
-retrieved during the backward pass. Tensors should not be stored
-directly on <cite>ctx</cite> (though this is not currently enforced for
-backward compatibility). Instead, tensors should be saved either with
-<code class="xref py py-func docutils literal notranslate"><span class="pre">ctx.save_for_backward()</span></code> if they are intended to be used in
-<code class="docutils literal notranslate"><span class="pre">backward</span></code> (equivalently, <code class="docutils literal notranslate"><span class="pre">vjp</span></code>) or <code class="xref py py-func docutils literal notranslate"><span class="pre">ctx.save_for_forward()</span></code>
-if they are intended to be used for in <code class="docutils literal notranslate"><span class="pre">jvp</span></code>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.quantizers.MinMaxQuant.FakeQuant.backward">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_x_quant</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/minmax_quantizer.html#MinMaxQuant.FakeQuant.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.backward" title="Permalink to this definition">#</a></dt>
-<dd><p>Defines a formula for differentiating the operation with backward mode
-automatic differentiation (alias to the vjp function).</p>
-<p>This function is to be overridden by all subclasses.</p>
-<p>It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
-as many outputs as the <a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.forward" title="torchapprox.quantizers.MinMaxQuant.FakeQuant.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> returned (None will be passed in
-for non tensor outputs of the forward function),
-and it should return as many tensors, as there were inputs to
-<a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.forward" title="torchapprox.quantizers.MinMaxQuant.FakeQuant.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>. Each argument is the gradient w.r.t the given output,
-and each returned value should be the gradient w.r.t. the
-corresponding input. If an input is not a Tensor or is a Tensor not
-requiring grads, you can just pass None as a gradient for that input.</p>
-<p>The context can be used to retrieve tensors saved during the forward
-pass. It also has an attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx.needs_input_grad</span></code> as a tuple
-of booleans representing whether each input needs gradient. E.g.,
-<a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.backward" title="torchapprox.quantizers.MinMaxQuant.FakeQuant.backward"><code class="xref py py-func docutils literal notranslate"><span class="pre">backward()</span></code></a> will have <code class="docutils literal notranslate"><span class="pre">ctx.needs_input_grad[0]</span> <span class="pre">=</span> <span class="pre">True</span></code> if the
-first input to <a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.forward" title="torchapprox.quantizers.MinMaxQuant.FakeQuant.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> needs gradient computated w.r.t. the
-output.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="torchapprox.quantizers.MinMaxQuant.Quant">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Quant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/minmax_quantizer.html#MinMaxQuant.Quant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.MinMaxQuant.Quant" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.autograd.Function</span></code></p>
 <p>Differentiable Integer Quantization node</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="torchapprox.quantizers.MinMaxQuant.Quant.forward">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounded</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/minmax_quantizer.html#MinMaxQuant.Quant.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.MinMaxQuant.Quant.forward" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/minmax_quantizer.html#MinMaxQuant.Quant.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.MinMaxQuant.Quant.forward" title="Permalink to this definition">#</a></dt>
 <dd><p>Performs the operation.</p>
 <p>This function is to be overridden by all subclasses.</p>
 <p>It must accept a context ctx as the first argument, followed by any
@@ -434,22 +376,8 @@ in order to scale it to Integer numerical range</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.quantizers.MinMaxQuant.fake_quant">
-<span class="sig-name descname"><span class="pre">fake_quant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/minmax_quantizer.html#MinMaxQuant.fake_quant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.MinMaxQuant.fake_quant" title="Permalink to this definition">#</a></dt>
-<dd><p>Apply Fake Quantization to a tensor of floats</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> – Floating-point input</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Fake-quantized output</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="torchapprox.quantizers.MinMaxQuant.quantize">
-<span class="sig-name descname"><span class="pre">quantize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/minmax_quantizer.html#MinMaxQuant.quantize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.MinMaxQuant.quantize" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">quantize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/minmax_quantizer.html#MinMaxQuant.quantize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.MinMaxQuant.quantize" title="Permalink to this definition">#</a></dt>
 <dd><p>Apply quantization operation to input tensor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -472,58 +400,13 @@ in order to scale it to Integer numerical range</p>
 <dd><p>Bases: <a class="reference internal" href="approx_quantizer/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer" title="torchapprox.quantizers.approx_quantizer.ApproxQuantizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torchapprox.quantizers.approx_quantizer.ApproxQuantizer</span></code></a></p>
 <p>ApproxQuantizer implementation container for PACT algorithm</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="torchapprox.quantizers.PACTQuant.FakeQuant">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FakeQuant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/pact_quantizer.html#PACTQuant.FakeQuant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.PACTQuant.FakeQuant" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.autograd.Function</span></code></p>
-<p>Differentiable Fake-Quantization Node</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.quantizers.PACTQuant.FakeQuant.forward">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/pact_quantizer.html#PACTQuant.FakeQuant.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.PACTQuant.FakeQuant.forward" title="Permalink to this definition">#</a></dt>
-<dd><p>Performs the operation.</p>
-<p>This function is to be overridden by all subclasses.</p>
-<p>It must accept a context ctx as the first argument, followed by any
-number of arguments (tensors or other types).</p>
-<p>The context can be used to store arbitrary data that can be then
-retrieved during the backward pass. Tensors should not be stored
-directly on <cite>ctx</cite> (though this is not currently enforced for
-backward compatibility). Instead, tensors should be saved either with
-<code class="xref py py-func docutils literal notranslate"><span class="pre">ctx.save_for_backward()</span></code> if they are intended to be used in
-<code class="docutils literal notranslate"><span class="pre">backward</span></code> (equivalently, <code class="docutils literal notranslate"><span class="pre">vjp</span></code>) or <code class="xref py py-func docutils literal notranslate"><span class="pre">ctx.save_for_forward()</span></code>
-if they are intended to be used for in <code class="docutils literal notranslate"><span class="pre">jvp</span></code>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.quantizers.PACTQuant.FakeQuant.backward">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_x_quant</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/pact_quantizer.html#PACTQuant.FakeQuant.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.PACTQuant.FakeQuant.backward" title="Permalink to this definition">#</a></dt>
-<dd><p>Defines a formula for differentiating the operation with backward mode
-automatic differentiation (alias to the vjp function).</p>
-<p>This function is to be overridden by all subclasses.</p>
-<p>It must accept a context <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx</span></code> as the first argument, followed by
-as many outputs as the <a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant.forward" title="torchapprox.quantizers.PACTQuant.FakeQuant.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> returned (None will be passed in
-for non tensor outputs of the forward function),
-and it should return as many tensors, as there were inputs to
-<a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant.forward" title="torchapprox.quantizers.PACTQuant.FakeQuant.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>. Each argument is the gradient w.r.t the given output,
-and each returned value should be the gradient w.r.t. the
-corresponding input. If an input is not a Tensor or is a Tensor not
-requiring grads, you can just pass None as a gradient for that input.</p>
-<p>The context can be used to retrieve tensors saved during the forward
-pass. It also has an attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">ctx.needs_input_grad</span></code> as a tuple
-of booleans representing whether each input needs gradient. E.g.,
-<a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant.backward" title="torchapprox.quantizers.PACTQuant.FakeQuant.backward"><code class="xref py py-func docutils literal notranslate"><span class="pre">backward()</span></code></a> will have <code class="docutils literal notranslate"><span class="pre">ctx.needs_input_grad[0]</span> <span class="pre">=</span> <span class="pre">True</span></code> if the
-first input to <a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant.forward" title="torchapprox.quantizers.PACTQuant.FakeQuant.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> needs gradient computated w.r.t. the
-output.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="torchapprox.quantizers.PACTQuant.Quant">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Quant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/pact_quantizer.html#PACTQuant.Quant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.PACTQuant.Quant" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.autograd.Function</span></code></p>
 <p>Differentiable Integer Quantization Node</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="torchapprox.quantizers.PACTQuant.Quant.forward">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounded</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/pact_quantizer.html#PACTQuant.Quant.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.PACTQuant.Quant.forward" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/pact_quantizer.html#PACTQuant.Quant.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.PACTQuant.Quant.forward" title="Permalink to this definition">#</a></dt>
 <dd><p>Performs the operation.</p>
 <p>This function is to be overridden by all subclasses.</p>
 <p>It must accept a context ctx as the first argument, followed by any
@@ -574,22 +457,8 @@ in order to scale it to Integer numerical range</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.quantizers.PACTQuant.fake_quant">
-<span class="sig-name descname"><span class="pre">fake_quant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/pact_quantizer.html#PACTQuant.fake_quant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.PACTQuant.fake_quant" title="Permalink to this definition">#</a></dt>
-<dd><p>Apply Fake Quantization to a tensor of floats</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> – Floating-point input</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Fake-quantized output</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="torchapprox.quantizers.PACTQuant.quantize">
-<span class="sig-name descname"><span class="pre">quantize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/pact_quantizer.html#PACTQuant.quantize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.PACTQuant.quantize" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">quantize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/torchapprox/quantizers/pact_quantizer.html#PACTQuant.quantize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.PACTQuant.quantize" title="Permalink to this definition">#</a></dt>
 <dd><p>Apply quantization operation to input tensor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -674,26 +543,17 @@ in order to scale it to Integer numerical range</p>
 <li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer</span></code></a><ul>
 <li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer.bitwidth"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer.bitwidth</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer.scale_factor"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer.scale_factor</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer.fake_quant"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer.fake_quant()</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer.quantize"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer.quantize()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant</span></code></a><ul>
-<li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant.FakeQuant</span></code></a><ul>
-<li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.forward"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant.FakeQuant.forward()</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.backward"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant.FakeQuant.backward()</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.Quant"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant.Quant</span></code></a><ul>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.Quant.forward"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant.Quant.forward()</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.Quant.backward"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant.Quant.backward()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.scale_factor"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant.scale_factor</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.fake_quant"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant.fake_quant()</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.quantize"><code class="docutils literal notranslate"><span class="pre">MinMaxQuant.quantize()</span></code></a><ul>
-<li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.forward">forward</a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant.backward">backward</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.Quant.forward">forward</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.Quant.backward">backward</a></li>
 </ul>
@@ -701,21 +561,13 @@ in order to scale it to Integer numerical range</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant"><code class="docutils literal notranslate"><span class="pre">PACTQuant</span></code></a><ul>
-<li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant"><code class="docutils literal notranslate"><span class="pre">PACTQuant.FakeQuant</span></code></a><ul>
-<li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant.forward"><code class="docutils literal notranslate"><span class="pre">PACTQuant.FakeQuant.forward()</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant.backward"><code class="docutils literal notranslate"><span class="pre">PACTQuant.FakeQuant.backward()</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.Quant"><code class="docutils literal notranslate"><span class="pre">PACTQuant.Quant</span></code></a><ul>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.Quant.forward"><code class="docutils literal notranslate"><span class="pre">PACTQuant.Quant.forward()</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.Quant.backward"><code class="docutils literal notranslate"><span class="pre">PACTQuant.Quant.backward()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.scale_factor"><code class="docutils literal notranslate"><span class="pre">PACTQuant.scale_factor</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.fake_quant"><code class="docutils literal notranslate"><span class="pre">PACTQuant.fake_quant()</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.quantize"><code class="docutils literal notranslate"><span class="pre">PACTQuant.quantize()</span></code></a><ul>
-<li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant.forward">forward</a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant.backward">backward</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.Quant.forward">forward</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.Quant.backward">backward</a></li>
 </ul>
@@ -725,23 +577,18 @@ in order to scale it to Integer numerical range</p>
 <li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer">ApproxQuantizer</a><ul>
 <li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer.bitwidth">bitwidth</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer.scale_factor">scale_factor</a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer.fake_quant">fake_quant</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.ApproxQuantizer.quantize">quantize</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant">MinMaxQuant</a><ul>
-<li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.FakeQuant">FakeQuant</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.Quant">Quant</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.scale_factor">scale_factor</a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.fake_quant">fake_quant</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.MinMaxQuant.quantize">quantize</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant">PACTQuant</a><ul>
-<li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.FakeQuant">FakeQuant</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.Quant">Quant</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.scale_factor">scale_factor</a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.fake_quant">fake_quant</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.PACTQuant.quantize">quantize</a></li>
 </ul>
 </li>

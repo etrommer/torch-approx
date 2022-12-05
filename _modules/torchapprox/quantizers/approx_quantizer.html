@@ -192,6 +192,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/torchapprox/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/torchapprox/utils/conversion/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/torchapprox/utils/evoapprox/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -248,20 +249,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_bitwidth</span> <span class="o">=</span> <span class="n">bitwidth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">bitwidth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
 
-<div class="viewcode-block" id="ApproxQuantizer.fake_quant"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.fake_quant">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">fake_quant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Apply Fake Quantization to a tensor of floats</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x: Floating-point input</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Fake-quantized output</span>
-<span class="sd">        &quot;&quot;&quot;</span></div>
-
 <div class="viewcode-block" id="ApproxQuantizer.quantize"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.quantize">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">quantize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">,</span> <span class="n">rounded</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">quantize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply quantization operation to input tensor</span>
 

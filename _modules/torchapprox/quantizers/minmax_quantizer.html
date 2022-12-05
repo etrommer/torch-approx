@@ -192,6 +192,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/torchapprox/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/torchapprox/utils/conversion/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/torchapprox/utils/evoapprox/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -255,55 +256,30 @@
     <span class="k">def</span> <span class="nf">scale_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_factor</span>
 
-<div class="viewcode-block" id="MinMaxQuant.fake_quant"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.MinMaxQuant.fake_quant">[docs]</a>    <span class="k">def</span> <span class="nf">fake_quant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="MinMaxQuant.quantize"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.MinMaxQuant.quantize">[docs]</a>    <span class="k">def</span> <span class="nf">quantize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
             <span class="n">minmax</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_scale_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span> <span class="o">/</span> <span class="n">minmax</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">FakeQuant</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">minmax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Quant</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">minmax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MinMaxQuant.quantize"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.MinMaxQuant.quantize">[docs]</a>    <span class="k">def</span> <span class="nf">quantize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">rounded</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-            <span class="n">minmax</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_scale_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span> <span class="o">/</span> <span class="n">minmax</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Quant</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">minmax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_max</span><span class="p">,</span> <span class="n">rounded</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="MinMaxQuant.FakeQuant"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.MinMaxQuant.FakeQuant">[docs]</a>    <span class="k">class</span> <span class="nc">FakeQuant</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Differentiable Fake-quantization node</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="MinMaxQuant.FakeQuant.forward"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.MinMaxQuant.FakeQuant.forward">[docs]</a>        <span class="nd">@staticmethod</span>
-        <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">minmax</span><span class="p">,</span> <span class="n">int_max</span><span class="p">):</span>
-            <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">int_max</span> <span class="o">/</span> <span class="n">minmax</span>
-            <span class="n">x_quant</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="n">minmax</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">minmax</span><span class="p">)</span>
-            <span class="n">x_quant</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x_quant</span> <span class="o">*</span> <span class="n">scale_factor</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale_factor</span>
-            <span class="k">return</span> <span class="n">x_quant</span></div>
-
-<div class="viewcode-block" id="MinMaxQuant.FakeQuant.backward"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.MinMaxQuant.FakeQuant.backward">[docs]</a>        <span class="nd">@staticmethod</span>
-        <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad_x_quant</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">grad_x_quant</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div></div>
-
-    <span class="c1"># pylint: disable=duplicate-code</span>
 <div class="viewcode-block" id="MinMaxQuant.Quant"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.MinMaxQuant.Quant">[docs]</a>    <span class="k">class</span> <span class="nc">Quant</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Differentiable Integer Quantization node</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MinMaxQuant.Quant.forward"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.MinMaxQuant.Quant.forward">[docs]</a>        <span class="nd">@staticmethod</span>
-        <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">minmax</span><span class="p">,</span> <span class="n">int_max</span><span class="p">,</span> <span class="n">rounded</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">minmax</span><span class="p">,</span> <span class="n">int_max</span><span class="p">):</span>
             <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">int_max</span> <span class="o">/</span> <span class="n">minmax</span>
             <span class="n">ctx</span><span class="o">.</span><span class="n">save_for_backward</span><span class="p">(</span><span class="n">scale_factor</span><span class="p">)</span>
             <span class="n">x_quant</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="n">minmax</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">minmax</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale_factor</span>
-            <span class="k">if</span> <span class="n">rounded</span><span class="p">:</span>
-                <span class="n">x_quant</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x_quant</span><span class="p">)</span>
+            <span class="n">x_quant</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x_quant</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">x_quant</span></div>
 
 <div class="viewcode-block" id="MinMaxQuant.Quant.backward"><a class="viewcode-back" href="../../../autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.MinMaxQuant.Quant.backward">[docs]</a>        <span class="nd">@staticmethod</span>
         <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad_x_quant</span><span class="p">):</span>
             <span class="p">(</span><span class="n">scale_factor</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">saved_tensors</span>
-            <span class="k">return</span> <span class="n">grad_x_quant</span> <span class="o">*</span> <span class="n">scale_factor</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div></div></div>
+            <span class="k">return</span> <span class="n">grad_x_quant</span> <span class="o">*</span> <span class="n">scale_factor</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div></div></div>
 </pre></div>
         </article>
       </div>

@@ -191,6 +191,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/torchapprox/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/utils/conversion/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/torchapprox/utils/evoapprox/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -269,16 +270,18 @@
           <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxLinear.approx_fwd">(torchapprox.layers.ApproxLinear method)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/torchapprox/utils/evoapprox/index.html#torchapprox.utils.evoapprox.approx_multiplication">approx_multiplication() (in module torchapprox.utils.evoapprox)</a>
+</li>
         <li><a href="autoapi/torchapprox/layers/index.html#torchapprox.layers.ApproxConv2d">ApproxConv2d (class in torchapprox.layers)</a>
 
         <ul>
           <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d">(class in torchapprox.layers.approx_conv2d)</a>
 </li>
         </ul></li>
-        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.ApproxConv2dOp">ApproxConv2dOp (class in torchapprox.operators.conv2d)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.ApproxConv2dOp">ApproxConv2dOp (class in torchapprox.operators.conv2d)</a>
+</li>
         <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.ApproxDWConv2dOp">ApproxDWConv2dOp (class in torchapprox.operators.conv2d)</a>
 </li>
         <li><a href="autoapi/torchapprox/operators/approxgemm/index.html#torchapprox.operators.approxgemm.ApproxGeMM">ApproxGeMM (class in torchapprox.operators.approxgemm)</a>
@@ -326,27 +329,19 @@
 </li>
           <li><a href="autoapi/torchapprox/operators/linear/index.html#torchapprox.operators.linear.FastLinearOp.backward">(torchapprox.operators.linear.FastLinearOp static method)</a>
 </li>
-          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant.backward">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant static method)</a>
-</li>
           <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.Quant.backward">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant.Quant static method)</a>
-</li>
-          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.FakeQuant.backward">(torchapprox.quantizers.MinMaxQuant.FakeQuant static method)</a>
 </li>
           <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.Quant.backward">(torchapprox.quantizers.MinMaxQuant.Quant static method)</a>
 </li>
-          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant.backward">(torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant static method)</a>
-</li>
           <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.Quant.backward">(torchapprox.quantizers.pact_quantizer.PACTQuant.Quant static method)</a>
-</li>
-          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.FakeQuant.backward">(torchapprox.quantizers.PACTQuant.FakeQuant static method)</a>
 </li>
           <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.Quant.backward">(torchapprox.quantizers.PACTQuant.Quant static method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/torchapprox/operators/conv2d/index.html#torchapprox.operators.conv2d.Conv2dArgs.backward_args">backward_args() (torchapprox.operators.conv2d.Conv2dArgs method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/torchapprox/layers/approx_layer/index.html#torchapprox.layers.approx_layer.InferenceMode.BASELINE">BASELINE (torchapprox.layers.approx_layer.InferenceMode attribute)</a>
 
         <ul>
@@ -425,20 +420,6 @@
   <h2>F</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="autoapi/torchapprox/quantizers/approx_quantizer/index.html#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.fake_quant">fake_quant() (torchapprox.quantizers.approx_quantizer.ApproxQuantizer method)</a>
-
-        <ul>
-          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.ApproxQuantizer.fake_quant">(torchapprox.quantizers.ApproxQuantizer method)</a>
-</li>
-          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.fake_quant">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant method)</a>
-</li>
-          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.fake_quant">(torchapprox.quantizers.MinMaxQuant method)</a>
-</li>
-          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.fake_quant">(torchapprox.quantizers.pact_quantizer.PACTQuant method)</a>
-</li>
-          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.fake_quant">(torchapprox.quantizers.PACTQuant method)</a>
-</li>
-        </ul></li>
         <li><a href="autoapi/torchapprox/layers/approx_conv2d/index.html#torchapprox.layers.approx_conv2d.ApproxConv2d.fan_in">fan_in (torchapprox.layers.approx_conv2d.ApproxConv2d property)</a>
 
         <ul>
@@ -484,19 +465,11 @@
 </li>
           <li><a href="autoapi/torchapprox/operators/lut/index.html#torchapprox.operators.lut.LUT.forward">(torchapprox.operators.lut.LUT method)</a>
 </li>
-          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant.forward">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant static method)</a>
-</li>
           <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.Quant.forward">(torchapprox.quantizers.minmax_quantizer.MinMaxQuant.Quant static method)</a>
-</li>
-          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.FakeQuant.forward">(torchapprox.quantizers.MinMaxQuant.FakeQuant static method)</a>
 </li>
           <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.Quant.forward">(torchapprox.quantizers.MinMaxQuant.Quant static method)</a>
 </li>
-          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant.forward">(torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant static method)</a>
-</li>
           <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.Quant.forward">(torchapprox.quantizers.pact_quantizer.PACTQuant.Quant static method)</a>
-</li>
-          <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.FakeQuant.forward">(torchapprox.quantizers.PACTQuant.FakeQuant static method)</a>
 </li>
           <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.Quant.forward">(torchapprox.quantizers.PACTQuant.Quant static method)</a>
 </li>
@@ -637,6 +610,8 @@
           <li><a href="autoapi/torchapprox/operators/lut/index.html#torchapprox.operators.lut.LUT.lut">(torchapprox.operators.lut.LUT property)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/torchapprox/utils/evoapprox/index.html#torchapprox.utils.evoapprox.lut">lut() (in module torchapprox.utils.evoapprox)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -649,12 +624,6 @@
 
         <ul>
           <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant">(class in torchapprox.quantizers.minmax_quantizer)</a>
-</li>
-        </ul></li>
-        <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.FakeQuant">MinMaxQuant.FakeQuant (class in torchapprox.quantizers)</a>
-
-        <ul>
-          <li><a href="autoapi/torchapprox/quantizers/minmax_quantizer/index.html#torchapprox.quantizers.minmax_quantizer.MinMaxQuant.FakeQuant">(class in torchapprox.quantizers.minmax_quantizer)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.MinMaxQuant.Quant">MinMaxQuant.Quant (class in torchapprox.quantizers)</a>
@@ -708,6 +677,8 @@
           <li><a href="autoapi/torchapprox/utils/index.html#module-torchapprox.utils">torchapprox.utils</a>
 </li>
           <li><a href="autoapi/torchapprox/utils/conversion/index.html#module-torchapprox.utils.conversion">torchapprox.utils.conversion</a>
+</li>
+          <li><a href="autoapi/torchapprox/utils/evoapprox/index.html#module-torchapprox.utils.evoapprox">torchapprox.utils.evoapprox</a>
 </li>
         </ul></li>
         <li><a href="autoapi/torchapprox/operators/htp_models/htp_models_mul12s/index.html#torchapprox.operators.htp_models.htp_models_mul12s.mul12s_2pp">mul12s_2pp() (in module torchapprox.operators.htp_models.htp_models_mul12s)</a>
@@ -850,12 +821,6 @@
 
         <ul>
           <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant">(class in torchapprox.quantizers.pact_quantizer)</a>
-</li>
-        </ul></li>
-        <li><a href="autoapi/torchapprox/quantizers/index.html#torchapprox.quantizers.PACTQuant.FakeQuant">PACTQuant.FakeQuant (class in torchapprox.quantizers)</a>
-
-        <ul>
-          <li><a href="autoapi/torchapprox/quantizers/pact_quantizer/index.html#torchapprox.quantizers.pact_quantizer.PACTQuant.FakeQuant">(class in torchapprox.quantizers.pact_quantizer)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -1026,8 +991,6 @@
           <li><a href="autoapi/torchapprox/operators/htp_models/index.html#module-torchapprox.operators.htp_models">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     torchapprox.operators.htp_models.htp_models_mul12s
 
@@ -1035,6 +998,8 @@
           <li><a href="autoapi/torchapprox/operators/htp_models/htp_models_mul12s/index.html#module-torchapprox.operators.htp_models.htp_models_mul12s">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     torchapprox.operators.htp_models.htp_models_mul16s
 
@@ -1103,6 +1068,13 @@
 
         <ul>
           <li><a href="autoapi/torchapprox/utils/conversion/index.html#module-torchapprox.utils.conversion">module</a>
+</li>
+        </ul></li>
+        <li>
+    torchapprox.utils.evoapprox
+
+        <ul>
+          <li><a href="autoapi/torchapprox/utils/evoapprox/index.html#module-torchapprox.utils.evoapprox">module</a>
 </li>
         </ul></li>
     </ul></td>

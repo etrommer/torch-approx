@@ -193,6 +193,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../utils/conversion/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.conversion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/evoapprox/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -277,22 +278,8 @@ in order to scale it to Integer numerical range</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="torchapprox.quantizers.approx_quantizer.ApproxQuantizer.fake_quant">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fake_quant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.FloatTensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.FloatTensor</span></span></span><a class="reference internal" href="../../../../_modules/torchapprox/quantizers/approx_quantizer.html#ApproxQuantizer.fake_quant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.fake_quant" title="Permalink to this definition">#</a></dt>
-<dd><p>Apply Fake Quantization to a tensor of floats</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> – Floating-point input</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Fake-quantized output</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="torchapprox.quantizers.approx_quantizer.ApproxQuantizer.quantize">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quantize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.FloatTensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.FloatTensor</span></span></span><a class="reference internal" href="../../../../_modules/torchapprox/quantizers/approx_quantizer.html#ApproxQuantizer.quantize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.quantize" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quantize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.FloatTensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.FloatTensor</span></span></span><a class="reference internal" href="../../../../_modules/torchapprox/quantizers/approx_quantizer.html#ApproxQuantizer.quantize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.quantize" title="Permalink to this definition">#</a></dt>
 <dd><p>Apply quantization operation to input tensor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -376,14 +363,12 @@ in order to scale it to Integer numerical range</p>
 <li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer</span></code></a><ul>
 <li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.bitwidth"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer.bitwidth</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.scale_factor"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer.scale_factor</span></code></a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.fake_quant"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer.fake_quant()</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.quantize"><code class="docutils literal notranslate"><span class="pre">ApproxQuantizer.quantize()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer">ApproxQuantizer</a><ul>
 <li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.bitwidth">bitwidth</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.scale_factor">scale_factor</a></li>
-<li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.fake_quant">fake_quant</a></li>
 <li><a class="reference internal" href="#torchapprox.quantizers.approx_quantizer.ApproxQuantizer.quantize">quantize</a></li>
 </ul>
 </li>

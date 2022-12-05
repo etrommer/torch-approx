@@ -16,6 +16,7 @@ Submodules
    :maxdepth: 1
 
    conversion/index.rst
+   evoapprox/index.rst
 
 
 Package Contents
