@@ -9,13 +9,13 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.8"
 torch = "1.13.0"
-torchvision = "*"
 poethepoet = "*"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
+torchvision = "*"
 mypy = "^0.971"
 pylint = "^2.15.0"
 pytest = "^7.1.2"
