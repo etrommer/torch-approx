@@ -43,7 +43,7 @@ void ta_gemm_cpu_batchb(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor r
                 for (auto elem = 0; elem < a_acc.size(1); elem++) {
                     auto i1 = static_cast<uint8_t>(a_acc[row][elem]);
                     auto i2 = static_cast<uint8_t>(b_acc[batch][col][elem]);
-                    acc += lut_acc[i1][i2];
+                    acc += lut_acc[i2][i1];
                 }
                 res_acc[batch][row][col] = acc;
             }

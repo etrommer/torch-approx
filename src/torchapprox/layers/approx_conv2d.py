@@ -142,8 +142,8 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         )
 
     def quant_fwd(self, x):
-        x_q = self.x_quantizer.fake_quant(x)
-        w_q = self.w_quantizer.fake_quant(self.weight)
+        x_q = self.x_quantizer.quantize(x)
+        w_q = self.w_quantizer.quantize(self.weight)
         y = torch.nn.functional.conv2d(
             x_q,
             w_q,
@@ -152,21 +152,19 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
             dilation=self.dilation,
             groups=self.groups,
         )
+        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
     def approx_fwd(self, x):
-        if self.fast_model is None:
-            x_q = self.x_quantizer.quantize(x)
-            w_q = self.w_quantizer.quantize(self.weight)
-        else:
-            x_q = self.x_quantizer.quantize(x, rounded=False)
-            w_q = self.w_quantizer.quantize(self.weight, rounded=False)
+        x_q = self.x_quantizer.quantize(x)
+        w_q = self.w_quantizer.quantize(self.weight)
 
         if self.fast_model is not None:
             # Use HTP Model
             y = FastApproxConv2dOp.apply(
                 x_q, w_q, self.fast_model, self.conv_args.backward_args()
             )
+            y = torch.round(y)
         elif self.use_fast_dwconv():
             # Use accelerated DWConv kernels
             y = ApproxDWConv2dOp.apply(

@@ -53,9 +53,10 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
         return torch.nn.functional.linear(x, self.weight)
 
     def quant_fwd(self, x):
-        x_q = self.x_quantizer.fake_quant(x)
-        w_q = self.w_quantizer.fake_quant(self.weight)
+        x_q = self.x_quantizer.quantize(x)
+        w_q = self.w_quantizer.quantize(self.weight)
         y = torch.nn.functional.linear(x_q, w_q)
+        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
     def approx_fwd(self, x):
@@ -66,9 +67,10 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
             y = self.approx_op(x_q, w_q.T)
         else:
             # HTP Model
-            x_q = self.x_quantizer.quantize(x, rounded=False)
-            w_q = self.w_quantizer.quantize(self.weight, rounded=False)
+            x_q = self.x_quantizer.quantize(x)
+            w_q = self.w_quantizer.quantize(self.weight)
             y = FastLinearOp.apply(x_q, w_q, self.fast_model)
+            y = torch.round(y)
         # Rescale results
         y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
 

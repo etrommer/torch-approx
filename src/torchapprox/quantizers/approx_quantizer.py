@@ -15,19 +15,7 @@ class ApproxQuantizer(torch.nn.Module, ABC):
         self.int_max = torch.tensor([2 ** (bitwidth - 1) - 1])
 
     @abstractmethod
-    def fake_quant(self, x: torch.FloatTensor) -> torch.FloatTensor:
-        """
-        Apply Fake Quantization to a tensor of floats
-
-        Args:
-            x: Floating-point input
-
-        Returns:
-            Fake-quantized output
-        """
-
-    @abstractmethod
-    def quantize(self, x: torch.FloatTensor, rounded: bool = True) -> torch.FloatTensor:
+    def quantize(self, x: torch.FloatTensor) -> torch.FloatTensor:
         """
         Apply quantization operation to input tensor
 

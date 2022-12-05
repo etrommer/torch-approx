@@ -9,10 +9,13 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.8"
 torch = "1.13.0"
-torchvision = "*"
 poethepoet = "*"
 
+[tool.poetry.group.dev]
+optional = true
+
 [tool.poetry.group.dev.dependencies]
+torchvision = "*"
 mypy = "^0.971"
 pylint = "^2.15.0"
 pytest = "^7.1.2"
@@ -20,6 +23,8 @@ pytest-benchmark = "^4.0.0"
 pre-commit = "^2.20.0"
 pytest-cov = "^3.0.0"
 
+[tool.poetry.group.extras]
+optional = true
 
 [tool.poetry.group.extras.dependencies]
 furo = "^2022.9.29"
