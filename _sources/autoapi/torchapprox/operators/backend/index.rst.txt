@@ -42,7 +42,7 @@ Attributes
    
 
 .. py:data:: sources
-   :annotation: = ['../../cpu/ta_gemm_cpu.cpp']
+   :annotation: = ['kernels/cpu/ta_gemm_cpu.cpp']
 
    
 
