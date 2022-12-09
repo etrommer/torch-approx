@@ -244,18 +244,90 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.approx_multiplication" title="torchapprox.utils.evoapprox.approx_multiplication"><code class="xref py py-obj docutils literal notranslate"><span class="pre">approx_multiplication</span></code></a>(multiplier, range_x, range_y, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.module_names" title="torchapprox.utils.evoapprox.module_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">module_names</span></code></a>(→ List[str])</p></td>
+<td><p>List all available modules in EvoApproxLib</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.attribute" title="torchapprox.utils.evoapprox.attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attribute</span></code></a>(→ Any)</p></td>
+<td><p>Read Attribute from EvoApprox module</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.load_multiplier" title="torchapprox.utils.evoapprox.load_multiplier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_multiplier</span></code></a>(multiplier_name)</p></td>
+<td><p>Try loading a multiplier module from the EvoApprox library</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.approx_multiplication" title="torchapprox.utils.evoapprox.approx_multiplication"><code class="xref py py-obj docutils literal notranslate"><span class="pre">approx_multiplication</span></code></a>(multiplier_name, range_x, ...)</p></td>
 <td><p>Calculate approximate multiplication result of supplied</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.lut" title="torchapprox.utils.evoapprox.lut"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lut</span></code></a>(multiplier_name[, bitwidth, signed])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.error_map" title="torchapprox.utils.evoapprox.error_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">error_map</span></code></a>(→ numpy.ndarray)</p></td>
+<td><p>Generate the error map for a given multiplier,</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.error_distribution" title="torchapprox.utils.evoapprox.error_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">error_distribution</span></code></a>(→ Tuple[Any, Any])</p></td>
+<td><p>Calculate the Mean and Standard Deviation of an EvoApprox multiplier</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.bitwidth_from_name" title="torchapprox.utils.evoapprox.bitwidth_from_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bitwidth_from_name</span></code></a>(→ int)</p></td>
+<td><p>Helper function to extract the bitwidth from a given multiplier name</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.signedness_from_name" title="torchapprox.utils.evoapprox.signedness_from_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">signedness_from_name</span></code></a>(→ bool)</p></td>
+<td><p>Helper function to extract the signedness for a given multiplier name</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#torchapprox.utils.evoapprox.lut" title="torchapprox.utils.evoapprox.lut"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lut</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Generate Lookup-Table for supplied EvoApprox multiplier</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.utils.evoapprox.module_names">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">module_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torchapprox.utils.evoapprox.module_names" title="Permalink to this definition">#</a></dt>
+<dd><p>List all available modules in EvoApproxLib</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filter_str</strong> – Only return moduls whose name contains a certain substring, i.e. <cite>mul8s</cite>. Defaults to “”.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ImportError</strong> – Loading of library failed</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of (filtered) available module names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.utils.evoapprox.attribute">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#torchapprox.utils.evoapprox.attribute" title="Permalink to this definition">#</a></dt>
+<dd><p>Read Attribute from EvoApprox module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>multiplier_name</strong> – Name of the target multiplier</p></li>
+<li><p><strong>attr_name</strong> – Name of the target attribute</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Target attribute value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.utils.evoapprox.load_multiplier">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">load_multiplier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.utils.evoapprox.load_multiplier" title="Permalink to this definition">#</a></dt>
+<dd><p>Try loading a multiplier module from the EvoApprox library</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>multiplier_name</strong> – String with name of target multiplier</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ImportError</strong> – Multiplier module could not be loaded</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>EvoApprox module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="torchapprox.utils.evoapprox.approx_multiplication">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">approx_multiplication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitwidth</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.utils.evoapprox.approx_multiplication" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">approx_multiplication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitwidth</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.utils.evoapprox.approx_multiplication" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculate approximate multiplication result of supplied
 approximate multiplier along a given range.</p>
 <dl class="field-list simple">
@@ -269,15 +341,92 @@ approximate multiplier along a given range.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Array of the approximate multiplication result across the
-Cartesian product of the supplied input operand ranges</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p>2D Array of the approximate multiplication result across the
+Cartesian product of the supplied input operand ranges</p></li>
+<li><p>2D Array of x operands</p></li>
+<li><p>2D Array of y operands</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.utils.evoapprox.error_map">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">error_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#torchapprox.utils.evoapprox.error_map" title="Permalink to this definition">#</a></dt>
+<dd><p>Generate the error map for a given multiplier,
+i.e. the difference between accurate and approximate result across the entire input space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>multiplier_name</strong> – Name for target multiplier</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Error Map for multiplier input space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.utils.evoapprox.error_distribution">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">error_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fan_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torchapprox.utils.evoapprox.error_distribution" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the Mean and Standard Deviation of an EvoApprox multiplier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>multiplier_name</strong> – Name of the desired multiplier, e.g. <cite>mul8s_1KV6</cite></p></li>
+<li><p><strong>fan_in</strong> – Compensates the reduced standard deviation from repeated sampling
+when a large number of multiplications is accumulated in a neuron.
+Defaults to <cite>1</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>Mean of the approximate multiplication error, scaled to the neuron output</p></li>
+<li><p>Standard deviation of approximate multiplication error, scaled to the neuron output</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.utils.evoapprox.bitwidth_from_name">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">bitwidth_from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#torchapprox.utils.evoapprox.bitwidth_from_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Helper function to extract the bitwidth from a given multiplier name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>multiplier_name</strong> – Target multiplier name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The multipliers bitwidth, i.e. 8 for <cite>mul8s_…</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torchapprox.utils.evoapprox.signedness_from_name">
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">signedness_from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#torchapprox.utils.evoapprox.signedness_from_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Helper function to extract the signedness for a given multiplier name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>multiplier_name</strong> – Target multiplier name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The multipliers signedness, i.e. True for <cite>mul8s_…</cite></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torchapprox.utils.evoapprox.lut">
-<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapprox.utils.evoapprox.lut" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">torchapprox.utils.evoapprox.</span></span><span class="sig-name descname"><span class="pre">lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiplier_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#torchapprox.utils.evoapprox.lut" title="Permalink to this definition">#</a></dt>
 <dd><p>Generate Lookup-Table for supplied EvoApprox multiplier</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -354,9 +503,23 @@ If not supplied, this is inferred from the <cite>multiplier_name</cite>. Default
 <li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torchapprox.utils.evoapprox</span></code></a><ul>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.module_names"><code class="docutils literal notranslate"><span class="pre">module_names()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.attribute"><code class="docutils literal notranslate"><span class="pre">attribute()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.load_multiplier"><code class="docutils literal notranslate"><span class="pre">load_multiplier()</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.utils.evoapprox.approx_multiplication"><code class="docutils literal notranslate"><span class="pre">approx_multiplication()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.error_map"><code class="docutils literal notranslate"><span class="pre">error_map()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.error_distribution"><code class="docutils literal notranslate"><span class="pre">error_distribution()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.bitwidth_from_name"><code class="docutils literal notranslate"><span class="pre">bitwidth_from_name()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.signedness_from_name"><code class="docutils literal notranslate"><span class="pre">signedness_from_name()</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.utils.evoapprox.lut"><code class="docutils literal notranslate"><span class="pre">lut()</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.module_names">module_names</a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.attribute">attribute</a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.load_multiplier">load_multiplier</a></li>
 <li><a class="reference internal" href="#torchapprox.utils.evoapprox.approx_multiplication">approx_multiplication</a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.error_map">error_map</a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.error_distribution">error_distribution</a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.bitwidth_from_name">bitwidth_from_name</a></li>
+<li><a class="reference internal" href="#torchapprox.utils.evoapprox.signedness_from_name">signedness_from_name</a></li>
 <li><a class="reference internal" href="#torchapprox.utils.evoapprox.lut">lut</a></li>
 </ul>
 </li>
