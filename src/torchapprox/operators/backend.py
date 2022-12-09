@@ -12,14 +12,14 @@ from torch.utils.cpp_extension import load
 logger = logging.getLogger(__name__)
 
 
-sources = ["../../cpu/ta_gemm_cpu.cpp"]
+sources = ["kernels/cpu/ta_gemm_cpu.cpp"]
 extra_cflags = ["-fopenmp"]
 
 if torch.cuda.is_available():
     sources += [
-        "../../cuda/ta_backend.cpp",
-        "../../cuda/ta_gemm_cuda.cu",
-        "../../cuda/ta_dwconv.cu",
+        "kernels/cuda/ta_backend.cpp",
+        "kernels/cuda/ta_gemm_cuda.cu",
+        "kernels/cuda/ta_dwconv.cu",
     ]
     extra_cflags += ["-DTA_CUDA_EXTENSION"]
 else:
