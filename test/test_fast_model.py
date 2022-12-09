@@ -5,12 +5,13 @@ import pytest
 import torch
 
 import torchapprox.layers as tal
-import torchapprox.utils.evoapprox as evoutil
 from torchapprox.operators import htp_models as htp
 
 try:
     import evoapproxlib
-except ImportError:
+
+    import torchapprox.utils.evoapprox as evoutil
+except ModuleNotFoundError:
     pytest.skip(
         "EvoApproxLib not found. Skipping dependent tests", allow_module_level=True
     )
