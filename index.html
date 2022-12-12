@@ -242,68 +242,136 @@ GPU-accelerated Neural Network layers using Approximate Multiplication for PyTor
 <p><img alt="Build Docs" src="https://github.com/etrommer/torch-approx/actions/workflows/docs.yaml/badge.svg" />
 <img alt="Unit Tests" src="https://github.com/etrommer/torch-approx/actions/workflows/pytest.yaml/badge.svg" /></p>
 </div>
+<ul class="simple">
+<li><p><span class="xref myst">1. Installation</span></p>
+<ul>
+<li><p><span class="xref myst">1.1. Dependencies</span></p>
+<ul>
+<li><p><span class="xref myst">1.1.1. Ubuntu (22.04)</span></p></li>
+</ul>
+</li>
+<li><p><span class="xref myst">1.2. Package</span></p>
+<ul>
+<li><p><span class="xref myst">1.2.1. via pip</span></p></li>
+</ul>
+</li>
+<li><p><span class="xref myst">1.3. EvoApproxLib</span></p></li>
+<li><p><span class="xref myst">1.4. Development</span></p>
+<ul>
+<li><p><span class="xref myst">1.4.1. Run Unit Tests</span></p></li>
+<li><p><span class="xref myst">1.4.2. Run Benchmarking</span></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><span class="xref myst">2. Usage</span></p></li>
+<li><p><span class="xref myst">3. Contributing</span></p></li>
+<li><p><span class="xref myst">4. License</span></p></li>
+<li><p><span class="xref myst">5. Credits</span></p></li>
+</ul>
 <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h1>
+<h1>1. Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">#</a></h2>
+<h2>1.1. Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">#</a></h2>
 <section id="ubuntu-22-04">
-<h3>Ubuntu (22.04)<a class="headerlink" href="#ubuntu-22-04" title="Permalink to this heading">#</a></h3>
+<h3>1.1.1. Ubuntu (22.04)<a class="headerlink" href="#ubuntu-22-04" title="Permalink to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt install libomp-dev ninja-build
 </pre></div>
 </div>
 </section>
 </section>
 <section id="package">
-<h2>Package<a class="headerlink" href="#package" title="Permalink to this heading">#</a></h2>
+<h2>1.2. Package<a class="headerlink" href="#package" title="Permalink to this heading">#</a></h2>
 <section id="via-pip">
-<h3>via pip<a class="headerlink" href="#via-pip" title="Permalink to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install torchapprox
+<h3>1.2.1. via pip<a class="headerlink" href="#via-pip" title="Permalink to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install git+ssh://github.com/etrommer/torch-approx
 </pre></div>
 </div>
 </section>
-<section id="via-github">
-<h3>via Github<a class="headerlink" href="#via-github" title="Permalink to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/etrommer/torch-approx
+</section>
+<section id="evoapproxlib">
+<h2>1.3. EvoApproxLib<a class="headerlink" href="#evoapproxlib" title="Permalink to this heading">#</a></h2>
+<p>The <a class="reference external" href="https://github.com/ehw-fit/evoapproxlib/tree/v2022">EvoApprox Library of Approximate Circuits</a> is used as a reference and for testing in several places throughout this package. Because downloading and compiling the library is relatively time-consuming, it is not part of the automated package install. Instead, it needs to be installed by hand if required. To install it, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./install_evoapprox.sh
+</pre></div>
+</div>
+<p>this compiles and installs the library into the poetry environment of the project.</p>
+</section>
+<section id="development">
+<h2>1.4. Development<a class="headerlink" href="#development" title="Permalink to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone git@github.com:etrommer/torch-approx.git
 <span class="nb">cd</span> torch-approx
-poetry install
+poetry install --with dev extras
 </pre></div>
 </div>
-</section>
-</section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">#</a></h2>
-<section id="unit-tests">
-<h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this heading">#</a></h3>
+<section id="run-unit-tests">
+<h3>1.4.1. Run Unit Tests<a class="headerlink" href="#run-unit-tests" title="Permalink to this heading">#</a></h3>
 <p>Run Unit Tests with</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run pytest
 </pre></div>
 </div>
 </section>
-<section id="benchmarking">
-<h3>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this heading">#</a></h3>
+<section id="run-benchmarking">
+<h3>1.4.2. Run Benchmarking<a class="headerlink" href="#run-benchmarking" title="Permalink to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run pytest benchmarks
 </pre></div>
 </div>
 </section>
-<section id="evoapproxlib">
-<h3>EvoApproxLib<a class="headerlink" href="#evoapproxlib" title="Permalink to this heading">#</a></h3>
-<p>The <a class="reference external" href="https://github.com/ehw-fit/evoapproxlib/tree/v2022">EvoApprox Library of Approximate Circuits</a> is used as a reference and for testing in several places throughout this package. Because downloading and compiling the library is relatively time-consuming, it is not part of the automated package install. Instead, it needs to be installed by hand if required. To install it, run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run bash install_evoapprox.sh
+</section>
+</section>
+<section id="usage">
+<h1>2. Usage<a class="headerlink" href="#usage" title="Permalink to this heading">#</a></h1>
+<ol class="arabic">
+<li><p>Define &amp; Train NN Model (or use a pre-trained model)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torchvision.models</span> <span class="k">as</span> <span class="nn">models</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">mobilenet_v2</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>this compiles and installs the library into the poetry environment of the project.</p>
-</section>
+</li>
+<li><p>Convert to Torchapprox</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchapprox.utils.conversion</span> <span class="kn">import</span> <span class="n">inplace_conversion</span>
+
+<span class="n">approx_model</span> <span class="o">=</span> <span class="n">inplace_conversion</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set Inference Mode</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchapprox.utils.conversion</span> <span class="kn">import</span> <span class="n">get_approx_modules</span>
+
+<span class="n">approx_modules</span> <span class="o">=</span> <span class="n">get_approx_modules</span><span class="p">(</span><span class="n">approx_model</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">approx_modules</span><span class="p">:</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">inference_mode</span> <span class="o">=</span> <span class="n">tal</span><span class="o">.</span><span class="n">InferenceMode</span><span class="o">.</span><span class="n">APPROXIMATE</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set LUT (assuming EvoApproxLib has been installed <span class="xref myst">as described above</span>)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchapprox.utils.evoapprox</span> <span class="kn">import</span> <span class="n">lut</span>
+
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">approx_modules</span><span class="p">:</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">approx_op</span><span class="o">.</span><span class="n">lut</span> <span class="o">=</span> <span class="n">lut</span><span class="p">(</span><span class="s1">&#39;mul8s_1KV6&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Any 256x256 numpy array can be supplied as a LUT, depending on your use case. Note that the axes have to follow this ordering:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">...</span> <span class="mi">126</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="o">-</span><span class="mi">128</span><span class="p">,</span> <span class="o">-</span><span class="mi">127</span><span class="p">,</span> <span class="o">...-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where the LUT entry at position <code class="docutils literal notranslate"><span class="pre">lut[x,y]</span></code> is the approxmiate multiplication result of <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
+</li>
+<li><p>Train
+Train your model using <a class="reference external" href="https://pytorch.org/tutorials/beginner/introyt/trainingyt.html">a standard PyTorch Training Pipeline</a></p></li>
+</ol>
 </section>
 <section id="contributing">
-<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">#</a></h2>
+<h1>3. Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">#</a></h1>
 <p>Interested in contributing? Check out the contributing guidelines. Please note that this project is released with a Code of Conduct. By contributing to this project, you agree to abide by its terms.</p>
 </section>
 <section id="license">
-<h2>License<a class="headerlink" href="#license" title="Permalink to this heading">#</a></h2>
+<h1>4. License<a class="headerlink" href="#license" title="Permalink to this heading">#</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">torchapprox</span></code> was created by Elias Trommer. It is licensed under the terms of the MIT license.</p>
 </section>
 <section id="credits">
-<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this heading">#</a></h2>
+<h1>5. Credits<a class="headerlink" href="#credits" title="Permalink to this heading">#</a></h1>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">torchapprox</span></code> was created with <a class="reference external" href="https://cookiecutter.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">cookiecutter</span></code></a> and the <code class="docutils literal notranslate"><span class="pre">py-pkgs-cookiecutter</span></code> <a class="reference external" href="https://github.com/py-pkgs/py-pkgs-cookiecutter">template</a>.</p></li>
 <li><p>Depthwise Convolution Kernels based on: <a class="reference external" href="https://github.com/rosinality/depthwise-conv-pytorch">https://github.com/rosinality/depthwise-conv-pytorch</a></p></li>
@@ -311,7 +379,6 @@ poetry install
 </ul>
 <div class="toctree-wrapper compound">
 </div>
-</section>
 </section>
 
         </article>
@@ -361,27 +428,27 @@ poetry install
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Installation</a><ul>
-<li><a class="reference internal" href="#dependencies">Dependencies</a><ul>
-<li><a class="reference internal" href="#ubuntu-22-04">Ubuntu (22.04)</a></li>
+<li><a class="reference internal" href="#">1. Installation</a><ul>
+<li><a class="reference internal" href="#dependencies">1.1. Dependencies</a><ul>
+<li><a class="reference internal" href="#ubuntu-22-04">1.1.1. Ubuntu (22.04)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#package">Package</a><ul>
-<li><a class="reference internal" href="#via-pip">via pip</a></li>
-<li><a class="reference internal" href="#via-github">via Github</a></li>
+<li><a class="reference internal" href="#package">1.2. Package</a><ul>
+<li><a class="reference internal" href="#via-pip">1.2.1. via pip</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
-<li><a class="reference internal" href="#benchmarking">Benchmarking</a></li>
-<li><a class="reference internal" href="#evoapproxlib">EvoApproxLib</a></li>
+<li><a class="reference internal" href="#evoapproxlib">1.3. EvoApproxLib</a></li>
+<li><a class="reference internal" href="#development">1.4. Development</a><ul>
+<li><a class="reference internal" href="#run-unit-tests">1.4.1. Run Unit Tests</a></li>
+<li><a class="reference internal" href="#run-benchmarking">1.4.2. Run Benchmarking</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#contributing">Contributing</a></li>
-<li><a class="reference internal" href="#license">License</a></li>
-<li><a class="reference internal" href="#credits">Credits</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#usage">2. Usage</a></li>
+<li><a class="reference internal" href="#contributing">3. Contributing</a></li>
+<li><a class="reference internal" href="#license">4. License</a></li>
+<li><a class="reference internal" href="#credits">5. Credits</a></li>
 </ul>
 
           </div>
