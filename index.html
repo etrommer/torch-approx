@@ -244,14 +244,25 @@ GPU-accelerated Neural Network layers using Approximate Multiplication for PyTor
 </div>
 <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h1>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">#</a></h2>
+<section id="ubuntu-22-04">
+<h3>Ubuntu (22.04)<a class="headerlink" href="#ubuntu-22-04" title="Permalink to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt install libomp-dev ninja-build
+</pre></div>
+</div>
+</section>
+</section>
+<section id="package">
+<h2>Package<a class="headerlink" href="#package" title="Permalink to this heading">#</a></h2>
 <section id="via-pip">
-<h2>via pip<a class="headerlink" href="#via-pip" title="Permalink to this heading">#</a></h2>
+<h3>via pip<a class="headerlink" href="#via-pip" title="Permalink to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install torchapprox
 </pre></div>
 </div>
 </section>
 <section id="via-github">
-<h2>via Github<a class="headerlink" href="#via-github" title="Permalink to this heading">#</a></h2>
+<h3>via Github<a class="headerlink" href="#via-github" title="Permalink to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/etrommer/torch-approx
 <span class="nb">cd</span> torch-approx
 poetry install
@@ -260,22 +271,22 @@ poetry install
 </section>
 </section>
 <section id="usage">
-<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">#</a></h1>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">#</a></h2>
 <section id="unit-tests">
-<h2>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this heading">#</a></h2>
+<h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this heading">#</a></h3>
 <p>Run Unit Tests with</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run pytest
 </pre></div>
 </div>
 </section>
 <section id="benchmarking">
-<h2>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this heading">#</a></h2>
+<h3>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run pytest benchmarks
 </pre></div>
 </div>
 </section>
 <section id="evoapproxlib">
-<h2>EvoApproxLib<a class="headerlink" href="#evoapproxlib" title="Permalink to this heading">#</a></h2>
+<h3>EvoApproxLib<a class="headerlink" href="#evoapproxlib" title="Permalink to this heading">#</a></h3>
 <p>The <a class="reference external" href="https://github.com/ehw-fit/evoapproxlib/tree/v2022">EvoApprox Library of Approximate Circuits</a> is used as a reference and for testing in several places throughout this package. Because downloading and compiling the library is relatively time-consuming, it is not part of the automated package install. Instead, it needs to be installed by hand if required. To install it, run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run bash install_evoapprox.sh
 </pre></div>
@@ -284,15 +295,15 @@ poetry install
 </section>
 </section>
 <section id="contributing">
-<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">#</a></h1>
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">#</a></h2>
 <p>Interested in contributing? Check out the contributing guidelines. Please note that this project is released with a Code of Conduct. By contributing to this project, you agree to abide by its terms.</p>
 </section>
 <section id="license">
-<h1>License<a class="headerlink" href="#license" title="Permalink to this heading">#</a></h1>
+<h2>License<a class="headerlink" href="#license" title="Permalink to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">torchapprox</span></code> was created by Elias Trommer. It is licensed under the terms of the MIT license.</p>
 </section>
 <section id="credits">
-<h1>Credits<a class="headerlink" href="#credits" title="Permalink to this heading">#</a></h1>
+<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">torchapprox</span></code> was created with <a class="reference external" href="https://cookiecutter.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">cookiecutter</span></code></a> and the <code class="docutils literal notranslate"><span class="pre">py-pkgs-cookiecutter</span></code> <a class="reference external" href="https://github.com/py-pkgs/py-pkgs-cookiecutter">template</a>.</p></li>
 <li><p>Depthwise Convolution Kernels based on: <a class="reference external" href="https://github.com/rosinality/depthwise-conv-pytorch">https://github.com/rosinality/depthwise-conv-pytorch</a></p></li>
@@ -300,6 +311,7 @@ poetry install
 </ul>
 <div class="toctree-wrapper compound">
 </div>
+</section>
 </section>
 
         </article>
@@ -350,6 +362,11 @@ poetry install
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a><ul>
+<li><a class="reference internal" href="#ubuntu-22-04">Ubuntu (22.04)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#package">Package</a><ul>
 <li><a class="reference internal" href="#via-pip">via pip</a></li>
 <li><a class="reference internal" href="#via-github">via Github</a></li>
 </ul>
@@ -363,6 +380,8 @@ poetry install
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 <li><a class="reference internal" href="#credits">Credits</a></li>
+</ul>
+</li>
 </ul>
 
           </div>
