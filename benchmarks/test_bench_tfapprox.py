@@ -17,9 +17,11 @@ def test_bench_tfapprox(benchmark, channels):
             )
         ]
     )
-    x = tf.random.uniform([BATCH_SIZE, channels, CONV2_DIM, CONV2_DIM])
+    tf.config.experimental.set_synchronous_execution(True)
+    x = tf.random.normal([BATCH_SIZE, channels, CONV2_DIM, CONV2_DIM])
 
     def benchmark_fn(x):
-        approx_model(x)
+        y = approx_model(x)
+        return y
 
     benchmark(benchmark_fn, x)
