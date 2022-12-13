@@ -17,6 +17,6 @@ class FastLinearOp(torch.autograd.Function):
     @staticmethod
     def backward(ctx, grad):
         x, w = ctx.saved_tensors
-        grad_input = torch.matmul(grad, w.T)
-        grad_weight = torch.sum(torch.matmul(grad.transpose(1, 2), x), axis=0).T
+        grad_input = torch.matmul(grad, w)
+        grad_weight = torch.matmul(grad.T, x)
         return grad_input, grad_weight, None

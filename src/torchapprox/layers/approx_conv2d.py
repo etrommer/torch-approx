@@ -164,7 +164,6 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
             y = FastApproxConv2dOp.apply(
                 x_q, w_q, self.fast_model, self.conv_args.backward_args()
             )
-            y = torch.round(y)
         elif self.use_fast_dwconv():
             # Use accelerated DWConv kernels
             y = ApproxDWConv2dOp.apply(
