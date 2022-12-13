@@ -42,22 +42,8 @@ class ApproxLayer(ABC):
         self.inference_mode: InferenceMode = InferenceMode.BASELINE
         self.fast_model: Optional[Callable] = None
 
-        self._stdev: torch.nn.Paramter = torch.nn.Parameter(
-            torch.tensor(0.0), requires_grad=True
-        )
-
-    @property
-    def stdev(self) -> torch.nn.Parameter:
-        """
-        The relative standard deviation of the Additive Gaussian noise that is added
-        to the computation output. Scaling is done relative the current batch's standard devitaion.
-        This is only used when the mode is set to `noise`. It will have no effect in other modes.
-        """
-        return self._stdev
-
-    @stdev.setter
-    def stdev(self, noise_std: float):
-        self._stdev = torch.nn.Parameter(torch.tensor(noise_std), requires_grad=True)
+        self.stdev: torch.Tensor = torch.tensor([0.0])
+        self.mean: torch.Tensor = torch.tensor([0.0])
 
     @property
     @abstractmethod
@@ -138,7 +124,7 @@ class ApproxLayer(ABC):
         """
         y = self.quant_fwd(x)
         if self.training:
-            noise = torch.randn_like(y) * torch.std(y) * self.stdev
+            noise = torch.randn_like(y) * torch.std(y) * self.stdev + self.mean
             y = y + noise
         return y
 
