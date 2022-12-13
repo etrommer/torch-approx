@@ -42,8 +42,36 @@ class ApproxLayer(ABC):
         self.inference_mode: InferenceMode = InferenceMode.BASELINE
         self.fast_model: Optional[Callable] = None
 
-        self.stdev: torch.Tensor = torch.tensor([0.0])
-        self.mean: torch.Tensor = torch.tensor([0.0])
+        self._stdev: torch.Tensor = torch.tensor([0.0])
+        self._mean: torch.Tensor = torch.tensor([0.0])
+
+    @property
+    def stdev(self) -> float:
+        """
+        Perturbation Error Relative Standard Deviation
+
+        Returns:
+            Currently configured perturbation standard deviation
+        """
+        return self._stdev.item()
+
+    @stdev.setter
+    def stdev(self, val: float):
+        self._stdev = torch.tensor([val], device=self.weight.device)  # type: ignore
+
+    @property
+    def mean(self) -> float:
+        """
+        Perturbation Error mean
+
+        Returns:
+            Currently configured perturbation mean
+        """
+        return self._mean.item()
+
+    @mean.setter
+    def mean(self, val: float):
+        self._mean = torch.tensor([val], device=self.weight.device)  # type: ignore
 
     @property
     @abstractmethod
