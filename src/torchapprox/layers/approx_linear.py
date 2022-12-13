@@ -70,7 +70,6 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
             x_q = self.x_quantizer.quantize(x)
             w_q = self.w_quantizer.quantize(self.weight)
             y = FastLinearOp.apply(x_q, w_q, self.fast_model)
-            y = torch.round(y)
         # Rescale results
         y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
 
