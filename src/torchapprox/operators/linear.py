@@ -12,7 +12,8 @@ class FastLinearOp(torch.autograd.Function):
     @staticmethod
     def forward(ctx, x, w, model):
         ctx.save_for_backward(x, w)
-        return model(torch.nn.functional.linear, x, w, {})
+        y = model(torch.nn.functional.linear, x, w, {})
+        return torch.round(y)
 
     @staticmethod
     def backward(ctx, grad):

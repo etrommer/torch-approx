@@ -155,7 +155,8 @@ class FastApproxConv2dOp(torch.autograd.Function):
     def forward(ctx, x, w, model, kwargs):
         ctx.save_for_backward(x, w)
         ctx.conf = kwargs
-        return model(torch.nn.functional.conv2d, x, w, kwargs)
+        y = model(torch.nn.functional.conv2d, x, w, kwargs)
+        return torch.round(y)
 
     @staticmethod
     def backward(ctx, grad):
