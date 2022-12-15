@@ -31,6 +31,7 @@ furo = "^2022.9.29"
 myst-nb = "^0.17.1"
 sphinx-autoapi = "^2.0.0"
 sphinx-paramlinks = "^0.5.4"
+seaborn = "^0.12.1"
 
 [tool.poe.tasks]
 install-ltt = "python3 -m pip install light-the-torch"
