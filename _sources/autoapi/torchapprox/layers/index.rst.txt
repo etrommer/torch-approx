@@ -134,11 +134,18 @@ Classes
    Derivable Abstract Base Class for implementing Approximate Neural Network layers
 
    .. py:property:: stdev
-      :type: torch.nn.Parameter
+      :type: float
 
-      The relative standard deviation of the Additive Gaussian noise that is added
-      to the computation output. Scaling is done relative the current batch's standard devitaion.
-      This is only used when the mode is set to `noise`. It will have no effect in other modes.
+      Perturbation Error Relative Standard Deviation
+
+      :returns: Currently configured perturbation standard deviation
+
+   .. py:property:: mean
+      :type: float
+
+      Perturbation Error mean
+
+      :returns: Currently configured perturbation mean
 
    .. py:property:: fan_in
       :type: int

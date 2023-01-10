@@ -396,10 +396,24 @@ Quantization is implicitly applied to the input and weights.</p>
 <p>Derivable Abstract Base Class for implementing Approximate Neural Network layers</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="torchapprox.layers.ApproxLayer.stdev">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stdev</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">torch.nn.Parameter</span></em><a class="headerlink" href="#torchapprox.layers.ApproxLayer.stdev" title="Permalink to this definition">#</a></dt>
-<dd><p>The relative standard deviation of the Additive Gaussian noise that is added
-to the computation output. Scaling is done relative the current batch’s standard devitaion.
-This is only used when the mode is set to <cite>noise</cite>. It will have no effect in other modes.</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stdev</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#torchapprox.layers.ApproxLayer.stdev" title="Permalink to this definition">#</a></dt>
+<dd><p>Perturbation Error Relative Standard Deviation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Currently configured perturbation standard deviation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="torchapprox.layers.ApproxLayer.mean">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mean</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#torchapprox.layers.ApproxLayer.mean" title="Permalink to this definition">#</a></dt>
+<dd><p>Perturbation Error mean</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Currently configured perturbation mean</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -709,6 +723,7 @@ Quantization is implicitly applied to the input and weights.</p>
 </li>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer"><code class="docutils literal notranslate"><span class="pre">ApproxLayer</span></code></a><ul>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.stdev"><code class="docutils literal notranslate"><span class="pre">ApproxLayer.stdev</span></code></a></li>
+<li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.mean"><code class="docutils literal notranslate"><span class="pre">ApproxLayer.mean</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.fan_in"><code class="docutils literal notranslate"><span class="pre">ApproxLayer.fan_in</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.opcount"><code class="docutils literal notranslate"><span class="pre">ApproxLayer.opcount</span></code></a></li>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.from_super"><code class="docutils literal notranslate"><span class="pre">ApproxLayer.from_super()</span></code></a></li>
@@ -753,6 +768,7 @@ Quantization is implicitly applied to the input and weights.</p>
 </li>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer">ApproxLayer</a><ul>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.stdev">stdev</a></li>
+<li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.mean">mean</a></li>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.fan_in">fan_in</a></li>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.opcount">opcount</a></li>
 <li><a class="reference internal" href="#torchapprox.layers.ApproxLayer.from_super">from_super</a></li>
