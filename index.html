@@ -390,7 +390,7 @@ Any 256x256 numpy array can be supplied as a LUT, depending on your use case. No
 </div>
 <p>where the LUT entry at position <code class="docutils literal notranslate"><span class="pre">lut[x,y]</span></code> is the approxmiate multiplication result of <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
 <p>For the sake of illustration, here is an example of how to simulate an accurate multiplier using the LUT approach:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># Construct LUT</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
@@ -401,6 +401,8 @@ Any 256x256 numpy array can be supplied as a LUT, depending on your use case. No
 <span class="c1"># Apply LUT to approximate layers</span>
 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">approx_modules</span><span class="p">:</span>
     <span class="n">m</span><span class="o">.</span><span class="n">approx_op</span><span class="o">.</span><span class="n">lut</span> <span class="o">=</span> <span class="n">my_lut</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="c1"># Alternatively, the LUT can also be supplied as a torch tensor (required to be 16-Bit Int)</span>
 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">approx_modules</span><span class="p">:</span>
