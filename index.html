@@ -373,7 +373,8 @@ This will automatically detect all <code class="docutils literal notranslate"><s
 </pre></div>
 </div>
 </li>
-<li><p>Apply the desired approximate product function to each approximate module. There are two ways of doing this: you can either use a Lookup table, or an HTP model. The benefits and downsides of both are briefly discussed in the <span class="xref myst">Summary</span>.</p>
+<li><p>Apply the desired approximate product function to each approximate module.
+There are two ways of doing this: you can either use a Lookup table, or an HTP model. The benefits and downsides of both are briefly discussed in the <span class="xref myst">Summary</span>.</p>
 <p><strong>Option 1:</strong> Use LUT<br />
 This example assumes that EvoApproxLib has been installed <span class="xref myst">as described above</span>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchapprox.utils.evoapprox</span> <span class="kn">import</span> <span class="n">lut</span>
@@ -387,8 +388,8 @@ Any 256x256 numpy array can be supplied as a LUT, depending on your use case. No
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">...</span> <span class="mi">126</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="o">-</span><span class="mi">128</span><span class="p">,</span> <span class="o">-</span><span class="mi">127</span><span class="p">,</span> <span class="o">...-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>where the LUT entry at position <code class="docutils literal notranslate"><span class="pre">lut[x,y]</span></code> is the approxmiate multiplication result of <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>.<br />
-For the sake of illustration, here is an example of how to simulate an accurate multiplier using the LUT approach:</p>
+<p>where the LUT entry at position <code class="docutils literal notranslate"><span class="pre">lut[x,y]</span></code> is the approxmiate multiplication result of <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
+<p>For the sake of illustration, here is an example of how to simulate an accurate multiplier using the LUT approach:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="p">:</span>
 
 <span class="c1"># Construct LUT</span>
