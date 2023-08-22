@@ -8,19 +8,21 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-poethepoet = "*"
+torch = "2.0.0"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-torchvision = "*"
 mypy = "^0.971"
 pylint = "^2.15.0"
 pytest = "^7.1.2"
 pytest-benchmark = "^4.0.0"
 pytest-cov = "^3.0.0"
 pre-commit = "^3.3.3"
+black = "^23.7.0"
+ipykernel = "^6.25.1"
+torchviz = "^0.0.2"
 
 [tool.poetry.group.extras]
 optional = true
@@ -39,23 +41,6 @@ autoinstall-torch-cuda = ["install-ltt", "run-ltt"]
 
 [tool.pytest.ini_options]
 testpaths = ["test"]
-
-[tool.pylint.main]
-max-line-length = 120
-ignore = 'docs'
-
-[tool.pylint.format]
-good-names = 'i,j,k,x,y,w,a,b,c'
-
-[tool.pylint.typecheck]
-generated-members=['numpy.*', 'torch.*']
-
-[tool.pylint.design]
-max-returns = 10
-max-args = 6
-
-[tool.isort]
-profile = "black"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
