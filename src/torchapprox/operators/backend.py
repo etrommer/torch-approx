@@ -4,7 +4,6 @@ TorchApprox Accelerated Backend Functions
 """
 import logging
 import os
-from typing import Optional
 
 import torch
 from torch.utils.cpp_extension import load
@@ -72,7 +71,6 @@ def approx(
     a: torch.Tensor,
     b: torch.Tensor,
     lut: torch.Tensor,
-    res: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """
     Input validation wrapper for Approximate GeMM
@@ -103,19 +101,7 @@ def approx(
         b = torch.transpose(b, 1, 2)
     else:
         raise ValueError(f"Incompatible Dimensions: {a.size()} - {b.size()}")
-    if res is None:
-        # Pre-allocate
-        res = torch.empty((batch_dim, dim_1, dim_2), dtype=torch.int32, device=a.device)
-    else:
-        # Validate user-supplied results tensor
-        assert res.dtype == torch.int32, "Result needs to be int32"
-        assert a.device == res.device, "Results tensor on wrong device"
-        assert len(res.size()) == 3
-        assert (
-            res.size(0) == batch_dim and res.size(1) == dim_1 and res.size(2) == dim_2
-        ), "Results tensor shape does not match"
-        res = res.contiguous()
-
+    res = torch.empty((batch_dim, dim_1, dim_2), dtype=torch.int32, device=a.device)
     lut = lut.to(a.device)
     a = a.contiguous()
     b = b.contiguous()

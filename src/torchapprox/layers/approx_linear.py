@@ -1,45 +1,57 @@
 # pylint: disable=missing-module-docstring, arguments-differ, abstract-method
+from typing import Optional
+
 import torch
+import torch.ao.quantization as tq
+import torch.nn as nn
+from torch.ao.nn.qat.modules.linear import Linear as QATLinear
 
 from torchapprox.operators.linear import FastLinearOp
 
 from .approx_layer import ApproxLayer
 
 
-class ApproxLinear(torch.nn.Linear, ApproxLayer):
+class ApproxLinearWrapper(nn.Module):
+    def __init__(self, wrapped: torch.nn.Linear, qconfig: Optional[tq.QConfig] = None):
+        torch.nn.Module.__init__(self)
+        self.quant_stub = tq.QuantStub()
+        self.dequant_stub = tq.DeQuantStub()
+        self.wrapped = wrapped
+        if not qconfig:
+            self.qconfig = ApproxLayer.default_qconfig()
+
+    def forward(self, x):
+        x_scale = getattr(self.quant_stub.activation_post_process, "scale", None)
+        x_zero_point = getattr(
+            self.quant_stub.activation_post_process, "zero_point", None
+        )
+        x_q = self.quant_stub(x)
+        y_q = self.wrapped(x_q, x_scale, x_zero_point)
+        y = self.dequant_stub(y_q)
+        return y
+
+
+class ApproxLinear(ApproxLayer, QATLinear):
     """
     Approximate Linear Layer implementation
     """
 
-    def __init__(self, *args, **kwargs):
-        torch.nn.Linear.__init__(self, *args, **kwargs)
+    _FLOAT_MODULE = nn.Linear
+
+    def __init__(
+        self,
+        in_features,
+        out_features,
+        bias=True,
+        qconfig=None,
+        device=None,
+        dtype=None,
+    ):
+        QATLinear.__init__(
+            self, in_features, out_features, bias, qconfig, device, dtype
+        )
         ApproxLayer.__init__(self)
         self._opcount = torch.tensor(self.in_features * self.out_features).float()
-        self.to(self.weight.device)
-
-    @staticmethod
-    def from_super(cls_instance: torch.nn.Linear):
-        """
-        Alias for from_linear
-        """
-        return ApproxLinear.from_linear(cls_instance)
-
-    @staticmethod
-    def from_linear(linear: torch.nn.Linear):
-        """
-        Construct ApproxLinear from torch.nn.Linear layer
-        """
-        has_bias = linear.bias is not None
-        approx_instance = ApproxLinear(
-            linear.in_features, linear.out_features, bias=has_bias
-        )
-
-        with torch.no_grad():
-            approx_instance.weight = linear.weight
-            if has_bias:
-                approx_instance.bias = linear.bias
-
-        return approx_instance
 
     @property
     def fan_in(self) -> int:
@@ -49,33 +61,19 @@ class ApproxLinear(torch.nn.Linear, ApproxLayer):
     def opcount(self) -> int:
         return int(self._opcount)
 
-    def baseline_fwd(self, x):
-        return torch.nn.functional.linear(x, self.weight)
-
-    def quant_fwd(self, x):
-        x_q = self.x_quantizer.quantize(x)
-        w_q = self.w_quantizer.quantize(self.weight)
+    def quant_fwd(self, x_q, w_q):
         y = torch.nn.functional.linear(x_q, w_q)
-        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
-    def approx_fwd(self, x):
+    def approx_fwd(self, x_q, w_q, x_scale, x_zero_point, w_scale, w_zero_point):
         if self.fast_model is None:
             # ApproxGeMM
-            x_q = self.x_quantizer.quantize(x)[:, None, :]
-            w_q = self.w_quantizer.quantize(self.weight)
-            y = self.approx_op(x_q, w_q.T)
+            y = self.approx_op(x_q, w_q, x_scale, x_zero_point, w_scale, w_zero_point)
         else:
             # HTP Model
-            x_q = self.x_quantizer.quantize(x)
-            w_q = self.w_quantizer.quantize(self.weight)
             y = FastLinearOp.apply(x_q, w_q, self.fast_model)
         # Rescale results
-        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
+        # y /= x_scale * w_scale
 
-        y = y.view(y.size(0), -1)
+        # y = y.view(y.size(0), -1)
         return y
-
-    # pylint: disable=arguments-renamed
-    def forward(self, x):
-        return ApproxLayer.forward(self, x, self.bias)

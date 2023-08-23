@@ -54,7 +54,13 @@ class LUT(torch.nn.Module):
             )
 
     def forward(
-        self, x: torch.Tensor, w: torch.Tensor, res: Optional[torch.Tensor] = None
+        self,
+        x: torch.Tensor,
+        w: torch.Tensor,
+        x_scale: torch.Tensor,
+        x_zero_point: torch.Tensor,
+        w_scale: torch.Tensor,
+        w_zero_point: torch.Tensor,
     ) -> torch.Tensor:
         """
         Perform Approximate Matrix Multiply (GeMM)
@@ -72,7 +78,7 @@ class LUT(torch.nn.Module):
             # Can be useful when piping data through this module is necessary but
             # approximate hardware simulation is not required
             # (e.g. for collecting activation maps in multipliers assignment stage)
-            w = torch.round(w).float()
-            x = torch.round(x).float()
             return x @ w
-        return ApproxGeMM.apply(x, w, self.lut, res)
+        return ApproxGeMM.apply(
+            x, w, self.lut, x_scale, x_zero_point, w_scale, w_zero_point
+        )
