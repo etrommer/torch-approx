@@ -2,12 +2,13 @@
 from typing import Optional, Union
 
 import numpy as np
+import numpy.typing as npt
 import torch
 
 from .approxgemm import ApproxGeMM
 
 
-class LUT(torch.nn.Module):
+class LUTGeMM(torch.nn.Module):
     """
     Class that wraps the Lookup Table matrix multiplication as a torch.nn.Module.
     This is required so that hooks can be attached in order to trace
@@ -17,9 +18,17 @@ class LUT(torch.nn.Module):
     def __init__(self):
         torch.nn.Module.__init__(self)
         self._lut: Optional[torch.Tensor] = None
+        self.lut = self.accurate_lut()
+
+    @staticmethod
+    def accurate_lut() -> npt.NDArray[np.int16]:
+        x = np.arange(256)
+        x[x >= 128] -= 256
+        xx, yy = np.meshgrid(x, x)
+        return (xx * yy).astype(np.int16)
 
     @property
-    def lut(self) -> Optional[torch.Tensor]:
+    def lut(self) -> torch.Tensor:
         """
         The Lookup table to use for approximate multiplication. LUT can be:
         - `None`: An accurate product is used internall. This is much faster than passing
@@ -33,11 +42,7 @@ class LUT(torch.nn.Module):
         return self._lut
 
     @lut.setter
-    def lut(self, new_lut: Optional[Union[np.ndarray, torch.Tensor]]):
-        if new_lut is None:
-            self._lut = None
-            return
-
+    def lut(self, new_lut: Union[np.ndarray, torch.Tensor]):
         assert len(new_lut.shape) == 2, "LUT needs to be 2D square matrix"
         assert (
             new_lut.shape[0] == new_lut.shape[1] == 256
@@ -73,12 +78,6 @@ class LUT(torch.nn.Module):
         Returns:
             The approximate matrix batched matrix product of x and w, using the supplied LUT
         """
-        if self.lut is None:
-            # Ignore approximation LUT and output accurate matrix-matrix product.
-            # Can be useful when piping data through this module is necessary but
-            # approximate hardware simulation is not required
-            # (e.g. for collecting activation maps in multipliers assignment stage)
-            return x @ w
         return ApproxGeMM.apply(
             x, w, self.lut, x_scale, x_zero_point, w_scale, w_zero_point
         )
