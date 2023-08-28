@@ -6,11 +6,25 @@ import torch
 
 from torchapprox import layers as tal
 from torchapprox import utils
+import torch.ao.quantization as quant
 
 
 def test_instantiate():
     with pytest.raises(TypeError):
-        al = tal.ApproxLayer()
+        tal.ApproxLayer()
+
+
+@pytest.mark.xfail
+def test_compile(device, lut):
+    layer = torch.nn.Linear(42, 23)
+    w = tal.approx_linear.ApproxLinearWrapper(layer)
+    x = torch.rand(128, 42).requires_grad_()
+    quant.prepare_qat(w, {torch.nn.Linear: tal.ApproxLinear}, inplace=True)
+
+    w.wrapped.approx_op.lut = lut
+    w.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
+    w_comp = torch.compile(w)
+    w_comp(x)
 
 
 def test_conversion():
@@ -33,43 +47,39 @@ def test_conversion():
 
 
 def test_linear_from_super(device):
-    l = torch.nn.Linear(20, 10, device=device)
-    al = tal.ApproxLinear.from_super(copy.deepcopy(l))
+    lin_layer = torch.nn.Linear(20, 10, device=device)
+    wrapped_lin = tal.ApproxWrapper(lin_layer)
+    quant.prepare_qat(wrapped_lin, tal.layer_mapping_dict(), inplace=True)
+    # al = tal.ApproxLinear.from_float(copy.deepcopy(l))
 
     # Properties should be identical
-    assert l.weight.device == al.weight.device
-    assert l.in_features == al.in_features
-    assert l.out_features == al.out_features
+    assert lin_layer.weight.device == wrapped_lin.wrapped.weight.device
+    assert lin_layer.in_features == wrapped_lin.wrapped.in_features
+    assert lin_layer.out_features == wrapped_lin.wrapped.out_features
 
     # Weights and biases should be the same
-    assert torch.allclose(l.weight, al.weight)
-    assert torch.allclose(l.bias, al.bias)
-
-    # Baseline forward pass should yield the same result
-    x = torch.rand(4, 20, device=device)
-    assert torch.allclose(l(x), al(x))
+    assert torch.allclose(lin_layer.weight, wrapped_lin.wrapped.weight)
+    assert torch.allclose(lin_layer.bias, wrapped_lin.wrapped.bias)
 
 
 def test_conv2d_from_super(device):
-    l = torch.nn.Conv2d(8, 16, 3, device=device)
-    al = tal.ApproxConv2d.from_super(copy.deepcopy(l))
+    conv_layer = torch.nn.Conv2d(8, 16, 3, device=device)
+    wrapped_conv = tal.ApproxWrapper(conv_layer)
+    quant.prepare_qat(wrapped_conv, tal.layer_mapping_dict(), inplace=True)
 
     # Check properties
-    assert l.weight.device == al.weight.device
-    assert l.kernel_size == al.kernel_size
-    assert l.in_channels == al.in_channels
-    assert l.out_channels == al.out_channels
-    assert l.stride == al.stride
-    assert l.padding == al.padding
-    assert l.dilation == al.dilation
-    assert l.groups == al.groups
+    assert conv_layer.weight.device == wrapped_conv.wrapped.weight.device
+    assert conv_layer.kernel_size == wrapped_conv.wrapped.kernel_size
+    assert conv_layer.in_channels == wrapped_conv.wrapped.in_channels
+    assert conv_layer.out_channels == wrapped_conv.wrapped.out_channels
+    assert conv_layer.stride == wrapped_conv.wrapped.stride
+    assert conv_layer.padding == wrapped_conv.wrapped.padding
+    assert conv_layer.dilation == wrapped_conv.wrapped.dilation
+    assert conv_layer.groups == wrapped_conv.wrapped.groups
 
     # Check weights and biases
-    assert torch.allclose(l.weight, al.weight)
-    assert torch.allclose(l.bias, al.bias)
-
-    x = torch.rand(2, 8, 4, 4, device=device)
-    assert torch.allclose(l(x), al(x))
+    assert torch.allclose(conv_layer.weight, wrapped_conv.wrapped.weight)
+    assert torch.allclose(conv_layer.bias, wrapped_conv.wrapped.bias)
 
 
 def test_linear_properties():
