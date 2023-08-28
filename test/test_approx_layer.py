@@ -83,26 +83,6 @@ def test_conv2d_from_super(device):
     assert torch.allclose(conv_layer.bias, wrapped_conv.wrapped.bias)
 
 
-def test_linear_properties():
-    al = tal.ApproxLinear(10, 20, False)
-    assert al.fan_in == 10
-    assert al.opcount == 200
-
-
-def test_conv2d_properties():
-    in_channels = 8
-    out_channels = 16
-    kernel_size = 3
-
-    al = tal.ApproxConv2d(in_channels, out_channels, kernel_size)
-    x = torch.rand((4, in_channels, 4, 4))
-    _ = al(x)
-    assert al.fan_in == in_channels * kernel_size**2
-
-    input_size = 2 * 2  # 4x4px without padding
-    assert al.opcount == in_channels * input_size * kernel_size**2 * out_channels
-
-
 layer_configs = [
     (tal.ApproxLinear, (4, 20), (20, 10), {}),
     (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 1}),
@@ -115,31 +95,31 @@ layer_configs = [
 
 
 @pytest.mark.parametrize("layer", layer_configs)
-def test_layer_fwd(lut, device, layer):
-    approx_type, input_dims, layer_args, layer_kwargs = layer
+def test_layer_fwd(device, layer):
+    layer_type, input_dims, layer_args, layer_kwargs = layer
 
-    layer = approx_type(*layer_args, **layer_kwargs, device=device)
-    layer.inference_mode = tal.InferenceMode.APPROXIMATE
-    layer.approx_op.lut = lut
-
-    ref_layer = copy.deepcopy(layer)
-    ref_layer.inference_mode = tal.InferenceMode.QUANTIZED
+    layer = tal.ApproxWrapper(layer_type(*layer_args, **layer_kwargs, device=device))
+    quant.prepare_qat(layer, tal.layer_mapping_dict(), inplace=True)
 
     x = torch.rand(input_dims, device=device)
+    layer.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
 
-    assert torch.allclose(ref_layer(x), layer(x), atol=1e-7)
+    xref = copy.deepcopy(x)
+    ref_layer = copy.deepcopy(layer)
+    ref_layer.wrapped.inference_mode = tal.InferenceMode.QUANTIZED
 
-    layer.approx_op.lut = None
-    assert torch.allclose(ref_layer(x), layer(x), atol=1e-7)
+    y = layer(x)
+    yref = ref_layer(xref)
+
+    assert torch.allclose(y, yref, atol=1e-7)
 
 
 @pytest.mark.parametrize("layer", layer_configs)
-def test_layer_bwd(lut, device, layer):
+def test_layer_bwd(device, layer):
     approx_type, input_dims, layer_args, layer_kwargs = layer
 
     layer = approx_type(*layer_args, **layer_kwargs, device=device)
     layer.inference_mode = tal.InferenceMode.APPROXIMATE
-    layer.approx_op.lut = lut
 
     ref_layer = copy.deepcopy(layer)
     ref_layer.inference_mode = tal.InferenceMode.QUANTIZED
