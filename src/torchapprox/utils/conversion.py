@@ -1,14 +1,14 @@
 # pylint: disable=missing-module-docstring
-from typing import Dict, List, Optional, Tuple, Type
+from typing import List, Optional, Tuple
 
 import torch
 
 import torchapprox.layers as tal
 
 
-def inplace_conversion(
+def wrap_quantizable(
     net: torch.nn.Module,
-    layer_mappings: Optional[Dict[Type[torch.nn.Module], Type[tal.ApproxLayer]]] = None,
+    wrappable_layers: Optional[List[tal.ApproxLayer]] = None,
 ) -> torch.nn.Module:
     """
     Performs in-place upgrade of layers in a vanilla PyTorch network to TorchApprox
@@ -22,21 +22,24 @@ def inplace_conversion(
     Returns:
         An identical model with target layers replaced by Approximate Layer implementations
     """
-    if layer_mappings is None:
-        layer_mappings = {
-            torch.nn.Conv2d: tal.ApproxConv2d,
-            torch.nn.Linear: tal.ApproxLinear,
-        }
+    if not wrappable_layers:
+        wrappable_layers = [torch.nn.modules.Linear, torch.nn.modules.Conv2d]
 
-    def replace_module(parent_module, base_type, approx_type):
+    replace_list = []
+
+    def find_replacable_modules(parent_module):
         for name, child_module in parent_module.named_children():
+            if any([isinstance(child_module, t) for t in wrappable_layers]):
+                replace_list.append((parent_module, name))
             for child in parent_module.children():
-                replace_module(child, base_type, approx_type)
-            if isinstance(child_module, base_type):
-                setattr(parent_module, name, approx_type.from_super(child_module))
+                find_replacable_modules(child)
 
-    for base_type, approx_type in layer_mappings.items():
-        replace_module(net, base_type, approx_type)
+    find_replacable_modules(net)
+
+    for parent, name in replace_list:
+        orig_layer = getattr(parent, name)
+        wrapped = tal.ApproxWrapper(orig_layer)
+        setattr(parent, name, wrapped)
     return net
 
 

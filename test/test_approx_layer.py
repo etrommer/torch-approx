@@ -35,15 +35,16 @@ def test_conversion():
             self.linear = torch.nn.Linear(20, 10)
 
     mn = MiniNet()
-    utils.inplace_conversion(mn)
+    utils.wrap_quantizable(mn)
+    quant.prepare_qat(mn, tal.layer_mapping_dict(), inplace=True)
 
-    assert isinstance(mn.conv, tal.ApproxConv2d)
-    assert isinstance(mn.linear, tal.ApproxLinear)
+    assert isinstance(mn.conv.wrapped, tal.ApproxConv2d)
+    assert isinstance(mn.linear.wrapped, tal.ApproxLinear)
 
     approx_modules = utils.get_approx_modules(mn)
     assert len(approx_modules) == 2
-    assert approx_modules[0][0] == "conv"
-    assert approx_modules[1][0] == "linear"
+    assert approx_modules[0][0] == "conv.wrapped"
+    assert approx_modules[1][0] == "linear.wrapped"
 
 
 def test_linear_from_super(device):
