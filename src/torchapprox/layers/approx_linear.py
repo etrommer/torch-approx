@@ -1,34 +1,11 @@
 # pylint: disable=missing-module-docstring, arguments-differ, abstract-method
-from typing import Optional
 
 import torch
-import torch.ao.quantization as tq
 import torch.nn as nn
 from torch.ao.nn.qat.modules.linear import Linear as QATLinear
 
-from torchapprox.operators.linear import FastLinearOp
 
 from .approx_layer import ApproxLayer
-
-
-class ApproxLinearWrapper(nn.Module):
-    def __init__(self, wrapped: torch.nn.Linear, qconfig: Optional[tq.QConfig] = None):
-        torch.nn.Module.__init__(self)
-        self.quant_stub = tq.QuantStub()
-        self.dequant_stub = tq.DeQuantStub()
-        self.wrapped = wrapped
-        if not qconfig:
-            self.qconfig = ApproxLayer.default_qconfig()
-
-    def forward(self, x):
-        x_scale = getattr(self.quant_stub.activation_post_process, "scale", None)
-        x_zero_point = getattr(
-            self.quant_stub.activation_post_process, "zero_point", None
-        )
-        x_q = self.quant_stub(x)
-        y_q = self.wrapped(x_q, x_scale, x_zero_point)
-        y = self.dequant_stub(y_q)
-        return y
 
 
 class ApproxLinear(ApproxLayer, QATLinear):
@@ -70,8 +47,9 @@ class ApproxLinear(ApproxLayer, QATLinear):
             # ApproxGeMM
             y = self.approx_op(x_q, w_q, x_scale, x_zero_point, w_scale, w_zero_point)
         else:
+            pass
             # HTP Model
-            y = FastLinearOp.apply(x_q, w_q, self.fast_model)
+            # y = FastLinearOp.apply(x_q, w_q, self.fast_model)
         # Rescale results
         # y /= x_scale * w_scale
 
