@@ -2,13 +2,15 @@
 import enum
 import logging
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, no_type_check
+from typing import TYPE_CHECKING, Callable, Optional, no_type_check
 
 import torch
 import torch.ao.quantization as tq
 
-from torchapprox.operators import LUT
+from torchapprox.operators import LUTGeMM
 
+if TYPE_CHECKING:
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +34,7 @@ class ApproxLayer(ABC):
     """
 
     def __init__(self, qconfig: Optional[tq.QConfig] = None):
-        self.approx_op: LUT = LUT()
+        self.approx_op: LUTGeMM = LUTGeMM()
         self.inference_mode: InferenceMode = InferenceMode.QUANTIZED
         self.fast_model: Optional[Callable] = None
 
@@ -56,12 +58,6 @@ class ApproxLayer(ABC):
             quant_max=127,
         )
         return tq.QConfig(activation=act_qconfig, weight=weight_qconfig)
-
-    # @staticmethod
-    # def get_default_qat_module_mappings():
-    #     mapping = tq.get_default_qat_module_mappings()
-    #     mapping[torch.nn.Linear] = ApproxLinear
-    #     return mapping
 
     @property
     def stdev(self) -> float:
@@ -195,6 +191,9 @@ class ApproxLayer(ABC):
         if self.inference_mode == InferenceMode.NOISE:
             y_q = self.noise_fwd(x_q)
         elif self.inference_mode == InferenceMode.APPROXIMATE:
+            assert (x_scale is not None) and (
+                x_zero_point is not None
+            ), "Received no activation quantization information during approximate forward pass"
             w_scale = self.weight_fake_quant.scale
             w_zero_point = self.weight_fake_quant.zero_point
             w_scale = self.weight_fake_quant.scale

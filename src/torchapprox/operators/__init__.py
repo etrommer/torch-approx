@@ -1,4 +1,6 @@
 """
 Low-level NN operator implementations for GPU & CPU
 """
-from .lut import LUT
+__all__ = ["LUTGeMM"]
+
+from .lut import LUTGeMM

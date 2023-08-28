@@ -26,8 +26,8 @@ class ApproxGeMM(torch.autograd.Function):
         """
         Approximate forward operation
         """
-        x_int = ((x / x_scale) + x_zero_point).char()[:, None, :]
-        w_int = ((w / w_scale) + w_zero_point).char().T
+        x_int = torch.round((x / x_scale) + x_zero_point).char()[:, None, :]
+        w_int = torch.round((w / w_scale) + w_zero_point).char().T
         res_int = approx(x_int, w_int, lut)
         res = res_int.float()
         scaled = (
