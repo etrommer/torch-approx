@@ -190,7 +190,7 @@ class ApproxLayer(ABC):
 
         w_q = self.weight_fake_quant(self.weight)
         if self.inference_mode == InferenceMode.NOISE:
-            y_q = self.noise_fwd(x_q)
+            y_q = self.noise_fwd(x_q, w_q)
         elif self.inference_mode == InferenceMode.APPROXIMATE:
             assert (x_scale is not None) and (
                 x_zero_point is not None

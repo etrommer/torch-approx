@@ -152,7 +152,7 @@ class ApproxConv2dOp(torch.autograd.Function):
         x, w = ctx.saved_tensors
         conf = ctx.conf
         grad_input, grad_weight = _conv_bwd_ste(grad, x, w, conf)
-        return grad_input, grad_weight, None, None, None
+        return grad_input, grad_weight, None, None, None, None, None, None, None
 
 
 class FastApproxConv2dOp(torch.autograd.Function):

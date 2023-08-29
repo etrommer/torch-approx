@@ -23,6 +23,7 @@ pre-commit = "^3.3.3"
 black = "^23.7.0"
 ipykernel = "^6.25.1"
 torchviz = "^0.0.2"
+numpy = "^1.23.0"
 
 [tool.poetry.group.extras]
 optional = true

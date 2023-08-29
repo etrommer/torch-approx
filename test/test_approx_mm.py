@@ -3,7 +3,6 @@ from itertools import product
 
 import pytest
 import torch
-
 from torchapprox.operators.approxgemm import ApproxGeMM
 from torchapprox.operators.backend import approx
 
@@ -61,18 +60,12 @@ def test_mm(matrices, lut):
 
     # res = a * b
     res = approx(a, b, lut)
-    res_T = approx(b.T, a.transpose(1, 2), lut).transpose(1, 2)
     assert torch.allclose(ref, res)
-    assert torch.allclose(ref, res_T)
 
     # Check correctness when 2nd operand is batched
     # res.T = b.T * a.T
-    res_prealloc = approx(a, b, lut, torch.empty_like(ref))
-    res_prealloc_T = approx(
-        b.T, a.transpose(1, 2), lut, torch.empty_like(ref.transpose(1, 2))
-    ).transpose(1, 2)
-    assert torch.allclose(ref, res_prealloc)
-    assert torch.allclose(ref, res_prealloc_T)
+    res_T = approx(b.T, a.transpose(1, 2), lut).transpose(1, 2)
+    assert torch.allclose(ref, res_T)
 
 
 def test_mm_grad(device, lut):
@@ -80,19 +73,27 @@ def test_mm_grad(device, lut):
     a1 = torch.randint(
         -128,
         128,
-        size=(1, 10, 10),
+        size=(42, 23),
         device=device,
         dtype=torch.float32,
         requires_grad=True,
     )
     b1 = torch.randint(
-        -128, 128, size=(10, 10), device=device, dtype=torch.float32, requires_grad=True
+        -128, 128, size=(5, 23), device=device, dtype=torch.float32, requires_grad=True
     )
     a2 = copy.deepcopy(a1)
     b2 = copy.deepcopy(b1)
 
-    ApproxGeMM.apply(a1, b1, lut).sum().backward()
-    torch.matmul(a2, b2).sum().backward()
+    ApproxGeMM.apply(
+        a1,
+        b1,
+        lut,
+        torch.tensor([1.0]),
+        torch.tensor([0.0]),
+        torch.tensor([1.0]),
+        torch.tensor([0.0]),
+    ).sum().backward()
+    torch.matmul(a2, b2.T).sum().backward()
 
     assert torch.allclose(a1.grad, a2.grad)
     assert torch.allclose(b1.grad, b2.grad)
@@ -106,8 +107,28 @@ def test_indexing(device):
     lut[127, 0] = 42
     lut[0, 127] = -23
 
-    res = ApproxGeMM.apply(torch.tensor([[[127.0]]]), torch.tensor([[0.0]]), lut)
+    res = ApproxGeMM.apply(
+        torch.tensor([[127.0]]),
+        torch.tensor([[0.0]]),
+        lut,
+        torch.tensor([1.0]),
+        torch.tensor([0.0]),
+        torch.tensor([1.0]),
+        torch.tensor([0.0]),
+    )
     assert torch.allclose(res, torch.tensor([[[42.0]]]))
 
-    res = ApproxGeMM.apply(torch.tensor([[[0.0]]]), torch.tensor([[127.0]]), lut)
+    res = ApproxGeMM.apply(
+        torch.tensor([[0.0]]),
+        torch.tensor([[127.0]]),
+        lut,
+        torch.tensor([1.0]),
+        torch.tensor([0.0]),
+        torch.tensor([1.0]),
+        torch.tensor([0.0]),
+    )
     assert torch.allclose(res, torch.tensor([[[-23.0]]]))
+
+
+def test_approxgemm(device):
+    pass

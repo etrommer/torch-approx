@@ -84,13 +84,13 @@ def test_conv2d_from_super(device):
 
 
 layer_configs = [
-    (tal.ApproxLinear, (4, 20), (20, 10), {}),
-    (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 1}),
-    (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 2}),
-    (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 4}),
-    (tal.ApproxConv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 8}),
-    (tal.ApproxConv2d, (2, 8, 4, 4), (8, 8, 3), {"groups": 8}),
-    (tal.ApproxConv2d, (2, 16, 32, 32), (16, 16, 3), {"groups": 16}),
+    (torch.nn.Linear, (4, 20), (20, 10), {}),
+    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 1}),
+    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 2}),
+    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 4}),
+    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 8}),
+    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 8, 3), {"groups": 8}),
+    (torch.nn.Conv2d, (2, 16, 32, 32), (16, 16, 3), {"groups": 16}),
 ]
 
 
@@ -116,56 +116,74 @@ def test_layer_fwd(device, layer):
 
 @pytest.mark.parametrize("layer", layer_configs)
 def test_layer_bwd(device, layer):
-    approx_type, input_dims, layer_args, layer_kwargs = layer
+    layer_type, input_dims, layer_args, layer_kwargs = layer
+    layer = tal.ApproxWrapper(layer_type(*layer_args, **layer_kwargs, device=device))
+    quant.prepare_qat(layer, tal.layer_mapping_dict(), inplace=True)
 
-    layer = approx_type(*layer_args, **layer_kwargs, device=device)
-    layer.inference_mode = tal.InferenceMode.APPROXIMATE
+    layer.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
 
     ref_layer = copy.deepcopy(layer)
-    ref_layer.inference_mode = tal.InferenceMode.QUANTIZED
+    ref_layer.wrapped.inference_mode = tal.InferenceMode.QUANTIZED
 
     x1 = torch.rand(input_dims, device=device, requires_grad=True)
     x2 = copy.deepcopy(x1)
     ref_layer(x1).sum().backward()
     layer(x2).sum().backward()
 
-    idxs = torch.nonzero(torch.abs(ref_layer.weight.grad - layer.weight.grad) > 1e-3)
-    if len(idxs) != 0:
-        print(idxs[0])
-        print(ref_layer.weight.grad[0])
-        print(layer.weight.grad[0])
-
     assert torch.allclose(x1.grad, x2.grad, atol=5e-7)
-    assert torch.allclose(ref_layer.weight.grad, layer.weight.grad, atol=5e-7)
-    assert torch.allclose(ref_layer.bias.grad, layer.bias.grad, atol=5e-7)
+    assert torch.allclose(
+        ref_layer.wrapped.weight.grad, layer.wrapped.weight.grad, atol=5e-7
+    )
+    assert torch.allclose(
+        ref_layer.wrapped.bias.grad, layer.wrapped.bias.grad, atol=5e-7
+    )
 
 
 @pytest.mark.parametrize("layer", layer_configs)
 def test_layer_empty_lut(device, layer):
     approx_type, input_dims, layer_args, layer_kwargs = layer
+    approx_type = tal.layer_mapping_dict()[approx_type]
+    layer_kwargs["bias"] = False
+    layer = approx_type(
+        *layer_args,
+        **layer_kwargs,
+        device=device,
+        qconfig=tal.ApproxLayer.default_qconfig()
+    )
 
-    layer = approx_type(*layer_args, **layer_kwargs, bias=False, device=device)
     layer.inference_mode = tal.InferenceMode.APPROXIMATE
     layer.approx_op.lut = np.zeros((256, 256))
 
-    x = torch.rand(input_dims, device=device)
+    x = torch.randint(-128, 128, size=input_dims, device=device, dtype=torch.float32)
 
-    res = layer(x)
+    res = layer(x, torch.tensor([1.0]), torch.tensor([0.0]))
     assert torch.allclose(torch.zeros_like(res), res)
 
 
 @pytest.mark.parametrize("layer", layer_configs)
 def test_layer_noise(device, layer):
     approx_type, input_dims, layer_args, layer_kwargs = layer
-    layer = approx_type(*layer_args, **layer_kwargs, device=device)
+    approx_type = tal.layer_mapping_dict()[approx_type]
+    layer = approx_type(
+        *layer_args,
+        **layer_kwargs,
+        device=device,
+        qconfig=tal.ApproxLayer.default_qconfig()
+    )
     layer.inference_mode = tal.InferenceMode.NOISE
 
     ref_layer = copy.deepcopy(layer)
     ref_layer.inference_mode = tal.InferenceMode.QUANTIZED
 
-    x = torch.rand(input_dims, device=device)
+    x = torch.randint(-128, 128, size=input_dims, device=device, dtype=torch.float32)
+    x_scale = torch.tensor([1.0])
+    x_zero_point = torch.tensor([0.0])
 
     layer.stdev = 0.1
-    assert not torch.allclose(layer(x), ref_layer(x))
+    assert not torch.allclose(
+        layer(x, x_scale, x_zero_point), ref_layer(x, x_scale, x_zero_point)
+    )
     layer.stdev = 0.0
-    assert torch.allclose(layer(x), ref_layer(x))
+    assert torch.allclose(
+        layer(x, x_scale, x_zero_point), ref_layer(x, x_scale, x_zero_point)
+    )
