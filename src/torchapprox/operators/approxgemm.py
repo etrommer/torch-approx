@@ -53,10 +53,10 @@ class ApproxGeMM(torch.autograd.Function):
         # if len(a.size()) == 3:
         # Batched matrix is a
         grad_x = grad_w = None
-        # if ctx.needs_input_grad[0]:
-        grad_x = torch.matmul(grad_output, w)
-        # if ctx.needs_input_grad[1]:
-        grad_w = torch.matmul(grad_output.T, x)
+        if ctx.needs_input_grad[0]:
+            grad_x = torch.matmul(grad_output, w)
+        if ctx.needs_input_grad[1]:
+            grad_w = torch.matmul(grad_output.T, x)
         # else:
         #     # Batched matrix is b
         #     grad_a = torch.sum(torch.matmul(grad, b.transpose(1, 2)), axis=0)

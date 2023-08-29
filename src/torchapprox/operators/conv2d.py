@@ -41,7 +41,7 @@ class Conv2dArgs:
         return bwd_args
 
 
-def _conv_bwd_ste(grad, x, w, conf):
+def _conv_bwd_ste(grad, x, w, conf, require_input_grad=True, require_weight_grad=True):
     """
     Wrapper to reuse Conv2d gradient calculation
     for several approximate forward functions
@@ -55,9 +55,60 @@ def _conv_bwd_ste(grad, x, w, conf):
     Returns:
         Gradients for activations and weights
     """
-    grad_input = torch.nn.grad.conv2d_input(x.size(), w, grad, **conf)
-    grad_weight = torch.nn.grad.conv2d_weight(x, w.size(), grad, **conf)
+    grad_input = grad_weight = None
+    if require_input_grad:
+        grad_input = torch.nn.grad.conv2d_input(x.size(), w, grad, **conf)
+    if require_weight_grad:
+        grad_weight = torch.nn.grad.conv2d_weight(x, w.size(), grad, **conf)
     return grad_input, grad_weight
+
+
+def _group_limits(group_idx: int, total_groups: int, channels: int) -> Tuple[int, int]:
+    channels_per_group = channels // total_groups
+    lower_idx = group_idx * channels_per_group
+    upper_idx = (group_idx + 1) * channels_per_group
+    return int(lower_idx), int(upper_idx)
+
+
+def _affine_requantize(
+    x_q, w_q, y_q, x_scale, x_zero_point, w_scale, w_zero_point, conv_args, out_dims
+):
+    y_q = y_q.view(y_q.size(0), y_q.size(1), -1)
+    for group in range(conv_args.groups):
+        in_ch_lower, in_ch_upper = _group_limits(
+            group, conv_args.groups, conv_args.in_channels
+        )
+        out_ch_lower, out_ch_upper = _group_limits(
+            group, conv_args.groups, conv_args.out_channels
+        )
+        x_unfold = torch.nn.functional.unfold(
+            x_q[
+                :,
+                in_ch_lower:in_ch_upper,
+                :,
+            ],
+            kernel_size=conv_args.kernel_size,
+            padding=conv_args.padding,
+            stride=conv_args.stride,
+            dilation=conv_args.dilation,
+        )
+        kernels_flat = w_q[out_ch_lower:out_ch_upper].view(
+            conv_args.out_channels // conv_args.groups, -1
+        )
+        y_q[:, out_ch_lower:out_ch_upper] += (
+            kernels_flat.size(-1) * x_zero_point * w_zero_point
+            - x_zero_point * kernels_flat.sum(axis=1).unsqueeze(0)[:, :, None].float()
+            - w_zero_point * x_unfold.sum(axis=1).unsqueeze(1).float()
+        )
+
+    y_q *= x_scale * w_scale
+    y_q = y_q.view(
+        x_q.size(0),
+        conv_args.out_channels,
+        out_dims[0],
+        out_dims[1],
+    )
+    return y_q
 
 
 class ApproxConv2dOp(torch.autograd.Function):
@@ -67,7 +118,6 @@ class ApproxConv2dOp(torch.autograd.Function):
 
     @staticmethod
     def forward(
-        ctx,
         x,
         w,
         x_scale,
@@ -78,30 +128,25 @@ class ApproxConv2dOp(torch.autograd.Function):
         out_dims,
         lut,
     ):
-        ctx.save_for_backward(x, w)
-        ctx.conf = conv_args.backward_args()
-
         w_int = torch.round((w / w_scale) + w_zero_point).char()
 
         # Pre-allocate output tensor
-        y = torch.empty(
+        y_q = torch.empty(
             x.size(0),
             conv_args.out_channels,
             math.prod(out_dims),
             device=x.device,
-            dtype=torch.float32,
+            dtype=torch.int32,
         )
 
         for group in range(conv_args.groups):
             # Calculate lower and upper channel index for current group
-            def limits(group, channels):
-                group_size = channels // conv_args.groups
-                lower = group * group_size
-                upper = (group + 1) * group_size
-                return int(lower), int(upper)
-
-            in_ch_lower, in_ch_upper = limits(group, conv_args.in_channels)
-            out_ch_lower, out_ch_upper = limits(group, conv_args.out_channels)
+            in_ch_lower, in_ch_upper = _group_limits(
+                group, conv_args.groups, conv_args.in_channels
+            )
+            out_ch_lower, out_ch_upper = _group_limits(
+                group, conv_args.groups, conv_args.out_channels
+            )
 
             # Im2Col operation
             x_unfold = torch.nn.functional.unfold(
@@ -123,35 +168,44 @@ class ApproxConv2dOp(torch.autograd.Function):
             )
 
             # ApproxGeMM
-            res = approx(
+            y_q[:, out_ch_lower:out_ch_upper] = approx(
                 kernels_flat,
                 x_unfold_int,
                 lut,
-            ).float()
-            y[:, out_ch_lower:out_ch_upper] = (
-                kernels_flat.size(-1) * x_zero_point * w_zero_point
-                - x_zero_point
-                * kernels_flat.sum(axis=1).unsqueeze(0)[:, :, None].float()
-                - w_zero_point * x_unfold.sum(axis=1).unsqueeze(1).float()
-                + res
-            ) * (x_scale * w_scale)
+            )
+
+        x_q = torch.round((x / x_scale) + x_zero_point)
+        w_q = torch.round((w / w_scale) + w_zero_point)
+        y_q = y_q.float()
+
+        y_q = _affine_requantize(
+            x_q,
+            w_q,
+            y_q,
+            x_scale,
+            x_zero_point,
+            w_scale,
+            w_zero_point,
+            conv_args,
+            out_dims,
+        )
 
         # Reshape to correct output size
-        y = y.view(
-            x.size(0),
-            conv_args.out_channels,
-            out_dims[0],
-            out_dims[1],
-        )
-        y = y.float()
-        y.requires_grad_()
-        return y
+        return y_q
+
+    @staticmethod
+    def setup_context(ctx: Any, inputs: Tuple[Any], output: Any) -> Any:
+        x, w, _, _, _, _, conv_args, _, _ = inputs
+        ctx.save_for_backward(x, w)
+        ctx.conf = conv_args.backward_args()
 
     @staticmethod
     def backward(ctx, grad):
         x, w = ctx.saved_tensors
         conf = ctx.conf
-        grad_input, grad_weight = _conv_bwd_ste(grad, x, w, conf)
+        grad_input, grad_weight = _conv_bwd_ste(
+            grad, x, w, conf, ctx.needs_input_grad[0], ctx.needs_input_grad[1]
+        )
         return grad_input, grad_weight, None, None, None, None, None, None, None
 
 

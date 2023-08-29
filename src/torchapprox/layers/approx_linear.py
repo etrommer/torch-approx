@@ -50,8 +50,5 @@ class ApproxLinear(ApproxLayer, QATLinear):
             pass
             # HTP Model
             # y = FastLinearOp.apply(x_q, w_q, self.fast_model)
-        # Rescale results
-        # y /= x_scale * w_scale
 
-        # y = y.view(y.size(0), -1)
         return y
