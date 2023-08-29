@@ -70,6 +70,10 @@ class ApproxConv2dOp(torch.autograd.Function):
         ctx,
         x,
         w,
+        x_scale,
+        x_zero_point,
+        w_scale,
+        w_zero_point,
         conv_args: Conv2dArgs,
         out_dims,
         lut,
@@ -77,19 +81,21 @@ class ApproxConv2dOp(torch.autograd.Function):
         ctx.save_for_backward(x, w)
         ctx.conf = conv_args.backward_args()
 
+        w_int = torch.round((w / w_scale) + w_zero_point).char()
+
         # Pre-allocate output tensor
         y = torch.empty(
             x.size(0),
             conv_args.out_channels,
             math.prod(out_dims),
             device=x.device,
-            dtype=torch.int32,
+            dtype=torch.float32,
         )
 
         for group in range(conv_args.groups):
             # Calculate lower and upper channel index for current group
             def limits(group, channels):
-                group_size = int(channels / conv_args.groups)
+                group_size = channels // conv_args.groups
                 lower = group * group_size
                 upper = (group + 1) * group_size
                 return int(lower), int(upper)
@@ -109,21 +115,26 @@ class ApproxConv2dOp(torch.autograd.Function):
                 stride=conv_args.stride,
                 dilation=conv_args.dilation,
             )
+            x_unfold_int = torch.round((x_unfold / x_scale) + x_zero_point).char()
 
             # Reshape weights to 2D
-            kernels_flat = w[out_ch_lower:out_ch_upper].view(
-                int(conv_args.out_channels / conv_args.groups), -1
+            kernels_flat = w_int[out_ch_lower:out_ch_upper].view(
+                conv_args.out_channels // conv_args.groups, -1
             )
 
             # ApproxGeMM
-            if lut is None:
-                y[:, out_ch_lower:out_ch_upper] = kernels_flat @ x_unfold
-            else:
-                y[:, out_ch_lower:out_ch_upper] = approx(
-                    kernels_flat.char(),
-                    x_unfold.char(),
-                    lut,
-                )
+            res = approx(
+                kernels_flat,
+                x_unfold_int,
+                lut,
+            ).float()
+            y[:, out_ch_lower:out_ch_upper] = (
+                kernels_flat.size(-1) * x_zero_point * w_zero_point
+                - x_zero_point
+                * kernels_flat.sum(axis=1).unsqueeze(0)[:, :, None].float()
+                - w_zero_point * x_unfold.sum(axis=1).unsqueeze(1).float()
+                + res
+            ) * (x_scale * w_scale)
 
         # Reshape to correct output size
         y = y.view(

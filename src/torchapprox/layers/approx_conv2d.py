@@ -1,25 +1,54 @@
 # pylint: disable=missing-module-docstring, arguments-differ, abstract-method
 import math
+from typing import Optional, Union
 
 import torch
+from torch.ao.nn.qat.modules.conv import Conv2d as QATConv2d
 
 from torchapprox.operators.conv2d import (
     ApproxConv2dOp,
-    ApproxDWConv2dOp,
     Conv2dArgs,
-    FastApproxConv2dOp,
 )
+from torch.nn.common_types import _size_2_t
 
 from .approx_layer import ApproxLayer
 
 
-class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
+class ApproxConv2d(ApproxLayer, QATConv2d):
     """
     Approximate 2D Convolution layer implementation
     """
 
-    def __init__(self, *args, **kwargs):
-        torch.nn.Conv2d.__init__(self, *args, **kwargs)
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        kernel_size: _size_2_t,
+        stride: _size_2_t = 1,
+        padding: Union[str, _size_2_t] = 0,
+        dilation: _size_2_t = 1,
+        groups: int = 1,
+        bias: bool = True,
+        padding_mode: str = "zeros",
+        qconfig=None,
+        device=None,
+        dtype=None,
+    ) -> None:
+        QATConv2d.__init__(
+            self,
+            in_channels,
+            out_channels,
+            kernel_size,
+            stride,
+            padding,
+            dilation,
+            groups,
+            bias,
+            padding_mode,
+            qconfig,
+            device,
+            dtype,
+        )
         ApproxLayer.__init__(self)
         self._opcount = None
         self.to(self.weight.device)
@@ -131,19 +160,7 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
         )
         return args
 
-    def baseline_fwd(self, x):
-        return torch.nn.functional.conv2d(
-            x,
-            self.weight,
-            stride=self.stride,
-            padding=self.padding,
-            dilation=self.dilation,
-            groups=self.groups,
-        )
-
-    def quant_fwd(self, x):
-        x_q = self.x_quantizer.quantize(x)
-        w_q = self.w_quantizer.quantize(self.weight)
+    def quant_fwd(self, x_q, w_q):
         y = torch.nn.functional.conv2d(
             x_q,
             w_q,
@@ -152,49 +169,58 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
             dilation=self.dilation,
             groups=self.groups,
         )
-        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
-    def approx_fwd(self, x):
-        x_q = self.x_quantizer.quantize(x)
-        w_q = self.w_quantizer.quantize(self.weight)
-
+    def approx_fwd(self, x_q, w_q, x_scale, x_zero_point, w_scale, w_zero_point):
         if self.fast_model is not None:
+            pass
             # Use HTP Model
-            y = FastApproxConv2dOp.apply(
-                x_q, w_q, self.fast_model, self.conv_args.backward_args()
-            )
+            # TODO: Change to affine quantization
+            # y = FastApproxConv2dOp.apply(
+            # x_q, w_q, self.fast_model, self.conv_args.backward_args()
+            # )
         elif self.use_fast_dwconv():
+            pass
             # Use accelerated DWConv kernels
-            y = ApproxDWConv2dOp.apply(
-                x_q, w_q, self.approx_op.lut, self.conv_args.backward_args()
-            )
+            # TODO: Change to affine quantization
+            # y = ApproxDWConv2dOp.apply(
+            # x_q, w_q, self.approx_op.lut, self.conv_args.backward_args()
+            # )
         else:
             # Use regular Im2Col/GeMM
-            out_dims = self.output_dims(x)
+            out_dims = self.output_dims(x_q)
             y = ApproxConv2dOp.apply(
                 x_q,
                 w_q,
+                x_scale,
+                x_zero_point,
+                w_scale,
+                w_zero_point,
                 self.conv_args,
                 out_dims,
                 self.approx_op.lut,
             )
 
         # Dequantize
-        y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
+        # y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
     # pylint: disable=arguments-renamed
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        x_q: torch.Tensor,
+        x_scale: Optional[torch.Tensor] = None,
+        x_zero_point: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
         # calculate opcount for this layer using the input tensor size on first forward pass
         if self._opcount is None:
             self._opcount = int(
                 math.prod(self.kernel_size)
-                * math.prod(self.output_dims(x))
+                * math.prod(self.output_dims(x_q))
                 * (self.in_channels / self.groups)
                 * self.out_channels
             )
 
         # Reshape bias tensor to make it broadcastable
         bias = None if self.bias is None else self.bias[:, None, None]
-        return ApproxLayer.forward(self, x, bias)
+        return ApproxLayer.forward(self, x_q, x_scale, x_zero_point, bias)

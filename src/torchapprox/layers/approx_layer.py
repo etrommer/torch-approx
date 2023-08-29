@@ -173,6 +173,7 @@ class ApproxLayer(ABC):
         x_q: torch.Tensor,
         x_scale: Optional[torch.Tensor] = None,
         x_zero_point: Optional[torch.Tensor] = None,
+        bias: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         """
         Forward pass with currently selected mode applied
@@ -203,7 +204,9 @@ class ApproxLayer(ABC):
         else:
             y_q = self.quant_fwd(x_q, w_q)
 
-        if self.bias is not None:
+        if bias is not None:
+            y_q = y_q + bias
+        elif self.bias is not None:
             y_q = y_q + self.bias
 
         return y_q
