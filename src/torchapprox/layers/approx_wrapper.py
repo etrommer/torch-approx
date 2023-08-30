@@ -16,8 +16,8 @@ class ApproxWrapper(torch.nn.Module):
     however a custom module is necessary so that we can forward the activation
     quantization scale and zero point to the approximate layer in the forward function.
 
-    The wrapped `torch.nn.Linear` layer is meant to be replaced with an instance of
-    `torchapprox.layers.ApproxLinear` in a separate call to
+    The wrapped instance of `torch.nn.Module` is meant to be replaced with an instance of
+    `torchapprox.layers.ApproxLayer` in a separate call to
     `torch.ao.quantization.prepare()` after it has been wrapped here.
     """
 

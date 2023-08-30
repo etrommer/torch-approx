@@ -11,7 +11,7 @@ from torchapprox.operators.conv2d import (
 )
 from torch.nn.common_types import _size_2_t
 
-from .approx_layer import ApproxLayer
+from .approx_layer import ApproxLayer, QuantizationParameters
 
 
 class ApproxConv2d(ApproxLayer, QATConv2d):
@@ -50,6 +50,9 @@ class ApproxConv2d(ApproxLayer, QATConv2d):
             dtype,
         )
         ApproxLayer.__init__(self)
+        assert (
+            padding_mode == "zeros"
+        ), f"Unsupported padding_mode {padding_mode}, only zero-padding is supported"
         self._opcount = None
         self.to(self.weight.device)
 
@@ -171,38 +174,17 @@ class ApproxConv2d(ApproxLayer, QATConv2d):
         )
         return y
 
-    def approx_fwd(self, x_q, w_q, x_scale, x_zero_point, w_scale, w_zero_point):
-        if self.fast_model is not None:
-            pass
-            # Use HTP Model
-            # TODO: Change to affine quantization
-            # y = FastApproxConv2dOp.apply(
-            # x_q, w_q, self.fast_model, self.conv_args.backward_args()
-            # )
-        elif self.use_fast_dwconv():
-            pass
-            # Use accelerated DWConv kernels
-            # TODO: Change to affine quantization
-            # y = ApproxDWConv2dOp.apply(
-            # x_q, w_q, self.approx_op.lut, self.conv_args.backward_args()
-            # )
-        else:
-            # Use regular Im2Col/GeMM
-            out_dims = self.output_dims(x_q)
-            y = ApproxConv2dOp.apply(
-                x_q,
-                w_q,
-                x_scale,
-                x_zero_point,
-                w_scale,
-                w_zero_point,
-                self.conv_args,
-                out_dims,
-                self.approx_op.lut,
-            )
+    def approx_fwd(self, x_q, w_q, quant_params: QuantizationParameters):
+        y = ApproxConv2dOp.apply(
+            x_q,
+            w_q,
+            quant_params,
+            self.conv_args,
+            self.fast_model,
+            self.output_dims(x_q),
+            self.approx_op.lut,
+        )
 
-        # Dequantize
-        # y /= self.x_quantizer.scale_factor * self.w_quantizer.scale_factor
         return y
 
     # pylint: disable=arguments-renamed

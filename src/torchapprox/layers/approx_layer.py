@@ -3,6 +3,7 @@ import enum
 import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Optional, no_type_check
+from dataclasses import dataclass
 
 import torch
 import torch.ao.quantization as tq
@@ -26,6 +27,14 @@ class InferenceMode(enum.Enum):
     QUANTIZED = "Quantized Mode"
     NOISE = "Noise Mode"
     APPROXIMATE = "Approximate Mode"
+
+
+@dataclass
+class QuantizationParameters:
+    x_scale: torch.FloatTensor
+    x_zero_point: torch.FloatTensor
+    w_scale: torch.FloatTensor
+    w_zero_point: torch.FloatTensor
 
 
 class ApproxLayer(ABC):
@@ -104,7 +113,7 @@ class ApproxLayer(ABC):
 
     @abstractmethod
     def quant_fwd(
-        self, x_q: torch.FloatTensor, w_q: torch.FloatTensor
+        self, x: torch.FloatTensor, w: torch.FloatTensor
     ) -> torch.FloatTensor:
         """Quantized Forward Pass
         Performs the layer operation with an additional pass through the
@@ -125,17 +134,13 @@ class ApproxLayer(ABC):
     @abstractmethod
     def approx_fwd(
         self,
-        x_q: torch.CharTensor,
-        w_q: torch.CharTensor,
-        x_scale: torch.Tensor,
-        x_zero_point: torch.Tensor,
-        w_scale: torch.Tensor,
-        w_zero_point: torch.Tensor,
+        x: torch.CharTensor,
+        w: torch.CharTensor,
+        quant_params: QuantizationParameters,
     ):
         """Approximate Product Forward Pass
         Performs the layer operation using the currently configured
         approximate product Lookup Table.
-        Quantization is implicitly applied to the input and weights.
 
         Args:
             x: Layer input
@@ -170,7 +175,7 @@ class ApproxLayer(ABC):
     @no_type_check
     def forward(
         self,
-        x_q: torch.Tensor,
+        x: torch.Tensor,
         x_scale: Optional[torch.Tensor] = None,
         x_zero_point: Optional[torch.Tensor] = None,
         bias: Optional[torch.Tensor] = None,
@@ -188,25 +193,26 @@ class ApproxLayer(ABC):
             self, "weight_fake_quant"
         ), "QAT nodes not replaced. Run `prepare_qat` first."
 
-        w_q = self.weight_fake_quant(self.weight)
+        w = self.weight_fake_quant(self.weight)
         if self.inference_mode == InferenceMode.NOISE:
-            y_q = self.noise_fwd(x_q, w_q)
+            y = self.noise_fwd(x, w)
         elif self.inference_mode == InferenceMode.APPROXIMATE:
             assert (x_scale is not None) and (
                 x_zero_point is not None
             ), "Received no activation quantization information during approximate forward pass"
-            w_scale = self.weight_fake_quant.scale
-            w_zero_point = self.weight_fake_quant.zero_point
-            w_scale = self.weight_fake_quant.scale
-            y_q = self.approx_fwd(
-                x_q, w_q, x_scale, x_zero_point, w_scale, w_zero_point
+            quant_params = QuantizationParameters(
+                x_scale,
+                x_zero_point,
+                self.weight_fake_quant.scale,
+                self.weight_fake_quant.zero_point,
             )
+            y = self.approx_fwd(x, w, quant_params)
         else:
-            y_q = self.quant_fwd(x_q, w_q)
+            y = self.quant_fwd(x, w)
 
         if bias is not None:
-            y_q = y_q + bias
+            y = y + bias
         elif self.bias is not None:
-            y_q = y_q + self.bias
+            y = y + self.bias
 
-        return y_q
+        return y

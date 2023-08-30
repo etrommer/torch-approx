@@ -1,7 +1,10 @@
 # pylint: disable=missing-module-docstring, arguments-differ, abstract-method
 import math
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Tuple, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from torchapprox.layers.approx_layer import QuantizationParameters
 
 import torch
 
@@ -70,9 +73,7 @@ def _group_limits(group_idx: int, total_groups: int, channels: int) -> Tuple[int
     return int(lower_idx), int(upper_idx)
 
 
-def _affine_requantize(
-    x_q, w_q, y_q, x_scale, x_zero_point, w_scale, w_zero_point, conv_args, out_dims
-):
+def _affine_requantize(x_q, w_q, y_q, quant_params, conv_args, out_dims):
     y_q = y_q.view(y_q.size(0), y_q.size(1), -1)
     for group in range(conv_args.groups):
         in_ch_lower, in_ch_upper = _group_limits(
@@ -96,12 +97,15 @@ def _affine_requantize(
             conv_args.out_channels // conv_args.groups, -1
         )
         y_q[:, out_ch_lower:out_ch_upper] += (
-            kernels_flat.size(-1) * x_zero_point * w_zero_point
-            - x_zero_point * kernels_flat.sum(axis=1).unsqueeze(0)[:, :, None].float()
-            - w_zero_point * x_unfold.sum(axis=1).unsqueeze(1).float()
+            kernels_flat.size(-1)
+            * quant_params.x_zero_point
+            * quant_params.w_zero_point
+            - quant_params.x_zero_point
+            * kernels_flat.sum(axis=1).unsqueeze(0)[:, :, None].float()
+            - quant_params.w_zero_point * x_unfold.sum(axis=1).unsqueeze(1).float()
         )
 
-    y_q *= x_scale * w_scale
+    y_q *= quant_params.x_scale * quant_params.w_scale
     y_q = y_q.view(
         x_q.size(0),
         conv_args.out_channels,
@@ -111,6 +115,59 @@ def _affine_requantize(
     return y_q
 
 
+def _im2col_conv2d(
+    x_q: torch.FloatTensor,
+    w_q: torch.FloatTensor,
+    conv_args: Conv2dArgs,
+    lut: torch.ShortTensor,
+    out_dims: Tuple[int, int],
+) -> torch.FloatTensor:
+    # Pre-allocate output tensor
+    y_q = torch.empty(
+        x_q.size(0),
+        conv_args.out_channels,
+        math.prod(out_dims),
+        device=x_q.device,
+        dtype=torch.int32,
+    )
+
+    w_s8 = w_q.char()
+    for group in range(conv_args.groups):
+        # Calculate lower and upper channel index for current group
+        in_ch_lower, in_ch_upper = _group_limits(
+            group, conv_args.groups, conv_args.in_channels
+        )
+        out_ch_lower, out_ch_upper = _group_limits(
+            group, conv_args.groups, conv_args.out_channels
+        )
+
+        # Im2Col operation
+        x_unfold_s8 = torch.nn.functional.unfold(
+            x_q[
+                :,
+                in_ch_lower:in_ch_upper,
+                :,
+            ],
+            kernel_size=conv_args.kernel_size,
+            padding=conv_args.padding,
+            stride=conv_args.stride,
+            dilation=conv_args.dilation,
+        ).char()
+
+        # Reshape weights to 2D
+        w_flat_s8 = w_s8[out_ch_lower:out_ch_upper].view(
+            conv_args.out_channels // conv_args.groups, -1
+        )
+
+        # ApproxGeMM
+        y_q[:, out_ch_lower:out_ch_upper] = approx(
+            w_flat_s8,
+            x_unfold_s8,
+            lut,
+        )
+    return y_q.float()
+
+
 class ApproxConv2dOp(torch.autograd.Function):
     """
     Autograd wrapper around Im2Col/ApproxGeMM Conv2d operator
@@ -118,74 +175,23 @@ class ApproxConv2dOp(torch.autograd.Function):
 
     @staticmethod
     def forward(
-        x,
-        w,
-        x_scale,
-        x_zero_point,
-        w_scale,
-        w_zero_point,
+        x: torch.FloatTensor,
+        w: torch.FloatTensor,
+        quant_params: "QuantizationParameters",
         conv_args: Conv2dArgs,
-        out_dims,
-        lut,
+        htp_model: Optional[Callable],
+        out_dims: Tuple[int, int],
+        lut: torch.ShortTensor,
     ):
-        w_int = torch.round((w / w_scale) + w_zero_point).char()
-
-        # Pre-allocate output tensor
-        y_q = torch.empty(
-            x.size(0),
-            conv_args.out_channels,
-            math.prod(out_dims),
-            device=x.device,
-            dtype=torch.int32,
-        )
-
-        for group in range(conv_args.groups):
-            # Calculate lower and upper channel index for current group
-            in_ch_lower, in_ch_upper = _group_limits(
-                group, conv_args.groups, conv_args.in_channels
-            )
-            out_ch_lower, out_ch_upper = _group_limits(
-                group, conv_args.groups, conv_args.out_channels
-            )
-
-            # Im2Col operation
-            x_unfold = torch.nn.functional.unfold(
-                x[
-                    :,
-                    in_ch_lower:in_ch_upper,
-                    :,
-                ],
-                kernel_size=conv_args.kernel_size,
-                padding=conv_args.padding,
-                stride=conv_args.stride,
-                dilation=conv_args.dilation,
-            )
-            x_unfold_int = torch.round((x_unfold / x_scale) + x_zero_point).char()
-
-            # Reshape weights to 2D
-            kernels_flat = w_int[out_ch_lower:out_ch_upper].view(
-                conv_args.out_channels // conv_args.groups, -1
-            )
-
-            # ApproxGeMM
-            y_q[:, out_ch_lower:out_ch_upper] = approx(
-                kernels_flat,
-                x_unfold_int,
-                lut,
-            )
-
-        x_q = torch.round((x / x_scale) + x_zero_point)
-        w_q = torch.round((w / w_scale) + w_zero_point)
-        y_q = y_q.float()
+        x_q = torch.round((x / quant_params.x_scale) + quant_params.x_zero_point)
+        w_q = torch.round((w / quant_params.w_scale) + quant_params.w_zero_point)
+        y_q = _im2col_conv2d(x_q, w_q, conv_args, lut, out_dims)
 
         y_q = _affine_requantize(
             x_q,
             w_q,
             y_q,
-            x_scale,
-            x_zero_point,
-            w_scale,
-            w_zero_point,
+            quant_params,
             conv_args,
             out_dims,
         )
@@ -195,7 +201,7 @@ class ApproxConv2dOp(torch.autograd.Function):
 
     @staticmethod
     def setup_context(ctx: Any, inputs: Tuple[Any], output: Any) -> Any:
-        x, w, _, _, _, _, conv_args, _, _ = inputs
+        x, w, _, conv_args, _, _, _ = inputs
         ctx.save_for_backward(x, w)
         ctx.conf = conv_args.backward_args()
 
