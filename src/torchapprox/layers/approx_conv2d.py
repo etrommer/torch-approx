@@ -88,29 +88,6 @@ class ApproxConv2d(ApproxLayer, QATConv2d):
 
         return approx_instance
 
-    def use_fast_dwconv(self) -> bool:
-        """
-        Determine whether layer can be run using DWConv CUDA kernels
-
-        Returns:
-            - True if layer can be mapped to dwconv2d backend function
-            - False otherwise
-        """
-
-        if not self.weight.is_cuda:
-            return False
-        if self.approx_op.lut is None:
-            return False
-        if self.dilation[0] > 1 or self.dilation[1] > 1:
-            return False
-        if self.groups != self.in_channels:
-            return False
-        if self.in_channels != self.out_channels:
-            return False
-        if self.padding_mode != "zeros":
-            return False
-        return True
-
     def output_dims(self, x):
         """
         Output width and height
@@ -180,7 +157,7 @@ class ApproxConv2d(ApproxLayer, QATConv2d):
             w_q,
             quant_params,
             self.conv_args,
-            self.fast_model,
+            self.htp_model,
             self.output_dims(x_q),
             self.approx_op.lut,
         )

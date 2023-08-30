@@ -43,6 +43,27 @@ class Conv2dArgs:
         }
         return bwd_args
 
+    def use_fast_dwconv(self) -> bool:
+        """
+        Determine whether layer can be run using DWConv CUDA kernels
+
+        Returns:
+            - True if layer can be mapped to dwconv2d backend function
+            - False otherwise
+        """
+
+        # if not self.weight.is_cuda:
+        #     return False
+        # if self.approx_op.lut is None:
+        #     return False
+        if self.dilation[0] > 1 or self.dilation[1] > 1:
+            return False
+        if self.groups != self.in_channels:
+            return False
+        if self.in_channels != self.out_channels:
+            return False
+        return True
+
 
 def _conv_bwd_ste(grad, x, w, conf, require_input_grad=True, require_weight_grad=True):
     """
@@ -185,7 +206,19 @@ class ApproxConv2dOp(torch.autograd.Function):
     ):
         x_q = torch.round((x / quant_params.x_scale) + quant_params.x_zero_point)
         w_q = torch.round((w / quant_params.w_scale) + quant_params.w_zero_point)
-        y_q = _im2col_conv2d(x_q, w_q, conv_args, lut, out_dims)
+
+        if htp_model is not None:
+            # HTP model
+            y_q = htp_model(
+                torch.nn.functional.conv2d, x_q, w_q, conv_args.backward_args()
+            )
+            torch.round(y_q)
+        elif conv_args.use_fast_dwconv() and x.is_cuda and w.is_cuda:
+            # Depthwise Conv CUDA Kernel
+            y_q = dwconv2d(x, w, lut, conv_args.stride, conv_args.padding).float()
+        else:
+            # im2col & gemm kernel (supports CPU & GPU)
+            y_q = _im2col_conv2d(x_q, w_q, conv_args, lut, out_dims)
 
         y_q = _affine_requantize(
             x_q,
@@ -213,50 +246,3 @@ class ApproxConv2dOp(torch.autograd.Function):
             grad, x, w, conf, ctx.needs_input_grad[0], ctx.needs_input_grad[1]
         )
         return grad_input, grad_weight, None, None, None, None, None, None, None
-
-
-class FastApproxConv2dOp(torch.autograd.Function):
-    """
-    torch.autograd.Function wrapper for High Througput model of ApproxConv2d operator
-    uses fast model for forward pass and non-approximate gradients
-    for backward pass (STE)
-    """
-
-    @staticmethod
-    def forward(ctx, x, w, model, kwargs):
-        ctx.save_for_backward(x, w)
-        ctx.conf = kwargs
-        y = model(torch.nn.functional.conv2d, x, w, kwargs)
-        return torch.round(y)
-
-    @staticmethod
-    def backward(ctx, grad):
-        x, w = ctx.saved_tensors
-        conf = ctx.conf
-        grad_input, grad_weight = _conv_bwd_ste(grad, x, w, conf)
-        return grad_input, grad_weight, None, None
-
-
-class ApproxDWConv2dOp(torch.autograd.Function):
-    """
-    torch.autograd.Function wrapper for GPU-accelerated Depthwise Conv
-    """
-
-    @staticmethod
-    def forward(ctx, x, w, lut, kwargs):
-        ctx.save_for_backward(x, w)
-        ctx.conf = kwargs
-
-        x = x.char()
-        w = w.char()
-
-        res = dwconv2d(x, w, lut, kwargs["stride"], kwargs["padding"]).float()
-        res.requires_grad_()
-        return res
-
-    @staticmethod
-    def backward(ctx, grad):
-        x, w = ctx.saved_tensors
-        conf = ctx.conf
-        grad_input, grad_weight = _conv_bwd_ste(grad, x, w, conf)
-        return grad_input, grad_weight, None, None

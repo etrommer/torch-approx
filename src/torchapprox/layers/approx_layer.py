@@ -45,7 +45,7 @@ class ApproxLayer(ABC):
     def __init__(self, qconfig: Optional[tq.QConfig] = None):
         self.approx_op: LUTGeMM = LUTGeMM()
         self.inference_mode: InferenceMode = InferenceMode.QUANTIZED
-        self.fast_model: Optional[Callable] = None
+        self.htp_model: Optional[Callable] = None
 
         self._stdev: torch.Tensor = torch.tensor([0.0])
         self._mean: torch.Tensor = torch.tensor([0.0])

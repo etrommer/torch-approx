@@ -1,5 +1,5 @@
 # pylint: disable=missing-module-docstring
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Callable, Optional, Union, TYPE_CHECKING
 
 import numpy as np
 import numpy.typing as npt
@@ -62,7 +62,11 @@ class LUTGeMM(torch.nn.Module):
             )
 
     def forward(
-        self, x: torch.Tensor, w: torch.Tensor, quant_params: "QuantizationParameters"
+        self,
+        x: torch.Tensor,
+        w: torch.Tensor,
+        quant_params: "QuantizationParameters",
+        htp_model: Optional[Callable],
     ) -> torch.Tensor:
         """
         Perform Approximate Matrix Multiply (GeMM)
@@ -75,4 +79,4 @@ class LUTGeMM(torch.nn.Module):
         Returns:
             The approximate matrix batched matrix product of x and w, using the supplied LUT
         """
-        return ApproxGeMM.apply(x, w, self.lut, quant_params)
+        return ApproxGeMM.apply(x, w, self.lut, quant_params, htp_model)

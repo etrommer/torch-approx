@@ -1,5 +1,5 @@
 # pylint: disable=abstract-method, arguments-differ, missing-module-docstring
-from typing import Any, Tuple, TYPE_CHECKING
+from typing import Any, Tuple, TYPE_CHECKING, Optional, Callable
 
 import torch
 
@@ -22,32 +22,35 @@ class ApproxGeMM(torch.autograd.Function):
         w: torch.Tensor,
         lut: torch.Tensor,
         quant_params: "QuantizationParameters",
+        htp_model: Optional[Callable],
     ) -> torch.Tensor:
         """
         Approximate forward operation
         """
-        x_int = torch.round(
-            (x / quant_params.x_scale) + quant_params.x_zero_point
-        ).char()[:, None, :]
-        w_int = (
-            torch.round((w / quant_params.w_scale) + quant_params.w_zero_point).char().T
-        )
-        res_int = approx(x_int, w_int, lut)
-        res = res_int.float()
-        scaled = (
+        x_q = torch.round((x / quant_params.x_scale) + quant_params.x_zero_point)[
+            :, None, :
+        ]
+        w_q = torch.round((w / quant_params.w_scale) + quant_params.w_zero_point).T
+
+        if htp_model is None:
+            y_q = approx(x_q.char(), w_q.char(), lut).float()
+        else:
+            y_q = htp_model(torch.nn.functional.linear, x_q, w_q.T, {})
+
+        y_q = (
             x.size(-1) * quant_params.x_zero_point * quant_params.w_zero_point
-            - quant_params.x_zero_point * w_int.float().sum(axis=0)
-            - quant_params.w_zero_point * x_int.float().sum(axis=-1)[:, None]
-            + res
+            - quant_params.x_zero_point * w_q.float().sum(axis=0)
+            - quant_params.w_zero_point * x_q.float().sum(axis=-1)[:, None]
+            + y_q
         ) * (quant_params.x_scale * quant_params.w_scale)
-        scaled.requires_grad_()
-        return scaled.view(scaled.size(0), -1)
+        return y_q.view(y_q.size(0), -1)
 
     @staticmethod
     def setup_context(ctx: Any, inputs: Tuple[Any], output: Any) -> Any:
         (
             x,
             w,
+            _,
             _,
             _,
         ) = inputs
