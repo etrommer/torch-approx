@@ -6,6 +6,11 @@ import torch
 
 from torchapprox import layers as tal
 from torchapprox import utils
+from torchapprox.operators.htp_models import (
+    htp_models_mul8s,
+    htp_models_mul12s,
+    htp_models_mul16s,
+)
 import torch.ao.quantization as quant
 
 
@@ -93,20 +98,34 @@ layer_configs = [
     (torch.nn.Conv2d, (2, 16, 32, 32), (16, 16, 3), {"groups": 16}),
 ]
 
+# We use only the _accurate_ HTP models for testing
+# because they allow for comparing the output to the quantized
+# implementation
+htp_models = [
+    htp_models_mul8s["accurate"],
+    htp_models_mul12s["accurate"],
+    htp_models_mul16s["accurate"],
+]
 
-@pytest.mark.parametrize("layer", layer_configs)
-def test_layer_fwd(device, layer):
-    layer_type, input_dims, layer_args, layer_kwargs = layer
 
+def generate_models(layer_config, device):
+    layer_type, _, layer_args, layer_kwargs = layer_config
     layer = tal.ApproxWrapper(layer_type(*layer_args, **layer_kwargs, device=device))
     quant.prepare_qat(layer, tal.layer_mapping_dict(), inplace=True)
-
-    x = torch.rand(input_dims, device=device)
     layer.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
-
-    xref = copy.deepcopy(x)
     ref_layer = copy.deepcopy(layer)
     ref_layer.wrapped.inference_mode = tal.InferenceMode.QUANTIZED
+
+    return layer, ref_layer
+
+
+@pytest.mark.parametrize("layer_config", layer_configs)
+def test_layer_fwd(device, layer_config):
+    input_dims = layer_config[1]
+    layer, ref_layer = generate_models(layer_config, device)
+
+    x = torch.rand(input_dims, device=device)
+    xref = copy.deepcopy(x)
 
     y = layer(x)
     yref = ref_layer(xref)
@@ -114,16 +133,26 @@ def test_layer_fwd(device, layer):
     assert torch.allclose(y, yref, atol=1e-7)
 
 
-@pytest.mark.parametrize("layer", layer_configs)
-def test_layer_bwd(device, layer):
-    layer_type, input_dims, layer_args, layer_kwargs = layer
-    layer = tal.ApproxWrapper(layer_type(*layer_args, **layer_kwargs, device=device))
-    quant.prepare_qat(layer, tal.layer_mapping_dict(), inplace=True)
+@pytest.mark.parametrize("htp_model", htp_models)
+@pytest.mark.parametrize("layer_config", layer_configs)
+def test_htp(device, layer_config, htp_model):
+    input_dims = layer_config[1]
+    layer, ref_layer = generate_models(layer_config, device)
+    layer.wrapped.htp_model = htp_model
 
-    layer.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
+    x = torch.rand(input_dims, device=device)
+    xref = copy.deepcopy(x)
 
-    ref_layer = copy.deepcopy(layer)
-    ref_layer.wrapped.inference_mode = tal.InferenceMode.QUANTIZED
+    y = layer(x)
+    yref = ref_layer(xref)
+
+    assert torch.allclose(y, yref, atol=1e-7)
+
+
+@pytest.mark.parametrize("layer_config", layer_configs)
+def test_layer_bwd(device, layer_config):
+    input_dims = layer_config[1]
+    layer, ref_layer = generate_models(layer_config, device)
 
     x1 = torch.rand(input_dims, device=device, requires_grad=True)
     x2 = copy.deepcopy(x1)

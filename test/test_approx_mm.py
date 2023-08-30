@@ -92,7 +92,7 @@ def test_mm_grad(device, lut):
     a2 = copy.deepcopy(a1)
     b2 = copy.deepcopy(b1)
 
-    ApproxGeMM.apply(a1, b1, lut, quant_nop_params).sum().backward()
+    ApproxGeMM.apply(a1, b1, lut, quant_nop_params, None).sum().backward()
     torch.matmul(a2, b2.T).sum().backward()
 
     assert torch.allclose(a1.grad, a2.grad)
@@ -108,12 +108,12 @@ def test_indexing(device):
     lut[0, 127] = -23
 
     res = ApproxGeMM.apply(
-        torch.tensor([[127.0]]), torch.tensor([[0.0]]), lut, quant_nop_params
+        torch.tensor([[127.0]]), torch.tensor([[0.0]]), lut, quant_nop_params, None
     )
     assert torch.allclose(res, torch.tensor([[[42.0]]]))
 
     res = ApproxGeMM.apply(
-        torch.tensor([[0.0]]), torch.tensor([[127.0]]), lut, quant_nop_params
+        torch.tensor([[0.0]]), torch.tensor([[127.0]]), lut, quant_nop_params, None
     )
     assert torch.allclose(res, torch.tensor([[[-23.0]]]))
 
