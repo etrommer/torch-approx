@@ -184,8 +184,10 @@ def test_layer_empty_lut(device, layer):
     layer.approx_op.lut = np.zeros((256, 256))
 
     x = torch.randint(-128, 128, size=input_dims, device=device, dtype=torch.float32)
+    res = layer(
+        x, torch.tensor([1.0], device=device), torch.tensor([0.0], device=device)
+    )
 
-    res = layer(x, torch.tensor([1.0]), torch.tensor([0.0]))
     assert torch.allclose(torch.zeros_like(res), res)
 
 
@@ -205,8 +207,8 @@ def test_layer_noise(device, layer):
     ref_layer.inference_mode = tal.InferenceMode.QUANTIZED
 
     x = torch.randint(-128, 128, size=input_dims, device=device, dtype=torch.float32)
-    x_scale = torch.tensor([1.0])
-    x_zero_point = torch.tensor([0.0])
+    x_scale = torch.tensor([1.0], device=device)
+    x_zero_point = torch.tensor([0.0], device=device)
 
     layer.stdev = 0.1
     assert not torch.allclose(

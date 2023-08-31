@@ -215,7 +215,7 @@ class ApproxConv2dOp(torch.autograd.Function):
             torch.round(y_q)
         elif conv_args.use_fast_dwconv() and x.is_cuda and w.is_cuda:
             # Depthwise Conv CUDA Kernel
-            y_q = dwconv2d(x, w, lut, conv_args.stride, conv_args.padding).float()
+            y_q = dwconv2d(x_q, w_q, lut, conv_args.stride, conv_args.padding)
         else:
             # im2col & gemm kernel (supports CPU & GPU)
             y_q = _im2col_conv2d(x_q, w_q, conv_args, lut, out_dims)

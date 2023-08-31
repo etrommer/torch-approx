@@ -29,6 +29,7 @@ class ApproxLinear(ApproxLayer, QATLinear):
         )
         ApproxLayer.__init__(self)
         self._opcount = torch.tensor(self.in_features * self.out_features).float()
+        self.to(self.weight.device)
 
     @property
     def fan_in(self) -> int:
@@ -42,4 +43,5 @@ class ApproxLinear(ApproxLayer, QATLinear):
         return torch.nn.functional.linear(x, w)
 
     def approx_fwd(self, x, w, quant_params: QuantizationParameters):
-        return self.approx_op(x, w, quant_params, self.htp_model)
+        y = self.approx_op(x, w, quant_params, self.htp_model)
+        return y

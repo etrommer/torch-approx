@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 sources = ["kernels/cpu/ta_gemm_cpu.cpp"]
-extra_cflags = ["-fopenmp"]
+extra_cflags = ["-fopenmp", "-O3"]
 
 if torch.cuda.is_available():
     sources += [
@@ -34,15 +34,18 @@ ta_backend = load(
 
 
 def dwconv2d(
-    x: torch.Tensor,
-    w: torch.Tensor,
-    lut: torch.Tensor,
+    x: torch.FloatTensor,
+    w: torch.FloatTensor,
+    lut: torch.ShortTensor,
     stride: int = 1,
     padding: int = 0,
-):
+) -> torch.FloatTensor:
     """
     Approximate 2D Depthwise Convolution
     """
+    x = x.char()
+    w = w.char()
+
     assert x.device == w.device
     assert x.is_cuda
     assert (
@@ -64,7 +67,7 @@ def dwconv2d(
         out = ta_backend.dwconv2d_small(x, w, lut, 1, 1, *stride, *padding, True)
     else:
         out = ta_backend.dwconv2d(x, w, lut, 1, 1, *stride, *padding, *padding, True)
-    return out
+    return out.float()
 
 
 def approx(
