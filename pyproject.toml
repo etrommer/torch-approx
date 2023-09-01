@@ -24,6 +24,7 @@ black = "^23.7.0"
 ipykernel = "^6.25.1"
 torchviz = "^0.0.2"
 numpy = "^1.23.0"
+torchvision = "0.15.1"
 
 [tool.poetry.group.extras]
 optional = true

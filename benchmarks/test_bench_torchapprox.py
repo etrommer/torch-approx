@@ -1,6 +1,5 @@
 import pytest
 import torch
-import torchvision.models as models
 
 import torchapprox.layers as tal
 from torchapprox.operators.htp_models import (
@@ -8,7 +7,8 @@ from torchapprox.operators.htp_models import (
     htp_models_mul12s,
     htp_models_mul16s,
 )
-from torchapprox.utils.conversion import get_approx_modules, inplace_conversion
+from torchapprox.utils.conversion import get_approx_modules, wrap_quantizable
+from torch.ao.quantization import prepare_qat
 
 
 def set_bench_type(net, bench_type, lut):
@@ -17,13 +17,13 @@ def set_bench_type(net, bench_type, lut):
     for _, m in approx_modules:
         if bench_type == "lut":
             m.inference_mode = tal.InferenceMode.APPROXIMATE
-            m.fast_model = None
+            m.htp_model = None
             m.approx_op.lut = lut
         elif bench_type == "baseline":
             m.inference_mode = tal.InferenceMode.QUANTIZED
         else:
             m.inference_mode = tal.InferenceMode.APPROXIMATE
-            m.fast_model = bench_type[1]
+            m.htp_model = bench_type[1]
 
 
 input_sizes = {
@@ -35,7 +35,11 @@ input_sizes = {
 
 @pytest.fixture()
 def bench_torchapprox(bench_architecture):
-    model = inplace_conversion(bench_architecture)
+    model = wrap_quantizable(bench_architecture)
+    prepare_qat(model, tal.layer_mapping_dict(), inplace=True)
+    model.eval()
+    model.apply(torch.quantization.disable_observer)
+
     model.to("cuda")
     return model
 
@@ -64,7 +68,8 @@ def test_bench_torchapprox(benchmark, bench_torchapprox, bench_type, lut):
 
     def benchmark_fn(x):
         torch.cuda.synchronize()
-        y = net(x)
+        net(x)
         torch.cuda.synchronize()
 
-    benchmark(benchmark_fn, dummy_x)
+    with torch.no_grad():
+        benchmark(benchmark_fn, dummy_x)

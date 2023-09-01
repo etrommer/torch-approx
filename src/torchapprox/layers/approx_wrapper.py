@@ -45,6 +45,10 @@ class ApproxWrapper(torch.nn.Module):
         if not qconfig:
             self.qconfig = ApproxLayer.default_qconfig()
 
+    @staticmethod
+    def from_float(wrapped):
+        return ApproxWrapper(wrapped)
+
     def forward(self, x):
         x_q = self.quant_stub(x)
         x_scale = getattr(self.quant_stub.activation_post_process, "scale", None)

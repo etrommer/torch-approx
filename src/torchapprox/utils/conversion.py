@@ -23,7 +23,7 @@ def wrap_quantizable(
         An identical model with target layers replaced by Approximate Layer implementations
     """
     if not wrappable_layers:
-        wrappable_layers = [torch.nn.modules.Linear, torch.nn.modules.Conv2d]
+        wrappable_layers = [torch.nn.Linear, torch.nn.Conv2d]
 
     replace_list = []
 
@@ -31,8 +31,8 @@ def wrap_quantizable(
         for name, child_module in parent_module.named_children():
             if any([isinstance(child_module, t) for t in wrappable_layers]):
                 replace_list.append((parent_module, name))
-            for child in parent_module.children():
-                find_replacable_modules(child)
+        for child in parent_module.children():
+            find_replacable_modules(child)
 
     find_replacable_modules(net)
 
