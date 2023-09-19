@@ -37,12 +37,14 @@ class ApproxGeMM(torch.autograd.Function):
         else:
             y_q = htp_model(torch.nn.functional.linear, x_q, w_q.T, {})
 
-        y_q = (
-            x.size(-1) * quant_params.x_zero_point * quant_params.w_zero_point
-            - quant_params.x_zero_point * w_q.float().sum(axis=0)
-            - quant_params.w_zero_point * x_q.float().sum(axis=-1)[:, None]
-            + y_q
-        ) * (quant_params.x_scale * quant_params.w_scale)
+        if quant_params.x_zero_point != 0 or quant_params.w_zero_point != 0:
+            y_q = (
+                x.size(-1) * quant_params.x_zero_point * quant_params.w_zero_point
+                - quant_params.x_zero_point * w_q.float().sum(axis=0)
+                - quant_params.w_zero_point * x_q.float().sum(axis=-1)[:, None]
+                + y_q
+            )
+        y_q *= quant_params.x_scale * quant_params.w_scale
         return y_q.view(y_q.size(0), -1)
 
     @staticmethod
