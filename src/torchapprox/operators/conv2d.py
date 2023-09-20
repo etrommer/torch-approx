@@ -94,6 +94,10 @@ def _group_limits(group_idx: int, total_groups: int, channels: int) -> Tuple[int
     return int(lower_idx), int(upper_idx)
 
 
+def _symmetric_requantize(y_q, quant_params):
+    return y_q * quant_params.x_scale * quant_params.w_scale
+
+
 def _affine_requantize(x_q, w_q, y_q, quant_params, conv_args, out_dims):
     y_q = y_q.view(y_q.size(0), y_q.size(1), -1)
     for group in range(conv_args.groups):
@@ -127,12 +131,6 @@ def _affine_requantize(x_q, w_q, y_q, quant_params, conv_args, out_dims):
         )
 
     y_q *= quant_params.x_scale * quant_params.w_scale
-    y_q = y_q.view(
-        x_q.size(0),
-        conv_args.out_channels,
-        out_dims[0],
-        out_dims[1],
-    )
     return y_q
 
 
@@ -220,16 +218,25 @@ class ApproxConv2dOp(torch.autograd.Function):
             # im2col & gemm kernel (supports CPU & GPU)
             y_q = _im2col_conv2d(x_q, w_q, conv_args, lut, out_dims)
 
-        y_q = _affine_requantize(
-            x_q,
-            w_q,
-            y_q,
-            quant_params,
-            conv_args,
-            out_dims,
+        if quant_params.x_zero_point == 0 and quant_params.w_zero_point == 0:
+            y_q = _symmetric_requantize(y_q, quant_params)
+        else:
+            y_q = _affine_requantize(
+                x_q,
+                w_q,
+                y_q,
+                quant_params,
+                conv_args,
+                out_dims,
+            )
+
+        y_q = y_q.view(
+            x_q.size(0),
+            conv_args.out_channels,
+            out_dims[0],
+            out_dims[1],
         )
 
-        # Reshape to correct output size
         return y_q
 
     @staticmethod
