@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "torchapprox"
-version = "0.1.0"
+version = "0.2.0"
 description = "GPU-accelerated Neural Network layers using Approximate Multiplication for PyTorch"
 authors = ["Elias Trommer"]
 license = "MIT"
