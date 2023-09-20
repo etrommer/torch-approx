@@ -43,7 +43,9 @@ class ApproxWrapper(torch.nn.Module):
         self.wrapped = wrapped
 
         if not qconfig:
-            self.qconfig = ApproxLayer.default_qconfig()
+            qconfig = ApproxLayer.default_qconfig()
+
+        self.qconfig = qconfig
 
     @staticmethod
     def from_float(wrapped):
