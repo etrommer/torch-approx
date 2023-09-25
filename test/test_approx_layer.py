@@ -19,10 +19,9 @@ def test_instantiate():
         tal.ApproxLayer()
 
 
-@pytest.mark.xfail
 def test_compile(device, lut):
     layer = torch.nn.Linear(42, 23)
-    w = tal.approx_linear.ApproxLinearWrapper(layer)
+    w = tal.ApproxWrapper(layer)
     x = torch.rand(128, 42).requires_grad_()
     quant.prepare_qat(w, {torch.nn.Linear: tal.ApproxLinear}, inplace=True)
 
