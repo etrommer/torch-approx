@@ -200,6 +200,9 @@ class ApproxLayer(ABC):
             assert (x_scale is not None) and (
                 x_zero_point is not None
             ), "Received no activation quantization information during approximate forward pass"
+            assert (
+                len(x_scale) == 1 and len(x_zero_point) == 1
+            ), "Per-channel quantization only supported for weights"
             quant_params = QuantizationParameters(
                 x_scale,
                 x_zero_point,

@@ -27,21 +27,25 @@ class ApproxGeMM(torch.autograd.Function):
         """
         Approximate forward operation
         """
+
         x_q = torch.round((x / quant_params.x_scale) + quant_params.x_zero_point)[
             :, None, :
         ]
-        w_q = torch.round((w / quant_params.w_scale) + quant_params.w_zero_point).T
+        w_q = torch.round(
+            (w / quant_params.w_scale[:, None]) + quant_params.w_zero_point[:, None]
+        ).T
 
         if htp_model is None:
             y_q = approx(x_q.char(), w_q.char(), lut).float()
         else:
             y_q = htp_model(torch.nn.functional.linear, x_q, w_q.T, {})
 
-        if quant_params.x_zero_point != 0 or quant_params.w_zero_point != 0:
+        if quant_params.x_zero_point != 0 or torch.any(quant_params.w_zero_point != 0):
             y_q = (
                 x.size(-1) * quant_params.x_zero_point * quant_params.w_zero_point
                 - quant_params.x_zero_point * w_q.float().sum(axis=0)
-                - quant_params.w_zero_point * x_q.float().sum(axis=-1)[:, None]
+                - quant_params.w_zero_point
+                * (x_q.float().sum(axis=-1).unsqueeze(-1).expand(y_q.size()))
                 + y_q
             )
         y_q *= quant_params.x_scale * quant_params.w_scale
