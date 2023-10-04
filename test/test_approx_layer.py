@@ -87,6 +87,30 @@ def test_conv2d_from_super(device):
     assert torch.allclose(conv_layer.bias, wrapped_conv.wrapped.bias)
 
 
+weight_quant_configs = [
+    quant.FakeQuantize.with_args(
+        observer=quant.MinMaxObserver,
+        dtype=torch.qint8,
+        qscheme=torch.per_tensor_symmetric,
+        quant_min=-128,
+        quant_max=127,
+    ),
+    quant.FakeQuantize.with_args(
+        observer=quant.MinMaxObserver,
+        dtype=torch.qint8,
+        qscheme=torch.per_tensor_affine,
+        quant_min=-128,
+        quant_max=127,
+    ),
+    quant.FakeQuantize.with_args(
+        observer=quant.MovingAveragePerChannelMinMaxObserver,
+        dtype=torch.qint8,
+        qscheme=torch.per_channel_affine,
+        quant_min=-128,
+        quant_max=127,
+    ),
+]
+
 layer_configs = [
     (torch.nn.Linear, (4, 20), (20, 10), {}),
     (torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 1}),
@@ -107,9 +131,19 @@ htp_models = [
 ]
 
 
-def generate_models(layer_config, device):
+def generate_models(layer_config, device, weights_qconfig=None):
+    if weights_qconfig:
+        default_qconfig = tal.ApproxLayer.default_qconfig()
+        qconfig = quant.QConfig(
+            activation=default_qconfig.activation, weight=weights_qconfig
+        )
+    else:
+        qconfig = None
+
     layer_type, _, layer_args, layer_kwargs = layer_config
-    layer = tal.ApproxWrapper(layer_type(*layer_args, **layer_kwargs, device=device))
+    layer = tal.ApproxWrapper(
+        layer_type(*layer_args, **layer_kwargs, device=device), qconfig=qconfig
+    )
     quant.prepare_qat(layer, tal.layer_mapping_dict(), inplace=True)
     layer.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
     ref_layer = copy.deepcopy(layer)
@@ -119,9 +153,10 @@ def generate_models(layer_config, device):
 
 
 @pytest.mark.parametrize("layer_config", layer_configs)
-def test_layer_fwd(device, layer_config):
+@pytest.mark.parametrize("weight_qconfig", weight_quant_configs)
+def test_layer_fwd(device, layer_config, weight_qconfig):
     input_dims = layer_config[1]
-    layer, ref_layer = generate_models(layer_config, device)
+    layer, ref_layer = generate_models(layer_config, device, weight_qconfig)
 
     x = torch.rand(input_dims, device=device)
     xref = copy.deepcopy(x)
@@ -149,9 +184,10 @@ def test_htp(device, layer_config, htp_model):
 
 
 @pytest.mark.parametrize("layer_config", layer_configs)
-def test_layer_bwd(device, layer_config):
+@pytest.mark.parametrize("weight_qconfig", weight_quant_configs)
+def test_layer_bwd(device, layer_config, weight_qconfig):
     input_dims = layer_config[1]
-    layer, ref_layer = generate_models(layer_config, device)
+    layer, ref_layer = generate_models(layer_config, device, weight_qconfig)
 
     x1 = torch.rand(input_dims, device=device, requires_grad=True)
     x2 = copy.deepcopy(x1)

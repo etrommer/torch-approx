@@ -121,16 +121,34 @@ def _affine_requantize(x_q, w_q, y_q, quant_params, conv_args, out_dims):
         kernels_flat = w_q[out_ch_lower:out_ch_upper].view(
             conv_args.out_channels // conv_args.groups, -1
         )
-        y_q[:, out_ch_lower:out_ch_upper] += (
-            kernels_flat.size(-1)
-            * quant_params.x_zero_point
-            * quant_params.w_zero_point
-            - quant_params.x_zero_point
+        # per-channel quantization only for weigths,
+        # so correction factor for activations is the same for both modes
+        y_q[:, out_ch_lower:out_ch_upper] -= (
+            -quant_params.x_zero_point
             * kernels_flat.sum(axis=1).unsqueeze(0)[:, :, None].float()
-            - quant_params.w_zero_point * x_unfold.sum(axis=1).unsqueeze(1).float()
         )
+        if len(quant_params.w_zero_point) == 1:
+            # per-tensor weight quantization
+            y_q[:, out_ch_lower:out_ch_upper] += (
+                kernels_flat.size(-1)
+                * quant_params.x_zero_point
+                * quant_params.w_zero_point
+                - quant_params.w_zero_point * x_unfold.sum(axis=1).unsqueeze(1).float()
+            )
+        else:
+            # per-channel weight quantization
+            y_q[:, out_ch_lower:out_ch_upper] += (
+                kernels_flat.size(-1)
+                * quant_params.x_zero_point
+                * quant_params.w_zero_point[None, out_ch_lower:out_ch_upper, None]
+                - quant_params.w_zero_point[None, out_ch_lower:out_ch_upper, None]
+                * x_unfold.sum(axis=1)
+                .unsqueeze(1)
+                .expand(y_q[:, out_ch_lower:out_ch_upper].size())
+                .float()
+            )
 
-    y_q *= quant_params.x_scale * quant_params.w_scale
+    y_q *= quant_params.x_scale * quant_params.w_scale[None, :, None]
     return y_q
 
 
@@ -203,7 +221,10 @@ class ApproxConv2dOp(torch.autograd.Function):
         lut: torch.ShortTensor,
     ):
         x_q = torch.round((x / quant_params.x_scale) + quant_params.x_zero_point)
-        w_q = torch.round((w / quant_params.w_scale) + quant_params.w_zero_point)
+        w_q = torch.round(
+            (w / quant_params.w_scale[:, None, None, None])
+            + quant_params.w_zero_point[:, None, None, None]
+        )
 
         if htp_model is not None:
             # HTP model
@@ -218,7 +239,7 @@ class ApproxConv2dOp(torch.autograd.Function):
             # im2col & gemm kernel (supports CPU & GPU)
             y_q = _im2col_conv2d(x_q, w_q, conv_args, lut, out_dims)
 
-        if quant_params.x_zero_point == 0 and quant_params.w_zero_point == 0:
+        if quant_params.x_zero_point == 0 and torch.all(quant_params.w_zero_point == 0):
             y_q = _symmetric_requantize(y_q, quant_params)
         else:
             y_q = _affine_requantize(
