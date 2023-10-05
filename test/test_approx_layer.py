@@ -40,6 +40,7 @@ def test_conversion():
 
     mn = MiniNet()
     utils.wrap_quantizable(mn)
+    utils.wrap_quantizable(mn)
     quant.prepare_qat(mn, tal.layer_mapping_dict(), inplace=True)
 
     assert isinstance(mn.conv.wrapped, tal.ApproxConv2d)

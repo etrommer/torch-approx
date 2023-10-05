@@ -30,6 +30,8 @@ def wrap_quantizable(
     replace_list = []
 
     def find_replacable_modules(parent_module):
+        if isinstance(parent_module, tal.ApproxWrapper):
+            return
         for name, child_module in parent_module.named_children():
             if any([isinstance(child_module, t) for t in wrappable_layers]):
                 replace_list.append((parent_module, name))
