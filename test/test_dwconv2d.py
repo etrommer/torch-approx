@@ -35,5 +35,5 @@ def test_dwconv2d_forward(N, C, H, W, kernel_size, stride, padding, lut):
     lut = lut.cuda()
 
     native = torch.nn.functional.conv2d(x, w, stride=stride, padding=padding, groups=C)
-    custom = dwconv2d(x, w, lut.short(), stride=stride, padding=padding).float()
+    custom = dwconv2d(x, w, lut, stride=stride, padding=padding).float()
     assert torch.allclose(native, custom)

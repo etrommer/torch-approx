@@ -51,7 +51,7 @@ def dwconv2d(
     assert (
         x.dtype == w.dtype == torch.int8
     ), "Input operands need to be 8-Bit signed Integer"
-    assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
+    assert lut.dtype == torch.int32, "LUT needs to be 32 bit signed Integer"
 
     def make_tuple(val):
         if not isinstance(val, tuple):
@@ -84,8 +84,10 @@ def approx(
 
     # Check input number formats
     assert a.dtype == b.dtype, "Input Operands are of different types"
-    assert a.dtype == torch.int8, "Input operands need to be 8 bit signed Integer"
-    assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
+    assert (
+        a.dtype == torch.int8 or a.dtype == torch.uint8
+    ), "Input operands need to be 8 bit Integer"
+    assert lut.dtype == torch.int32, "LUT needs to be 32 bit signed Integer"
 
     # Check matrix dimensions
     if len(a.size()) == 3:
