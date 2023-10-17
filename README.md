@@ -8,6 +8,8 @@ GPU-accelerated Neural Network layers using Approximate Multiplication for PyTor
 ![Unit Tests](https://github.com/etrommer/torch-approx/actions/workflows/pytest.yaml/badge.svg)
 </div>
 
+<details>
+<summary>Table of Contents</summary>
 - [1. Installation](#1-installation)
   - [1.1. Dependencies](#11-dependencies)
     - [1.1.1. Ubuntu (22.04)](#111-ubuntu-2204)
@@ -21,6 +23,7 @@ GPU-accelerated Neural Network layers using Approximate Multiplication for PyTor
 - [3. Contributing](#3-contributing)
 - [4. License](#4-license)
 - [5. Credits](#5-credits)
+</details>
 
 # 1. Installation
 ## 1.1. Dependencies
