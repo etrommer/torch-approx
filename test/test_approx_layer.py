@@ -19,19 +19,6 @@ def test_instantiate():
         tal.ApproxLayer()
 
 
-@pytest.mark.xfail
-def test_compile(device, lut):
-    layer = torch.nn.Linear(42, 23)
-    w = tal.approx_linear.ApproxLinearWrapper(layer)
-    x = torch.rand(128, 42).requires_grad_()
-    quant.prepare_qat(w, {torch.nn.Linear: tal.ApproxLinear}, inplace=True)
-
-    w.wrapped.approx_op.lut = lut
-    w.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
-    w_comp = torch.compile(w)
-    w_comp(x)
-
-
 def test_conversion():
     class MiniNet(torch.nn.Module):
         def __init__(self):
@@ -151,6 +138,23 @@ def generate_models(layer_config, device, weights_qconfig=None):
     ref_layer.wrapped.inference_mode = tal.InferenceMode.QUANTIZED
 
     return layer, ref_layer
+
+
+@pytest.mark.parametrize("layer_config", layer_configs)
+@pytest.mark.parametrize("weight_qconfig", weight_quant_configs)
+def test_compile(device, layer_config, weight_qconfig):
+    input_dims = layer_config[1]
+    layer, ref_layer = generate_models(layer_config, device, weight_qconfig)
+
+    x = torch.rand(input_dims, device=device)
+    xref = copy.deepcopy(x)
+
+    layer_comp = torch.compile(layer)
+    y = layer_comp(x)
+
+    yref = ref_layer(xref)
+
+    assert torch.allclose(y, yref, atol=1e-7)
 
 
 @pytest.mark.parametrize("layer_config", layer_configs)
