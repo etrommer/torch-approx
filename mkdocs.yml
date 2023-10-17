@@ -1,12 +1,12 @@
-site_name: TorchApprox Docs
+site_name: TorchApprox Documentation
 
 theme:
     name: "material"
     palette:
         primary: custom
         accent: custom
-    logo: ta_logo.png
-    favicon: ta_favicon.png
+    logo: images/ta_logo.png
+    favicon: images/ta_favicon.png
 
 extra_css:
     - extra.css

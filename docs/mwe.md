@@ -1,9 +1,5 @@
 # TorchApprox QuickStart
 
-## Installation
-
-TODO
-
 ## Usage
 
 Let's assume that you have a vanilla PyTorch CNN model on which we want to try approximate multiplications:
