@@ -162,7 +162,7 @@ __global__ void dwconv2d_kernel(int32_t *out, const scalar_t *input, const scala
                             static_cast<uint8_t>(sk[kernel_y + y * up_y][kernel_x + x * up_x]);
 
                         auto idx = (i1 << 8) | i2;
-                        auto val = tex1Dfetch<int16_t>(lut_tex, idx);
+                        auto val = tex1Dfetch<int32_t>(lut_tex, idx);
                         v += val;
                     }
 
@@ -286,8 +286,8 @@ __global__ void __launch_bounds__(1024, 2)
                     auto idx1 = (i1 << 8) | i2;
                     auto idx2 = (i1 << 8) | i3;
 
-                    sum1 += tex1Dfetch<int16_t>(lut_tex, idx1);
-                    sum2 += tex1Dfetch<int16_t>(lut_tex, idx2);
+                    sum1 += tex1Dfetch<int32_t>(lut_tex, idx1);
+                    sum2 += tex1Dfetch<int32_t>(lut_tex, idx2);
 
                     ++shared_offset;
 
@@ -424,9 +424,9 @@ torch::Tensor ta_dwconv2d_small_launch(const torch::Tensor &input, const torch::
     // Create resource description
     struct cudaResourceDesc resDesc = {};
     resDesc.resType = cudaResourceTypeLinear;
-    resDesc.res.linear.devPtr = lut.data_ptr<int16_t>();
-    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int16_t);
-    resDesc.res.linear.desc = cudaCreateChannelDesc<int16_t>();
+    resDesc.res.linear.devPtr = lut.data_ptr<int32_t>();
+    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int32_t);
+    resDesc.res.linear.desc = cudaCreateChannelDesc<int32_t>();
 
     // Create texture description
     struct cudaTextureDesc texDesc = {};
@@ -546,9 +546,9 @@ torch::Tensor ta_dwconv2d_launch(const torch::Tensor &input, const torch::Tensor
     // Create resource description
     struct cudaResourceDesc resDesc = {};
     resDesc.resType = cudaResourceTypeLinear;
-    resDesc.res.linear.devPtr = lut.data_ptr<int16_t>();
-    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int16_t);
-    resDesc.res.linear.desc = cudaCreateChannelDesc<int16_t>();
+    resDesc.res.linear.devPtr = lut.data_ptr<int32_t>();
+    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int32_t);
+    resDesc.res.linear.desc = cudaCreateChannelDesc<int32_t>();
 
     // Create texture description
     struct cudaTextureDesc texDesc = {};

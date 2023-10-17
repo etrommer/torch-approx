@@ -1,13 +1,17 @@
 # pylint: disable=missing-module-docstring
-from typing import Optional, Union
+from typing import Callable, Optional, Union, TYPE_CHECKING
 
 import numpy as np
+import numpy.typing as npt
 import torch
+
+if TYPE_CHECKING:
+    from torchapprox.layers.approx_layer import QuantizationParameters
 
 from .approxgemm import ApproxGeMM
 
 
-class LUT(torch.nn.Module):
+class LUTGeMM(torch.nn.Module):
     """
     Class that wraps the Lookup Table matrix multiplication as a torch.nn.Module.
     This is required so that hooks can be attached in order to trace
@@ -17,9 +21,17 @@ class LUT(torch.nn.Module):
     def __init__(self):
         torch.nn.Module.__init__(self)
         self._lut: Optional[torch.Tensor] = None
+        self.lut = self.accurate_lut()
+
+    @staticmethod
+    def accurate_lut() -> npt.NDArray[np.int32]:
+        x = np.arange(256)
+        x[x >= 128] -= 256
+        xx, yy = np.meshgrid(x, x)
+        return (xx * yy).astype(np.int32)
 
     @property
-    def lut(self) -> Optional[torch.Tensor]:
+    def lut(self) -> torch.Tensor:
         """
         The Lookup table to use for approximate multiplication. LUT can be:
         - `None`: An accurate product is used internall. This is much faster than passing
@@ -33,28 +45,28 @@ class LUT(torch.nn.Module):
         return self._lut
 
     @lut.setter
-    def lut(self, new_lut: Optional[Union[np.ndarray, torch.Tensor]]):
-        if new_lut is None:
-            self._lut = None
-            return
-
+    def lut(self, new_lut: Union[np.ndarray, torch.Tensor]):
         assert len(new_lut.shape) == 2, "LUT needs to be 2D square matrix"
         assert (
             new_lut.shape[0] == new_lut.shape[1] == 256
         ), "Only 8x8 Bit LUTs are currently supported."
 
         if isinstance(new_lut, torch.Tensor):
-            assert new_lut.dtype == torch.short, "LUT needs to be signed 16 Bit Integer"
+            assert new_lut.dtype == torch.int, "LUT needs to be signed 32 Bit Integer"
             self._lut = new_lut
         elif isinstance(new_lut, np.ndarray):
-            self._lut = torch.from_numpy(new_lut).contiguous().short()
+            self._lut = torch.from_numpy(new_lut).contiguous().int()
         else:
             raise ValueError(
                 f"Unknown LUT input type: {type(new_lut)}, supported types: torch.Tensor, np.ndarray"
             )
 
     def forward(
-        self, x: torch.Tensor, w: torch.Tensor, res: Optional[torch.Tensor] = None
+        self,
+        x: torch.Tensor,
+        w: torch.Tensor,
+        quant_params: "QuantizationParameters",
+        htp_model: Optional[Callable],
     ) -> torch.Tensor:
         """
         Perform Approximate Matrix Multiply (GeMM)
@@ -67,12 +79,4 @@ class LUT(torch.nn.Module):
         Returns:
             The approximate matrix batched matrix product of x and w, using the supplied LUT
         """
-        if self.lut is None:
-            # Ignore approximation LUT and output accurate matrix-matrix product.
-            # Can be useful when piping data through this module is necessary but
-            # approximate hardware simulation is not required
-            # (e.g. for collecting activation maps in multipliers assignment stage)
-            w = torch.round(w).float()
-            x = torch.round(x).float()
-            return x @ w
-        return ApproxGeMM.apply(x, w, self.lut, res)
+        return ApproxGeMM.apply(x, w, self.lut, quant_params, htp_model)

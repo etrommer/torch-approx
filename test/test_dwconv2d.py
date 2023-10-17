@@ -29,13 +29,11 @@ configs = [
 @pytest.mark.parametrize("N,C,H,W,kernel_size,stride,padding", configs)
 def test_dwconv2d_forward(N, C, H, W, kernel_size, stride, padding, lut):
     x = torch.randint(-128, 128, (N, C, H, W), device=torch.device("cuda")).float()
-    k = torch.randint(
+    w = torch.randint(
         -128, 128, (C, 1, kernel_size, kernel_size), device=torch.device("cuda")
     ).float()
     lut = lut.cuda()
 
-    native = torch.nn.functional.conv2d(x, k, stride=stride, padding=padding, groups=C)
-    custom = dwconv2d(
-        x.char(), k.char(), lut.short(), stride=stride, padding=padding
-    ).float()
+    native = torch.nn.functional.conv2d(x, w, stride=stride, padding=padding, groups=C)
+    custom = dwconv2d(x, w, lut, stride=stride, padding=padding).float()
     assert torch.allclose(native, custom)

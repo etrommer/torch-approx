@@ -46,5 +46,5 @@ def bench_architecture(request):
         model = models.resnet18()
     elif request.param == "resnet50":
         model = models.resnet50()
-    model.eval()
+    # model.eval()
     return model

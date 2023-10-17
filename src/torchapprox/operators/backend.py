@@ -4,7 +4,6 @@ TorchApprox Accelerated Backend Functions
 """
 import logging
 import os
-from typing import Optional
 
 import torch
 from torch.utils.cpp_extension import load
@@ -13,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 sources = ["kernels/cpu/ta_gemm_cpu.cpp"]
-extra_cflags = ["-fopenmp"]
+extra_cflags = ["-fopenmp", "-O3"]
 
 if torch.cuda.is_available():
     sources += [
@@ -35,21 +34,24 @@ ta_backend = load(
 
 
 def dwconv2d(
-    x: torch.Tensor,
-    w: torch.Tensor,
-    lut: torch.Tensor,
+    x: torch.FloatTensor,
+    w: torch.FloatTensor,
+    lut: torch.ShortTensor,
     stride: int = 1,
     padding: int = 0,
-):
+) -> torch.FloatTensor:
     """
     Approximate 2D Depthwise Convolution
     """
+    x = x.char()
+    w = w.char()
+
     assert x.device == w.device
     assert x.is_cuda
     assert (
         x.dtype == w.dtype == torch.int8
     ), "Input operands need to be 8-Bit signed Integer"
-    assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
+    assert lut.dtype == torch.int32, "LUT needs to be 32 bit signed Integer"
 
     def make_tuple(val):
         if not isinstance(val, tuple):
@@ -65,14 +67,13 @@ def dwconv2d(
         out = ta_backend.dwconv2d_small(x, w, lut, 1, 1, *stride, *padding, True)
     else:
         out = ta_backend.dwconv2d(x, w, lut, 1, 1, *stride, *padding, *padding, True)
-    return out
+    return out.float()
 
 
 def approx(
     a: torch.Tensor,
     b: torch.Tensor,
     lut: torch.Tensor,
-    res: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """
     Input validation wrapper for Approximate GeMM
@@ -83,8 +84,10 @@ def approx(
 
     # Check input number formats
     assert a.dtype == b.dtype, "Input Operands are of different types"
-    assert a.dtype == torch.int8, "Input operands need to be 8 bit signed Integer"
-    assert lut.dtype == torch.int16, "LUT needs to be 16 bit signed Integer"
+    assert (
+        a.dtype == torch.int8 or a.dtype == torch.uint8
+    ), "Input operands need to be 8 bit Integer"
+    assert lut.dtype == torch.int32, "LUT needs to be 32 bit signed Integer"
 
     # Check matrix dimensions
     if len(a.size()) == 3:
@@ -103,19 +106,7 @@ def approx(
         b = torch.transpose(b, 1, 2)
     else:
         raise ValueError(f"Incompatible Dimensions: {a.size()} - {b.size()}")
-    if res is None:
-        # Pre-allocate
-        res = torch.empty((batch_dim, dim_1, dim_2), dtype=torch.int32, device=a.device)
-    else:
-        # Validate user-supplied results tensor
-        assert res.dtype == torch.int32, "Result needs to be int32"
-        assert a.device == res.device, "Results tensor on wrong device"
-        assert len(res.size()) == 3
-        assert (
-            res.size(0) == batch_dim and res.size(1) == dim_1 and res.size(2) == dim_2
-        ), "Results tensor shape does not match"
-        res = res.contiguous()
-
+    res = torch.empty((batch_dim, dim_1, dim_2), dtype=torch.int32, device=a.device)
     lut = lut.to(a.device)
     a = a.contiguous()
     b = b.contiguous()
