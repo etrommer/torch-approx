@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://github.com/etrommer/torch-approx/raw/main/docs/torchapprox_logo.png" width="400px" height="280px" alt="Torchapprox">
+<img src="https://github.com/etrommer/torch-approx/raw/main/docs/ta_banner.png" width="400px" height="345px" alt="Torchapprox">
 <h4>
 GPU-accelerated Neural Network layers using Approximate Multiplication for PyTorch
 </h4>

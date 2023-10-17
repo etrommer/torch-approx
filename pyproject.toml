@@ -26,15 +26,11 @@ torchviz = "^0.0.2"
 numpy = "^1.23.0"
 torchvision = "0.15.1"
 
-[tool.poetry.group.extras]
-optional = true
 
 [tool.poetry.group.extras.dependencies]
-furo = "^2022.9.29"
-myst-nb = "^0.17.1"
-sphinx-autoapi = "^2.0.0"
-sphinx-paramlinks = "^0.5.4"
-seaborn = "^0.12.1"
+mkdocs-material = "^9.4.6"
+mkdocs = "^1.5.3"
+mkdocstrings = {extras = ["python"], version = "^0.23.0"}
 
 [tool.poe.tasks]
 install-ltt = "python3 -m pip install light-the-torch"
