@@ -2,27 +2,29 @@ name: Build Docs
 on:
     push:
         branches:
-        - main
-        - 'docs/**'
+            - main
+            - 'docs/**'
 
 jobs:
-    docs:
+    build:
+        name: Deploy docs
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
-              uses: actions/checkout@v3
-            - name: Install poetry
-              run: pipx install poetry==1.2.0
-            - name: Setup Python
-              uses: actions/setup-python@v4
-              with:
-                  python-version: '3.9'
-                  cache: 'poetry'
-            - run: poetry install --with extras
-            - name: Build Docs
-              run: poetry run make -C docs html
-            - name: Deploy
-              uses: peaceiris/actions-gh-pages@v3
-              with:
-                github_token: ${{ secrets.GITHUB_TOKEN }}
-                publish_dir: ./docs/_build/html
+          - name: Checkout main
+            uses: actions/checkout@v2
+          - name: Install poetry
+            run: pipx install poetry==1.6.1
+          - name: Setup Python
+            uses: actions/setup-python@v4
+            with:
+              python-version: '3.9'
+              cache: 'poetry'
+          - name: Install mkdocs
+            run: poetry install --with extras
+          - name: Build Docs
+            run: poetry run mkdocs build
+          - name: Deploy docs
+            uses: peaceiris/actions-gh-pages@v3
+            with:
+              github_token: ${{ secrets.GITHUB_TOKEN }}
+              publish_dir: ./site
