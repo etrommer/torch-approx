@@ -3,6 +3,7 @@ from itertools import product
 
 import pytest
 import torch
+import numpy as np
 from torchapprox.operators.approxgemm import ApproxGeMM
 from torchapprox.operators.backend import approx
 from torchapprox.layers.approx_layer import QuantizationParameters
@@ -78,6 +79,22 @@ def test_mm(matrices, lut):
     assert torch.allclose(ref, res_T)
 
 
+def test_mm_unsigned(matrices):
+    a, b = matrices
+    a = a.byte()
+    b = b.byte()
+
+    ref = torch.matmul(a.float(), b.float()).int()
+
+    x = np.arange(256)
+    xx, yy = np.meshgrid(x, x)
+    lut = xx * yy
+    lut = torch.from_numpy(lut).int()
+
+    res = approx(a, b, lut)
+    assert torch.allclose(ref, res)
+
+
 def test_mm_grad(device, lut):
     lut = lut.to(device)
     a1 = torch.randint(
@@ -107,7 +124,7 @@ def test_indexing(device):
     """
     Tests whether indexing into LUT uses the first operand for major axis and second operand for the minor axis
     """
-    lut = torch.zeros((256, 256), dtype=torch.int16)
+    lut = torch.zeros((256, 256), dtype=torch.int32)
     lut[127, 0] = 42
     lut[0, 127] = -23
 

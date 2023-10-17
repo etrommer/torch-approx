@@ -40,7 +40,7 @@ ta_gemm_kernel(cudaTextureObject_t tex,
             auto i2 = static_cast<uint8_t>(b_shared[threadIdx.x][n]);
 
             auto idx = (i1 << 8) | i2;
-            auto val = tex1Dfetch<int16_t>(tex, idx);
+            auto val = tex1Dfetch<int32_t>(tex, idx);
             acc += val;
         }
         __syncthreads();
@@ -89,7 +89,7 @@ ta_gemm_kernel_batchb(cudaTextureObject_t tex,
             auto i2 = static_cast<uint8_t>(b_shared[threadIdx.x][n]);
 
             auto idx = (i2 << 8) | i1;
-            auto val = tex1Dfetch<int16_t>(tex, idx);
+            auto val = tex1Dfetch<int32_t>(tex, idx);
             acc += val;
         }
         __syncthreads();
@@ -109,9 +109,9 @@ void ta_gemm_cuda_launch(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor 
     // Create resource description
     struct cudaResourceDesc resDesc = {};
     resDesc.resType = cudaResourceTypeLinear;
-    resDesc.res.linear.devPtr = lut.data_ptr<int16_t>();
-    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int16_t);
-    resDesc.res.linear.desc = cudaCreateChannelDesc<int16_t>();
+    resDesc.res.linear.devPtr = lut.data_ptr<int32_t>();
+    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int32_t);
+    resDesc.res.linear.desc = cudaCreateChannelDesc<int32_t>();
 
     // Create texture description
     struct cudaTextureDesc texDesc = {};

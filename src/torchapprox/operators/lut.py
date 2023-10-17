@@ -24,11 +24,11 @@ class LUTGeMM(torch.nn.Module):
         self.lut = self.accurate_lut()
 
     @staticmethod
-    def accurate_lut() -> npt.NDArray[np.int16]:
+    def accurate_lut() -> npt.NDArray[np.int32]:
         x = np.arange(256)
         x[x >= 128] -= 256
         xx, yy = np.meshgrid(x, x)
-        return (xx * yy).astype(np.int16)
+        return (xx * yy).astype(np.int32)
 
     @property
     def lut(self) -> torch.Tensor:
@@ -52,10 +52,10 @@ class LUTGeMM(torch.nn.Module):
         ), "Only 8x8 Bit LUTs are currently supported."
 
         if isinstance(new_lut, torch.Tensor):
-            assert new_lut.dtype == torch.short, "LUT needs to be signed 16 Bit Integer"
+            assert new_lut.dtype == torch.int, "LUT needs to be signed 32 Bit Integer"
             self._lut = new_lut
         elif isinstance(new_lut, np.ndarray):
-            self._lut = torch.from_numpy(new_lut).contiguous().short()
+            self._lut = torch.from_numpy(new_lut).contiguous().int()
         else:
             raise ValueError(
                 f"Unknown LUT input type: {type(new_lut)}, supported types: torch.Tensor, np.ndarray"

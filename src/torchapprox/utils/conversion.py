@@ -4,20 +4,22 @@ from typing import List, Optional, Tuple
 import torch
 
 import torchapprox.layers as tal
+import torch.ao.quantization as tq
 
 
 def wrap_quantizable(
     net: torch.nn.Module,
     wrappable_layers: Optional[List[tal.ApproxLayer]] = None,
+    qconfig: Optional[tq.QConfig] = None,
 ) -> torch.nn.Module:
     """
     Performs in-place upgrade of layers in a vanilla PyTorch network to TorchApprox
-    approximate layer implementations
+    approximate layer implementations. Regular insertion of quant/dequant stubs does not work
+    because the activation quantization parameters are required _inside_ the quantized layer.
 
     Args:
         net: PyTorch neural network model
-        layer_mappings: Mapping Dict where the keys correspond to regular PyTorch layers and
-            values correspond to TorchApprox layers they are replaced with
+        wrappable_layers: Layer types to be wrapped
 
     Returns:
         An identical model with target layers replaced by Approximate Layer implementations
@@ -28,6 +30,8 @@ def wrap_quantizable(
     replace_list = []
 
     def find_replacable_modules(parent_module):
+        if isinstance(parent_module, tal.ApproxWrapper):
+            return
         for name, child_module in parent_module.named_children():
             if any([isinstance(child_module, t) for t in wrappable_layers]):
                 replace_list.append((parent_module, name))
@@ -38,7 +42,7 @@ def wrap_quantizable(
 
     for parent, name in replace_list:
         orig_layer = getattr(parent, name)
-        wrapped = tal.ApproxWrapper(orig_layer)
+        wrapped = tal.ApproxWrapper(orig_layer, qconfig)
         setattr(parent, name, wrapped)
     return net
 
