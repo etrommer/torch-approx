@@ -11,19 +11,19 @@
       
       
       
-      <link rel="icon" href="ta_favicon.png">
+      <link rel="icon" href="../ta_favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
-        <title>TorchApprox Docs</title>
+        <title>Changelog - TorchApprox Docs</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.35e1ed30.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.35e1ed30.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.356b1318.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
       
       
 
@@ -42,11 +42,11 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="extra.css">
+      <link rel="stylesheet" href="../extra.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -70,11 +70,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#torchapprox-documentation" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -87,9 +82,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="TorchApprox Docs" class="md-header__button md-logo" aria-label="TorchApprox Docs" data-md-component="logo">
+    <a href=".." title="TorchApprox Docs" class="md-header__button md-logo" aria-label="TorchApprox Docs" data-md-component="logo">
       
-  <img src="ta_logo.png" alt="logo">
+  <img src="../ta_logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -106,7 +101,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              TorchApprox Documentation
+              Changelog
             
           </span>
         </div>
@@ -180,9 +175,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="TorchApprox Docs" class="md-nav__button md-logo" aria-label="TorchApprox Docs" data-md-component="logo">
+    <a href=".." title="TorchApprox Docs" class="md-nav__button md-logo" aria-label="TorchApprox Docs" data-md-component="logo">
       
-  <img src="ta_logo.png" alt="logo">
+  <img src="../ta_logo.png" alt="logo">
 
     </a>
     TorchApprox Docs
@@ -196,7 +191,7 @@
   
   
     <li class="md-nav__item">
-      <a href="install/" class="md-nav__link">
+      <a href="../install/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -215,7 +210,7 @@
   
   
     <li class="md-nav__item">
-      <a href="mwe/" class="md-nav__link">
+      <a href="../mwe/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -270,7 +265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/layers/" class="md-nav__link">
+      <a href="../reference/layers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -290,7 +285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/operators/" class="md-nav__link">
+      <a href="../reference/operators/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -310,7 +305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/utils/" class="md-nav__link">
+      <a href="../reference/utils/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -337,7 +332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="contributing/" class="md-nav__link">
+      <a href="../contributing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -356,7 +351,7 @@
   
   
     <li class="md-nav__item">
-      <a href="conduct/" class="md-nav__link">
+      <a href="../conduct/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -386,8 +381,6 @@
   
   
   
-    
-  
   
 </nav>
                   </div>
@@ -402,11 +395,9 @@
                   
 
 
-<h1 id="torchapprox-documentation">TorchApprox Documentation</h1>
-<p>TorchApprox is a PyTorch extension that allows for using non-standard multiplication functions in PyTorch. This makes it easy to study the effects of <a href="https://arxiv.org/pdf/2301.12181.pdf">Approximate Hardware Multipliers</a> on Neural Network tasks. Currently <code>torch.nn.Linear</code> and <code>torch.nn.Conv2d</code> subclasses are implemented. Approximate Multipliers can help lower the arithmetic footprint of NN hardware with only minor reductions in accuracy. By default, integer multipliers with up to 8x8-Bit inputs are supported. These bitwidths are the standard numerical format when deploying neural networks on constrained hardware.</p>
-<p>The custom product function for the 8x8-Bit input space is expected to be pre-computed and saved as a Numpy array.</p>
-<p>Quantization of intermediate results during training uses the <a href="https://pytorch.org/docs/stable/quantization.html">PyTorch Quantization API</a>. </p>
-<p>TorchApprox is a companion package to <a href="https://github.com/etrommer/agn-approx">agn-approx</a>. TorchApprox implements low-level primitives, operators and approximate layers, while agn-approx provides high-level neural network experimental setups.</p>
+  <h1>Changelog</h1>
+
+<p><code>{include} ../CHANGELOG.md</code></p>
 
 
 
@@ -445,10 +436,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
       
     
   </body>

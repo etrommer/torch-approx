@@ -10,20 +10,22 @@
       
       
       
+        <link rel="next" href="../mwe/">
       
-      <link rel="icon" href="ta_favicon.png">
+      
+      <link rel="icon" href="../ta_favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
-        <title>TorchApprox Docs</title>
+        <title>Installation - TorchApprox Docs</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.35e1ed30.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.35e1ed30.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.356b1318.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
       
       
 
@@ -42,11 +44,11 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="extra.css">
+      <link rel="stylesheet" href="../extra.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -71,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#torchapprox-documentation" class="md-skip">
+        <a href="#installation" class="md-skip">
           Skip to content
         </a>
       
@@ -87,9 +89,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="TorchApprox Docs" class="md-header__button md-logo" aria-label="TorchApprox Docs" data-md-component="logo">
+    <a href=".." title="TorchApprox Docs" class="md-header__button md-logo" aria-label="TorchApprox Docs" data-md-component="logo">
       
-  <img src="ta_logo.png" alt="logo">
+  <img src="../ta_logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -106,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              TorchApprox Documentation
+              Installation
             
           </span>
         </div>
@@ -180,9 +182,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="TorchApprox Docs" class="md-nav__button md-logo" aria-label="TorchApprox Docs" data-md-component="logo">
+    <a href=".." title="TorchApprox Docs" class="md-nav__button md-logo" aria-label="TorchApprox Docs" data-md-component="logo">
       
-  <img src="ta_logo.png" alt="logo">
+  <img src="../ta_logo.png" alt="logo">
 
     </a>
     TorchApprox Docs
@@ -194,9 +196,29 @@
       
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="install/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -205,6 +227,74 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    Dependencies
+  </a>
+  
+    <nav class="md-nav" aria-label="Dependencies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu" class="md-nav__link">
+    Ubuntu
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pip-installation" class="md-nav__link">
+    Pip Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development" class="md-nav__link">
+    Development
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unit-tests" class="md-nav__link">
+    Unit Tests
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#micro-benchmarking" class="md-nav__link">
+    Micro-Benchmarking
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -215,7 +305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="mwe/" class="md-nav__link">
+      <a href="../mwe/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -270,7 +360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/layers/" class="md-nav__link">
+      <a href="../reference/layers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -290,7 +380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/operators/" class="md-nav__link">
+      <a href="../reference/operators/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -310,7 +400,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/utils/" class="md-nav__link">
+      <a href="../reference/utils/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -337,7 +427,7 @@
   
   
     <li class="md-nav__item">
-      <a href="contributing/" class="md-nav__link">
+      <a href="../contributing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -356,7 +446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="conduct/" class="md-nav__link">
+      <a href="../conduct/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -389,6 +479,62 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    Dependencies
+  </a>
+  
+    <nav class="md-nav" aria-label="Dependencies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu" class="md-nav__link">
+    Ubuntu
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pip-installation" class="md-nav__link">
+    Pip Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development" class="md-nav__link">
+    Development
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unit-tests" class="md-nav__link">
+    Unit Tests
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#micro-benchmarking" class="md-nav__link">
+    Micro-Benchmarking
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -402,11 +548,31 @@
                   
 
 
-<h1 id="torchapprox-documentation">TorchApprox Documentation</h1>
-<p>TorchApprox is a PyTorch extension that allows for using non-standard multiplication functions in PyTorch. This makes it easy to study the effects of <a href="https://arxiv.org/pdf/2301.12181.pdf">Approximate Hardware Multipliers</a> on Neural Network tasks. Currently <code>torch.nn.Linear</code> and <code>torch.nn.Conv2d</code> subclasses are implemented. Approximate Multipliers can help lower the arithmetic footprint of NN hardware with only minor reductions in accuracy. By default, integer multipliers with up to 8x8-Bit inputs are supported. These bitwidths are the standard numerical format when deploying neural networks on constrained hardware.</p>
-<p>The custom product function for the 8x8-Bit input space is expected to be pre-computed and saved as a Numpy array.</p>
-<p>Quantization of intermediate results during training uses the <a href="https://pytorch.org/docs/stable/quantization.html">PyTorch Quantization API</a>. </p>
-<p>TorchApprox is a companion package to <a href="https://github.com/etrommer/agn-approx">agn-approx</a>. TorchApprox implements low-level primitives, operators and approximate layers, while agn-approx provides high-level neural network experimental setups.</p>
+<h1 id="installation">Installation</h1>
+<h2 id="dependencies">Dependencies</h2>
+<p>TorchApprox relies on the <a href="https://ninja-build.org/">ninja build system</a> and <a href="https://www.openmp.org/">OpenMP</a> in order to JIT-compile kernels. Make sure they are available on your system.</p>
+<h3 id="ubuntu">Ubuntu</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libomp-dev<span class="w"> </span>ninja-build
+</span></code></pre></div>
+<h2 id="pip-installation">Pip Installation</h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>git+ssh://github.com/etrommer/torch-approx
+</span></code></pre></div>
+<h2 id="development">Development</h2>
+<p>If you want to help actively develop TorchApprox, clone TorchApprox from Github and make sure to install additional dependencies as well as pre-commit hooks:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:etrommer/torch-approx.git
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>torch-approx
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="w"> </span>dev<span class="w"> </span>extras
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>poetry<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>install
+</span></code></pre></div></p>
+<h2 id="unit-tests">Unit Tests</h2>
+<p>TorchApprox uses <a href="https://docs.pytest.org/en/7.1.x/getting-started.html">pytest</a> for unit testing. Unit tests can be run with:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>poetry<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span><span class="nb">test</span>
+</span></code></pre></div>
+If a CUDA device is detected, tests will be run on CPU and GPU. Otherwise, tests run on CPU only.</p>
+<h2 id="micro-benchmarking">Micro-Benchmarking</h2>
+<p>TorchApprox uses the <a href="https://pytest-benchmark.readthedocs.io/en/latest/">pytest-benchmark</a> plugin to perform benchmarking of low-level kernels. Benchmarking can be run with:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>poetry<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>benchmarks
+</span></code></pre></div></p>
 
 
 
@@ -445,10 +611,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
       
     
   </body>
