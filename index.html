@@ -433,13 +433,13 @@
 
 <h1 id="torchapprox-documentation">TorchApprox Documentation</h1>
 <h2 id="what-is-this">What is this?</h2>
-<p>TorchApprox is a PyTorch extension that allows for using non-standard multiplication functions for [Convolutional Neural Networks] in PyTorch. This makes it easy to study the effects of <a href="https://arxiv.org/pdf/2301.12181.pdf">Approximate Hardware Multipliers</a> on Neural Network tasks. Approximate Multipliers are hardware multiplication units that don't guarantee mathematically exact results under all circumstances. When deployed on a hardware NN accelerator, Approximate Multipliers can
+<p>TorchApprox is a PyTorch extension that allows for using non-standard multiplication functions for <a href="https://en.wikipedia.org/wiki/Convolutional_neural_network">Convolutional Neural Networks</a> in PyTorch. This makes it easy to study the effects of <a href="https://arxiv.org/pdf/2301.12181.pdf">Approximate Hardware Multipliers</a> on Neural Network tasks. Approximate Multipliers are hardware multiplication units that don't guarantee mathematically exact results under all circumstances. When deployed on a hardware NN accelerator, Approximate Multipliers can
 significantly lower the hardware resource consumption with only minimal impact on the Neural Network's accuarcy.</p>
 <h2 id="factsheet">Factsheet</h2>
 <ul>
 <li>TorchApprox provides custom implementations of <code>torch.nn.Linear</code> and <code>torch.nn.Conv2d</code> layers.</li>
-<li>Integer multipliers with up to 8x8-Bit input operands are supported. 8-Bit integer quantization is the industry standard for deploying neural networks to edge devices, since it provides significantly smaller networks and compute requirements at virtually the same accuracy, compared to FP16/FP32 models.</li>
-<li>The custom product function for the 8x8-Bit input space is expected to be pre-computed and saved as a 2D Numpy array. During runtime, multiplications in the supported layers types are replaced by array lookups into this table.</li>
+<li>Integer multipliers with up to 8x8-Bit input operands are supported. 8-Bit integer quantization is the industry standard for deploying neural networks to edge devices, since it provides significantly smaller networks and compute requirements at almost no accuracy loss compared to FP16/FP32 models.</li>
+<li>The custom product function for the 8x8-Bit input space is expected to be pre-computed and provided as a 2D Numpy array. During runtime, multiplications in the supported layers types are replaced by array lookups into this table.</li>
 <li>TorchApprox supports quantization-aware and approximation-aware training. For quantization during training, it uses the <a href="https://pytorch.org/docs/stable/quantization.html">PyTorch Quantization API</a>. </li>
 <li>TorchApprox is a companion package to <a href="https://github.com/etrommer/agn-approx">agn-approx</a>. TorchApprox implements low-level primitives, operators and approximate layers, while agn-approx provides high-level neural network experimental setups.</li>
 </ul>
