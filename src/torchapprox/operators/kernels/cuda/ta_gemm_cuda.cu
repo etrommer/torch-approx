@@ -3,6 +3,15 @@
 const auto BLOCK_SIZE = 16;
 
 template <typename scalar_t>
+__device__ inline int32_t lut_operator(cudaTextureObject_t tex, scalar_t idx1, scalar_t idx2) {
+
+    auto i1 = static_cast<uint8_t>(idx1);
+    auto i2 = static_cast<uint8_t>(idx2);
+    auto idx = (i1 << 8) | i2;
+    return tex1Dfetch<int32_t>(tex, idx);
+}
+
+template <typename scalar_t>
 __global__ void
 ta_gemm_kernel(cudaTextureObject_t tex,
                const torch::PackedTensorAccessor32<scalar_t, 3, torch::RestrictPtrTraits> a,
@@ -36,11 +45,9 @@ ta_gemm_kernel(cudaTextureObject_t tex,
 
 #pragma unroll
         for (auto n = 0; n < BLOCK_SIZE; n++) {
-            auto i1 = static_cast<uint8_t>(a_shared[threadIdx.y][n]);
-            auto i2 = static_cast<uint8_t>(b_shared[threadIdx.x][n]);
-
-            auto idx = (i1 << 8) | i2;
-            auto val = tex1Dfetch<int32_t>(tex, idx);
+            auto i1 = a_shared[threadIdx.y][n];
+            auto i2 = b_shared[threadIdx.x][n];
+            auto val = lut_operator<uint8_t>(tex, i1, i2);
             acc += val;
         }
         __syncthreads();
@@ -85,12 +92,9 @@ ta_gemm_kernel_batchb(cudaTextureObject_t tex,
 
 #pragma unroll
         for (auto n = 0; n < BLOCK_SIZE; n++) {
-            auto i1 = static_cast<uint8_t>(a_shared[threadIdx.y][n]);
-            auto i2 = static_cast<uint8_t>(b_shared[threadIdx.x][n]);
-
-            auto idx = (i2 << 8) | i1;
-            auto val = tex1Dfetch<int32_t>(tex, idx);
-            acc += val;
+            auto i1 = a_shared[threadIdx.y][n];
+            auto i2 = b_shared[threadIdx.x][n];
+            acc += lut_operator<uint8_t>(tex, i1, i2);
         }
         __syncthreads();
     }

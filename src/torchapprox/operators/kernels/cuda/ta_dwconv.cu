@@ -24,6 +24,15 @@ static __host__ __device__ __forceinline__ int floor_div(int a, int b) {
     return c;
 }
 
+template <typename scalar_t>
+__device__ inline int32_t lut_operator(cudaTextureObject_t tex, scalar_t idx1, scalar_t idx2) {
+
+    auto i1 = static_cast<uint8_t>(idx1);
+    auto i2 = static_cast<uint8_t>(idx2);
+    auto idx = (i1 << 8) | i2;
+    return tex1Dfetch<int32_t>(tex, idx);
+}
+
 __device__ inline unsigned get_lane_id() {
     unsigned int lane_id;
 
@@ -157,13 +166,10 @@ __global__ void dwconv2d_kernel(int32_t *out, const scalar_t *input, const scala
                 for (int y = 0; y < kernel_h / up_y; y++)
 #pragma unroll
                     for (int x = 0; x < kernel_w / up_x; x++) {
-                        auto i1 = static_cast<uint8_t>(sx[rel_in_y + y][rel_in_x + x]);
-                        auto i2 =
-                            static_cast<uint8_t>(sk[kernel_y + y * up_y][kernel_x + x * up_x]);
 
-                        auto idx = (i1 << 8) | i2;
-                        auto val = tex1Dfetch<int32_t>(lut_tex, idx);
-                        v += val;
+                        auto i1 = (sx[rel_in_y + y][rel_in_x + x]);
+                        auto i2 = (sk[kernel_y + y * up_y][kernel_x + x * up_x]);
+                        v += lut_operator(lut_tex, i1, i2);
                     }
 
                 if (out_x < p.out_w & out_y < p.out_h) {
