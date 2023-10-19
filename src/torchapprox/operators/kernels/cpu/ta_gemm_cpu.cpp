@@ -4,6 +4,13 @@
 
 #include <iostream>
 
+template <typename T>
+int32_t lut_operator(T idx1, T idx2, at::TensorAccessor<int32_t, 2> lut_accessor) {
+    auto i1 = static_cast<uint8_t>(idx1);
+    auto i2 = static_cast<uint8_t>(idx2);
+    return lut_accessor[i1][i2];
+}
+
 template <typename T> void ta_gemm_cpu(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor res) {
     auto a_acc = a.accessor<T, 3>();
     auto b_acc = b.accessor<T, 2>();
@@ -17,9 +24,9 @@ template <typename T> void ta_gemm_cpu(at::Tensor a, at::Tensor b, at::Tensor lu
             for (auto col = 0; col < b_acc.size(0); col++) {
                 int32_t acc = 0;
                 for (auto elem = 0; elem < a_acc.size(2); elem++) {
-                    auto i1 = static_cast<uint8_t>(a_acc[batch][row][elem]);
-                    auto i2 = static_cast<uint8_t>(b_acc[col][elem]);
-                    acc += lut_acc[i1][i2];
+                    auto i1 = a_acc[batch][row][elem];
+                    auto i2 = b_acc[col][elem];
+                    acc += lut_operator(i1, i2, lut_acc);
                 }
                 res_acc[batch][row][col] = acc;
             }
@@ -41,9 +48,9 @@ void ta_gemm_cpu_batchb(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor r
             for (auto col = 0; col < b_acc.size(1); col++) {
                 int32_t acc = 0;
                 for (auto elem = 0; elem < a_acc.size(1); elem++) {
-                    auto i1 = static_cast<uint8_t>(a_acc[row][elem]);
-                    auto i2 = static_cast<uint8_t>(b_acc[batch][col][elem]);
-                    acc += lut_acc[i2][i1];
+                    auto i1 = a_acc[row][elem];
+                    auto i2 = b_acc[batch][col][elem];
+                    acc += lut_operator(i1, i2, lut_acc);
                 }
                 res_acc[batch][row][col] = acc;
             }
