@@ -72,7 +72,7 @@ class ApproxConv2dOp(torch.autograd.Function):
         w,
         conv_args: Conv2dArgs,
         out_dims,
-        lut,
+        approx_op,
     ):
         ctx.save_for_backward(x, w)
         ctx.conf = conv_args.backward_args()
@@ -116,13 +116,10 @@ class ApproxConv2dOp(torch.autograd.Function):
             )
 
             # ApproxGeMM
-            if lut is None:
-                y[:, out_ch_lower:out_ch_upper] = kernels_flat @ x_unfold
-            else:
-                y[:, out_ch_lower:out_ch_upper] = approx(
+            with torch.no_grad():
+                y[:, out_ch_lower:out_ch_upper] = approx_op(
                     kernels_flat.char(),
                     x_unfold.char(),
-                    lut,
                 )
 
         # Reshape to correct output size
