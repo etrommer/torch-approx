@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "torchapprox"
-version = "0.1.0"
+version = "0.2.0"
 description = "GPU-accelerated Neural Network layers using Approximate Multiplication for PyTorch"
 authors = ["Elias Trommer"]
 license = "MIT"
@@ -8,30 +8,29 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-torch = "1.13.0"
-poethepoet = "*"
+torch = "2.0.0"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-torchvision = "*"
 mypy = "^0.971"
 pylint = "^2.15.0"
 pytest = "^7.1.2"
 pytest-benchmark = "^4.0.0"
-pre-commit = "^2.20.0"
 pytest-cov = "^3.0.0"
+pre-commit = "^3.3.3"
+black = "^23.7.0"
+ipykernel = "^6.25.1"
+torchviz = "^0.0.2"
+numpy = "^1.23.0"
+torchvision = "0.15.1"
 
-[tool.poetry.group.extras]
-optional = true
 
 [tool.poetry.group.extras.dependencies]
-furo = "^2022.9.29"
-myst-nb = "^0.17.1"
-sphinx-autoapi = "^2.0.0"
-sphinx-paramlinks = "^0.5.4"
-seaborn = "^0.12.1"
+mkdocs-material = "^9.4.6"
+mkdocs = "^1.5.3"
+mkdocstrings = {extras = ["python"], version = "^0.23.0"}
 
 [tool.poe.tasks]
 install-ltt = "python3 -m pip install light-the-torch"
@@ -41,23 +40,10 @@ autoinstall-torch-cuda = ["install-ltt", "run-ltt"]
 [tool.pytest.ini_options]
 testpaths = ["test"]
 
-[tool.pylint.main]
-max-line-length = 120
-ignore = 'docs'
-
-[tool.pylint.format]
-good-names = 'i,j,k,x,y,w,a,b,c'
-
-[tool.pylint.typecheck]
-generated-members=['numpy.*', 'torch.*']
-
-[tool.pylint.design]
-max-returns = 10
-max-args = 6
-
-[tool.isort]
-profile = "black"
-
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+ignore-init-module-imports = true
