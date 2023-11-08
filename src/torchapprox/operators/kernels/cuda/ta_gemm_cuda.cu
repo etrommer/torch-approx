@@ -94,7 +94,7 @@ ta_gemm_kernel_batchb(cudaTextureObject_t tex,
         for (auto n = 0; n < BLOCK_SIZE; n++) {
             auto i1 = a_shared[threadIdx.y][n];
             auto i2 = b_shared[threadIdx.x][n];
-            acc += lut_operator<uint8_t>(tex, i1, i2);
+            acc += lut_operator<uint8_t>(tex, i2, i1);
         }
         __syncthreads();
     }
@@ -113,9 +113,9 @@ void ta_gemm_cuda_launch(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor 
     // Create resource description
     struct cudaResourceDesc resDesc = {};
     resDesc.resType = cudaResourceTypeLinear;
-    resDesc.res.linear.devPtr = lut.data_ptr<int16_t>();
-    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int16_t);
-    resDesc.res.linear.desc = cudaCreateChannelDesc<int16_t>();
+    resDesc.res.linear.devPtr = lut.data_ptr<int32_t>();
+    resDesc.res.linear.sizeInBytes = lut.size(0) * lut.size(1) * sizeof(int32_t);
+    resDesc.res.linear.desc = cudaCreateChannelDesc<int32_t>();
 
     // Create texture description
     struct cudaTextureDesc texDesc = {};

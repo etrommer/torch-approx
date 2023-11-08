@@ -1,6 +1,5 @@
 import copy
 
-import numpy as np
 import pytest
 import torch
 
@@ -8,8 +7,6 @@ import torchapprox.layers as tal
 from torchapprox.operators import htp_models as htp
 
 try:
-    import evoapproxlib
-
     import torchapprox.utils.evoapprox as evoutil
 except ModuleNotFoundError:
     pytest.skip(
@@ -36,7 +33,7 @@ def test_layer_fwd(device, layer):
     ref_layer = copy.deepcopy(layer)
 
     ref_layer.approx_op.lut = evoutil.lut("mul8s_1L12")
-    layer.fast_model = htp.htp_models_mul8s["mul8s_1L12"]
+    layer.fast_model = htp.htp_models_mul8s["htp_mul8s_1L12"]
 
     x = 2.0 * torch.rand(input_dims, device=device)
 
@@ -52,7 +49,7 @@ def test_layer_bwd(device, layer):
     ref_layer = copy.deepcopy(layer)
 
     ref_layer.approx_op.lut = evoutil.lut("mul8s_1L12")
-    layer.fast_model = htp.htp_models_mul8s["mul8s_1L12"]
+    layer.fast_model = htp.htp_models_mul8s["htp_mul8s_1L12"]
 
     x1 = torch.rand(input_dims, device=device, requires_grad=True)
     x2 = copy.deepcopy(x1)
@@ -65,33 +62,32 @@ def test_layer_bwd(device, layer):
 
 
 def test_linear():
-    l = tal.ApproxLinear(20, 10, bias=False)
-    l.inference_mode = tal.InferenceMode.APPROXIMATE
-    al = copy.deepcopy(l)
+    layer = tal.ApproxLinear(20, 10, bias=False)
+    layer.inference_mode = tal.InferenceMode.APPROXIMATE
+    ax_layer = copy.deepcopy(layer)
 
     x = 2.0 * torch.rand(8, 20)
 
-    l.approx_op.lut = evoutil.lut("mul8s_1L12")
-    al.fast_model = htp.htp_models_mul8s["mul8s_1L12"]
+    layer.approx_op.lut = evoutil.lut("mul8s_1L12")
+    ax_layer.fast_model = htp.htp_models_mul8s["htp_mul8s_1L12"]
 
-    lres = l(x)
-    alres = al(x)
+    layer(x)
+    ax_layer(x)
 
-    assert torch.allclose(l(x), al(x))
+    assert torch.allclose(layer(x), ax_layer(x))
 
 
 def test_conv2d():
-    l = tal.ApproxConv2d(4, 4, 3, bias=False)
-    l.inference_mode = tal.InferenceMode.APPROXIMATE
-    al = copy.deepcopy(l)
+    layer = tal.ApproxConv2d(4, 4, 3, bias=False)
+    layer.inference_mode = tal.InferenceMode.APPROXIMATE
+    ax_layer = copy.deepcopy(layer)
 
     x = 2.0 * torch.rand(2, 4, 4, 4)
 
-    # FIXME: LUT ordering seems inconsistent for reverse matmul kernel
-    l.approx_op.lut = evoutil.lut("mul8s_1L12")
-    al.fast_model = htp.htp_models_mul8s["mul8s_1L12"]
+    layer.approx_op.lut = evoutil.lut("mul8s_1L12")
+    ax_layer.fast_model = htp.htp_models_mul8s["htp_mul8s_1L12"]
 
-    lres = l(x)
-    alres = al(x)
+    layer(x)
+    ax_layer(x)
 
-    assert torch.allclose(l(x), al(x))
+    assert torch.allclose(layer(x), ax_layer(x))

@@ -44,10 +44,10 @@ class LUT(torch.nn.Module):
         ), "Only 8x8 Bit LUTs are currently supported."
 
         if isinstance(new_lut, torch.Tensor):
-            assert new_lut.dtype == torch.short, "LUT needs to be signed 16 Bit Integer"
+            assert new_lut.dtype == torch.int, "LUT needs to be signed 16 Bit Integer"
             self._lut = new_lut
         elif isinstance(new_lut, np.ndarray):
-            self._lut = torch.from_numpy(new_lut).contiguous().short()
+            self._lut = torch.from_numpy(new_lut).contiguous().int()
         else:
             raise ValueError(
                 f"Unknown LUT input type: {type(new_lut)}, supported types: torch.Tensor, np.ndarray"

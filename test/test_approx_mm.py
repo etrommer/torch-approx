@@ -102,7 +102,7 @@ def test_indexing(device):
     """
     Tests whether indexing into LUT uses the first operand for major axis and second operand for the minor axis
     """
-    lut = torch.zeros((256, 256), dtype=torch.int16)
+    lut = torch.zeros((256, 256), dtype=torch.int32)
     lut[127, 0] = 42
     lut[0, 127] = -23
 
