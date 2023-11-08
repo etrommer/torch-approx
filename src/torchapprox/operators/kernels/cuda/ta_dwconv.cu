@@ -169,7 +169,7 @@ __global__ void dwconv2d_kernel(int32_t *out, const scalar_t *input, const scala
 
                         auto i1 = (sx[rel_in_y + y][rel_in_x + x]);
                         auto i2 = (sk[kernel_y + y * up_y][kernel_x + x * up_x]);
-                        v += lut_operator(lut_tex, i1, i2);
+                        v += lut_operator<uint8_t>(lut_tex, i1, i2);
                     }
 
                 if (out_x < p.out_w & out_y < p.out_h) {

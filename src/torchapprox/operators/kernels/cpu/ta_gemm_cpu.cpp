@@ -26,7 +26,7 @@ template <typename T> void ta_gemm_cpu(at::Tensor a, at::Tensor b, at::Tensor lu
                 for (auto elem = 0; elem < a_acc.size(2); elem++) {
                     auto i1 = a_acc[batch][row][elem];
                     auto i2 = b_acc[col][elem];
-                    acc += lut_operator(i1, i2, lut_acc);
+                    acc += lut_operator<uint8_t>(i1, i2, lut_acc);
                 }
                 res_acc[batch][row][col] = acc;
             }
@@ -50,7 +50,7 @@ void ta_gemm_cpu_batchb(at::Tensor a, at::Tensor b, at::Tensor lut, at::Tensor r
                 for (auto elem = 0; elem < a_acc.size(1); elem++) {
                     auto i1 = a_acc[row][elem];
                     auto i2 = b_acc[batch][col][elem];
-                    acc += lut_operator(i1, i2, lut_acc);
+                    acc += lut_operator<uint8_t>(i1, i2, lut_acc);
                 }
                 res_acc[batch][row][col] = acc;
             }
