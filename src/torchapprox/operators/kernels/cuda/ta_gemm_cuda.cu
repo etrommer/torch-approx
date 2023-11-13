@@ -2,9 +2,104 @@
 
 const auto BLOCK_SIZE = 16;
 
+__device__ inline int32_t DRUM(int16_t op1, int16_t op2, uint8_t k) {
+    if(op1 == 0 || op2 == 0) return 0;
+    if(op1 == -1) return -op2;
+    if(op2 == -1) return -op1;
+
+
+    // Sign extraction
+    const bool sgn1 = op1 > 0;
+    const bool sgn2 = op2 > 0;
+    uint32_t abs1 = sgn1 ? -(op1)-1 : op1;
+    uint32_t abs2 = sgn2 ? -(op2)-1 : op2;
+
+    // Find leading one
+    const auto lz1 = 31 - __clz(abs1);
+    const auto lz2 = 31 - __clz(abs2);
+
+    // Mask with the lowest `k` Bits set, zero otherwise
+    const auto mask = (1 << k) -1;
+    if (lz1 > k) {
+        // Truncate to the most-significant `k` bits
+        abs1 &= (mask << (lz1 - k));
+        // Always set lowest non-truncated Bit position to 1
+        abs1 |= (1 << lz1 - k);
+    }
+    if (lz2 > k) {
+        abs2 &= (mask << (lz2 - k));
+        abs1 |= (1 << lz1 - k);
+    }
+
+    // This derives from the hardware implementation in that
+    // we perform a regular multiplication instead of
+    // adding and shifting to keep things simple.
+    // The result is the same, however, because the approximation
+    // has already been applied to the operands at this point.
+    auto y0 = abs1 * abs2;
+    auto y = (sgn1 ^ sgn2) ? -y0 : y0;
+    return y0;
+}
+
+__device__ inline int32_t mitchell_trunc(int16_t op1, int16_t op2, uint8_t w) {
+    // Same as DRUM, only that the lowest non-truncated Bit position is not
+    // de-biased by setting it to one.
+    if(op1 == 0 || op2 == 0) return 0;
+    if(op1 == -1) return -op2;
+    if(op2 == -1) return -op1;
+
+
+    const bool sgn1 = op1 > 0;
+    const bool sgn2 = op2 > 0;
+
+    uint32_t abs1 = sgn1 ? -(op1)-1 : op1;
+    uint32_t abs2 = sgn2 ? -(op2)-1 : op2;
+
+    const auto lz1 = 31 - __clz(abs1);
+    const auto lz2 = 31 - __clz(abs2);
+
+    const auto mask = (1 << w) -1;
+    if (lz1 > w) {
+        abs1 &= (mask << (lz1 - w));
+    }
+    if (lz2 > w) {
+        abs2 &= (mask << (lz2 - w));
+    }
+
+    auto y0 = abs1 * abs2;
+    auto y = (sgn1 ^ sgn2) ? -y0 : y0;
+    return y0;
+}
+__device__ inline int32_t mitchell_trunc(int16_t op1, int16_t op2, uint8_t w) {
+    if(op1 == 0 || op2 == 0) return 0;
+    if(op1 == -1) return -op2;
+    if(op2 == -1) return -op1;
+
+
+    const bool sgn1 = op1 > 0;
+    const bool sgn2 = op2 > 0;
+
+    uint32_t abs1 = sgn1 ? -(op1)-1 : op1;
+    uint32_t abs2 = sgn2 ? -(op2)-1 : op2;
+
+    const auto lz1 = 31 - __clz(abs1);
+    const auto lz2 = 31 - __clz(abs2);
+
+    const auto mask = (1 << w) -1;
+    if (lz1 > w) {
+        abs1 &= (mask << (lz1 - w));
+    }
+    if (lz2 > w) {
+        abs2 &= (mask << (lz2 - w));
+    }
+
+    auto y0 = abs1 * abs2;
+    auto y = (sgn1 ^ sgn2) ? -y0 : y0;
+    return y0;
+}
+
 template <typename scalar_t>
 __device__ inline int32_t lut_operator(cudaTextureObject_t tex, scalar_t idx1, scalar_t idx2) {
-
     auto i1 = static_cast<uint8_t>(idx1);
     auto i2 = static_cast<uint8_t>(idx2);
     auto idx = (i1 << 8) | i2;
