@@ -83,7 +83,7 @@ def approx(
 
     # Check input number formats
     assert a.dtype == b.dtype, "Input Operands are of different types"
-    assert a.dtype == torch.int8, "Input operands need to be 8 bit signed Integer"
+    assert a.dtype == torch.int16, "Input operands need to be 8 bit signed Integer"
     assert lut.dtype == torch.int32, "LUT needs to be 32 bit signed Integer"
 
     # Check matrix dimensions
@@ -123,5 +123,6 @@ def approx(
     if a.is_cuda:
         ta_backend.matmul_cuda(a, b, lut, res)
     else:
-        ta_backend.matmul_cpu(a, b, lut, res)
+        raise NotImplementedError("Trying to run on CPU")
+        # ta_backend.matmul_cpu(a, b, lut, res)
     return res

@@ -120,8 +120,8 @@ class ApproxConv2dOp(torch.autograd.Function):
                 y[:, out_ch_lower:out_ch_upper] = kernels_flat @ x_unfold
             else:
                 y[:, out_ch_lower:out_ch_upper] = approx(
-                    kernels_flat.char(),
-                    x_unfold.char(),
+                    kernels_flat.short(),
+                    x_unfold.short(),
                     lut,
                 )
 
@@ -156,7 +156,8 @@ class FastApproxConv2dOp(torch.autograd.Function):
         ctx.save_for_backward(x, w)
         ctx.conf = kwargs
         y = model(torch.nn.functional.conv2d, x, w, kwargs)
-        return torch.round(y)
+        # return torch.round(y)
+        return y
 
     @staticmethod
     def backward(ctx, grad):

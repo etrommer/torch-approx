@@ -5,7 +5,6 @@ import torch
 
 from torchapprox.operators.conv2d import (
     ApproxConv2dOp,
-    ApproxDWConv2dOp,
     Conv2dArgs,
     FastApproxConv2dOp,
 )
@@ -65,6 +64,7 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
             - False otherwise
         """
 
+        return False
         if not self.weight.is_cuda:
             return False
         if self.approx_op.lut is None:
@@ -164,11 +164,9 @@ class ApproxConv2d(torch.nn.Conv2d, ApproxLayer):
             y = FastApproxConv2dOp.apply(
                 x_q, w_q, self.fast_model, self.conv_args.backward_args()
             )
-        elif self.use_fast_dwconv():
-            # Use accelerated DWConv kernels
-            y = ApproxDWConv2dOp.apply(
-                x_q, w_q, self.approx_op.lut, self.conv_args.backward_args()
-            )
+            # elif self.use_fast_dwconv():
+            #     # Use accelerated DWConv kernels
+            # y = ApproxDWConv2dOp.apply(x_q, w_q, self.approx_op.lut, self.conv_args.backward_args())
         else:
             # Use regular Im2Col/GeMM
             out_dims = self.output_dims(x)

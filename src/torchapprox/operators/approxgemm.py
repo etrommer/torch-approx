@@ -25,8 +25,8 @@ class ApproxGeMM(torch.autograd.Function):
         Approximate forward operation
         """
         ctx.save_for_backward(a, b)
-        a = torch.round(a).char()
-        b = torch.round(b).char()
+        a = torch.round(a).short()
+        b = torch.round(b).short()
         res = approx(a, b, lut, res).float()
         res.requires_grad_()
         return res

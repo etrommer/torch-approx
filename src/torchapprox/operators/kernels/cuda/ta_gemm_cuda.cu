@@ -1,8 +1,9 @@
 #include "ta_gemm_cuda.h"
 
 const auto BLOCK_SIZE = 16;
+const auto K = 3;
 
-__device__ inline int32_t DRUM(int16_t op1, int16_t op2, uint8_t k) {
+__device__ inline int32_t DRUM(int16_t op1, int16_t op2) {
     if (op1 == 0 || op2 == 0)
         return 0;
     if (op1 == -1)
@@ -22,16 +23,16 @@ __device__ inline int32_t DRUM(int16_t op1, int16_t op2, uint8_t k) {
     const auto lead1_2 = 31 - __clz(abs2);
 
     // Mask with the lowest `k` Bits set, zero otherwise
-    const auto mask = (1 << k) - 1;
-    if (lead1_1 > k) {
+    const auto mask = (1 << K) - 1;
+    if (lead1_1 > K) {
         // Truncate to the most-significant `k` bits
-        abs1 &= (mask << (lead1_1 - k + 1));
+        abs1 &= (mask << (lead1_1 - K + 1));
         // Always set lowest non-truncated Bit position to 1
-        abs1 |= (1 << (lead1_1 - k + 1));
+        abs1 |= (1 << (lead1_1 - K + 1));
     }
-    if (lead1_2 > k) {
-        abs2 &= (mask << (lead1_2 - k + 1));
-        abs2 |= (1 << (lead1_2 - k + 1));
+    if (lead1_2 > K) {
+        abs2 &= (mask << (lead1_2 - K + 1));
+        abs2 |= (1 << (lead1_2 - K + 1));
     }
 
     // This derives from the hardware implementation in that
@@ -122,7 +123,7 @@ ta_gemm_kernel(cudaTextureObject_t tex,
             auto i1 = a_shared[threadIdx.y][n];
             auto i2 = b_shared[threadIdx.x][n];
             /* auto val = lut_operator<uint8_t>(tex, i1, i2);*/
-            auto val = DRUM((int16_t)i1, (int16_t)i2, 4);
+            auto val = DRUM((int16_t)i1, (int16_t)i2);
             acc += val;
         }
         __syncthreads();
@@ -170,7 +171,7 @@ ta_gemm_kernel_batchb(cudaTextureObject_t tex,
             auto i1 = a_shared[threadIdx.y][n];
             auto i2 = b_shared[threadIdx.x][n];
             /* auto val = lut_operator<uint8_t>(tex, i2, i1);*/
-            auto val = DRUM((int16_t)i1, (int16_t)i2, 4);
+            auto val = DRUM((int16_t)i2, (int16_t)i1);
             acc += val;
         }
         __syncthreads();

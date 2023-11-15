@@ -10,30 +10,38 @@ def accurate_reference(base_func, op1, op2, kwargs):
 
 
 def htp_mitchell_trunc(base_func, op1, op2, kwargs):
-    EPS = torch.tensor([1e-6])
+    EPS = torch.tensor([1e-6]).cuda()
     k = 3
-    a = torch.floor(torch.log2(torch.maximum(op1, EPS)))
-    b = torch.floor(torch.log2(torch.maximum(op2, EPS)))
-    a = torch.maximum(2 ** (a - k + 1), torch.tensor([1]))
-    b = torch.maximum(2 ** (b - k + 1), torch.tensor([1]))
-    op1 -= op1 % a
-    op2 -= op2 % b
+
+    def transform_operand(op):
+        sgn = op < 0
+        op = torch.abs(op)
+        rem = torch.floor(torch.log2(torch.maximum(op, EPS)))
+        rem = 2 ** (rem - k + 2)
+        op -= torch.where(rem > 8, op % rem, op)
+        op += torch.where(rem > 8, rem / 2, 0)
+        op = torch.where(sgn, -op, op)
+        return op
+
+    op1 = transform_operand(op1)
+    op2 = transform_operand(op2)
     res = base_func(op1, op2, **kwargs)
     return res
 
 
 def htp_drum(base_func, op1, op2, kwargs):
     EPS = torch.tensor([1e-6]).cuda()
-    k = 4
+    k = 3
 
     def transform_operand(op):
         sgn = op < 0
         op = torch.abs(op)
         rem = torch.floor(torch.log2(torch.maximum(op, EPS)))
         rem = torch.maximum(2 ** (rem - k + 1), torch.tensor([1]).cuda())
-        op -= op % rem
-        op += rem / 2
+        op -= torch.where(op > 2 ** (k + 1), op % rem, 0)
+        op += torch.where(op > 2 ** (k + 1), rem / 2, 0)
         op = torch.where(sgn, -op, op)
+        return op
 
     op1 = transform_operand(op1)
     op2 = transform_operand(op2)
