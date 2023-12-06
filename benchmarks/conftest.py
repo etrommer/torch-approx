@@ -29,7 +29,7 @@ def lut():
     x = np.arange(256)
     x[x >= 128] -= 256
     xx, yy = np.meshgrid(x, x)
-    return torch.from_numpy(xx * yy).short()
+    return torch.from_numpy(xx * yy).int()
 
 
 @pytest.fixture(params=networks)
