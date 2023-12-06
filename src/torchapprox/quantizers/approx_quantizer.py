@@ -9,7 +9,7 @@ class ApproxQuantizer(torch.nn.Module, ABC):
     Abstract Quantizer interface definition
     """
 
-    def __init__(self, bitwidth: int = 15):
+    def __init__(self, bitwidth: int = 12):
         torch.nn.Module.__init__(self)
         self._bitwidth = bitwidth
         self.int_max = torch.tensor([2 ** (bitwidth - 1) - 1])

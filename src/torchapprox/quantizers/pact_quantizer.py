@@ -19,7 +19,7 @@ class PACTQuant(ApproxQuantizer):
     ApproxQuantizer implementation container for PACT algorithm
     """
 
-    def __init__(self, bitwidth: int = 15):
+    def __init__(self, bitwidth: int = 12):
         ApproxQuantizer.__init__(self, bitwidth)
         self.alpha = torch.nn.Parameter(torch.tensor([2.2]), requires_grad=True)
 

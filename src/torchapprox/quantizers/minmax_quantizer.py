@@ -13,7 +13,7 @@ class MinMaxQuant(ApproxQuantizer):
     Min/Max-Quantizer container class
     """
 
-    def __init__(self, bitwidth: int = 15):
+    def __init__(self, bitwidth: int = 12):
         ApproxQuantizer.__init__(self, bitwidth)
         self._scale_factor: float = 0.0
 
