@@ -6,6 +6,7 @@ from torch.ao.nn.qat.modules.linear import Linear as QATLinear
 
 
 from .approx_layer import ApproxLayer, QuantizationParameters
+from torchapprox.operators.approxgemm import ApproxGeMM
 
 
 class ApproxLinear(ApproxLayer, QATLinear):
@@ -43,5 +44,11 @@ class ApproxLinear(ApproxLayer, QATLinear):
         return torch.nn.functional.linear(x, w)
 
     def approx_fwd(self, x, w, quant_params: QuantizationParameters):
-        y = self.approx_op(x, w, quant_params, self.htp_model)
-        return y
+        return ApproxGeMM.apply(
+            x,
+            w,
+            self.lut,
+            quant_params,
+            self.htp_model,
+            self.traced_inputs,
+        )

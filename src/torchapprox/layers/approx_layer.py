@@ -2,13 +2,13 @@
 import enum
 import logging
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Callable, Optional, no_type_check
+from typing import TYPE_CHECKING, Callable, Optional, no_type_check, Union
 from dataclasses import dataclass
 
 import torch
 import torch.ao.quantization as tq
-
-from torchapprox.operators import LUTGeMM
+import numpy as np
+import numpy.typing as npt
 
 if TYPE_CHECKING:
     pass
@@ -37,15 +37,36 @@ class QuantizationParameters:
     w_zero_point: torch.FloatTensor
 
 
+@dataclass
+class TracedGeMMInputs:
+    features: Optional[torch.FloatTensor]
+    weights: Optional[torch.FloatTensor]
+
+    def trace(self, x_q: torch.Tensor, w_q: torch.Tensor):
+        if self.features is None:
+            self.features = x_q.detach().cpu().float()
+        else:
+            self.features = torch.cat([self.features, x_q])
+
+        if self.weights is None:
+            self.weights = w_q.detach().cpu().float()
+
+
 class ApproxLayer(ABC):
     """
     Derivable Abstract Base Class for implementing Approximate Neural Network layers
     """
 
-    def __init__(self, qconfig: Optional[tq.QConfig] = None):
-        self.approx_op: LUTGeMM = LUTGeMM()
+    def __init__(
+        self, qconfig: Optional[tq.QConfig] = None, learnable_noise: bool = False
+    ):
         self.inference_mode: InferenceMode = InferenceMode.QUANTIZED
+
+        self._lut: Optional[torch.ShortTensor] = None
+        self.lut = self.accurate_lut()
+
         self.htp_model: Optional[Callable] = None
+        self.traced_inputs: Optional[TracedGeMMInputs] = None
 
         self._stdev: torch.Tensor = torch.tensor([0.0])
         self._mean: torch.Tensor = torch.tensor([0.0])
@@ -67,6 +88,44 @@ class ApproxLayer(ABC):
             quant_max=127,
         )
         return tq.QConfig(activation=act_qconfig, weight=weight_qconfig)
+
+    @staticmethod
+    def accurate_lut() -> npt.NDArray[np.int32]:
+        x = np.arange(256)
+        x[x >= 128] -= 256
+        xx, yy = np.meshgrid(x, x)
+        return (xx * yy).astype(np.int32)
+
+    @property
+    def lut(self) -> torch.Tensor:
+        """
+        The Lookup table to use for approximate multiplication. LUT can be:
+        - `None`: An accurate product is used internall. This is much faster than passing
+            operands through LUT kernels. Functionally equivalent to running the layer in
+            `quant` mode, but useful when the unfolded inputs/outputs need to be traced at runtime.
+        - `torch.Tensor` or `numpy.array`:
+            - 2D array of size 256x256 is required. Unused entries will be ignored when simulating
+                multiplication where the operand width is less than 8 Bit
+            - When supplying a `torch.Tensor` the datatype needs to be signed 16-Bit.
+        """
+        return self._lut
+
+    @lut.setter
+    def lut(self, new_lut: Union[np.ndarray, torch.Tensor]):
+        assert len(new_lut.shape) == 2, "LUT needs to be 2D square matrix"
+        assert (
+            new_lut.shape[0] == new_lut.shape[1] == 256
+        ), "Only 8x8 Bit LUTs are currently supported."
+
+        if isinstance(new_lut, torch.Tensor):
+            assert new_lut.dtype == torch.int, "LUT needs to be signed 32 Bit Integer"
+            self._lut = new_lut
+        elif isinstance(new_lut, np.ndarray):
+            self._lut = torch.from_numpy(new_lut).contiguous().int()
+        else:
+            raise ValueError(
+                f"Unknown LUT input type: {type(new_lut)}, supported types: torch.Tensor, np.ndarray"
+            )
 
     @property
     def stdev(self) -> float:

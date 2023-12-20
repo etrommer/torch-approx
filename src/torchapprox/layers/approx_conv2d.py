@@ -159,7 +159,8 @@ class ApproxConv2d(ApproxLayer, QATConv2d):
             self.conv_args,
             self.htp_model,
             self.output_dims(x_q),
-            self.approx_op.lut,
+            self.lut,
+            self.traced_inputs,
         )
 
         return y

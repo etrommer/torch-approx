@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Dict, Optional, Tuple, Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from torchapprox.layers.approx_layer import QuantizationParameters
+    from torchapprox.layers.approx_layer import QuantizationParameters, TracedGeMMInputs
 
 import torch
 
@@ -52,10 +52,6 @@ class Conv2dArgs:
             - False otherwise
         """
 
-        # if not self.weight.is_cuda:
-        #     return False
-        # if self.approx_op.lut is None:
-        #     return False
         if self.dilation[0] > 1 or self.dilation[1] > 1:
             return False
         if self.groups != self.in_channels:
@@ -158,6 +154,7 @@ def _im2col_conv2d(
     conv_args: Conv2dArgs,
     lut: torch.ShortTensor,
     out_dims: Tuple[int, int],
+    traced_inputs: Optional["TracedGeMMInputs"],
 ) -> torch.FloatTensor:
     # Pre-allocate output tensor
     y_q = torch.empty(
@@ -196,6 +193,10 @@ def _im2col_conv2d(
             conv_args.out_channels // conv_args.groups, -1
         )
 
+        if traced_inputs:
+            assert conv_args.groups == 1, "Tracing of depthwise Conv2D is not supported"
+            traced_inputs.trace(x_unfold_s8, w_flat_s8)
+
         # ApproxGeMM
         y_q[:, out_ch_lower:out_ch_upper] = approx(
             w_flat_s8,
@@ -219,6 +220,7 @@ class ApproxConv2dOp(torch.autograd.Function):
         htp_model: Optional[Callable],
         out_dims: Tuple[int, int],
         lut: torch.ShortTensor,
+        traced_inputs: Optional["TracedGeMMInputs"],
     ):
         x_q = torch.round((x / quant_params.x_scale) + quant_params.x_zero_point)
         w_q = torch.round(
@@ -226,18 +228,19 @@ class ApproxConv2dOp(torch.autograd.Function):
             + quant_params.w_zero_point[:, None, None, None]
         )
 
-        if htp_model is not None:
+        trace = traced_inputs is not None
+        if htp_model is not None and not trace:
             # HTP model
             y_q = htp_model(
                 torch.nn.functional.conv2d, x_q, w_q, conv_args.backward_args()
             )
             torch.round(y_q)
-        elif conv_args.use_fast_dwconv() and x.is_cuda and w.is_cuda:
+        elif (conv_args.use_fast_dwconv() and x.is_cuda and w.is_cuda) and not trace:
             # Depthwise Conv CUDA Kernel
             y_q = dwconv2d(x_q, w_q, lut, conv_args.stride, conv_args.padding)
         else:
             # im2col & gemm kernel (supports CPU & GPU)
-            y_q = _im2col_conv2d(x_q, w_q, conv_args, lut, out_dims)
+            y_q = _im2col_conv2d(x_q, w_q, conv_args, lut, out_dims, traced_inputs)
 
         if quant_params.x_zero_point == 0 and torch.all(quant_params.w_zero_point == 0):
             y_q = _symmetric_requantize(y_q, quant_params)
@@ -262,7 +265,7 @@ class ApproxConv2dOp(torch.autograd.Function):
 
     @staticmethod
     def setup_context(ctx: Any, inputs: Tuple[Any], output: Any) -> Any:
-        x, w, _, conv_args, _, _, _ = inputs
+        x, w, _, conv_args, _, _, _, _ = inputs
         ctx.save_for_backward(x, w)
         ctx.conf = conv_args.backward_args()
 
@@ -273,4 +276,4 @@ class ApproxConv2dOp(torch.autograd.Function):
         grad_input, grad_weight = _conv_bwd_ste(
             grad, x, w, conf, ctx.needs_input_grad[0], ctx.needs_input_grad[1]
         )
-        return grad_input, grad_weight, None, None, None, None, None, None, None
+        return grad_input, grad_weight, None, None, None, None, None, None, None, None

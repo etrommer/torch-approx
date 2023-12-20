@@ -113,7 +113,7 @@ def test_mm_grad(device, lut):
 
     quant_nop = quant_params(device)
 
-    ApproxGeMM.apply(a1, b1, lut, quant_nop, None).sum().backward()
+    ApproxGeMM.apply(a1, b1, lut, quant_nop, None, None).sum().backward()
     torch.matmul(a2, b2.T).sum().backward()
 
     assert torch.allclose(a1.grad, a2.grad)
@@ -136,6 +136,7 @@ def test_indexing(device):
         lut,
         quant_nop,
         None,
+        None,
     )
     assert torch.allclose(res, torch.tensor([[[42.0]]], device=device))
 
@@ -144,6 +145,7 @@ def test_indexing(device):
         torch.tensor([[127.0]], device=device),
         lut,
         quant_nop,
+        None,
         None,
     )
     assert torch.allclose(res, torch.tensor([[[-23.0]]], device=device))

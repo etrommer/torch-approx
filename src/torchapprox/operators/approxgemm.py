@@ -6,7 +6,10 @@ import torch
 from torchapprox.operators.backend import approx
 
 if TYPE_CHECKING:
-    from torchapprox.layers.approx_layer import QuantizationParameters
+    from torchapprox.layers.approx_layer import (
+        QuantizationParameters,
+        TracedGeMMInputs,
+    )
 
 
 class ApproxGeMM(torch.autograd.Function):
@@ -23,6 +26,7 @@ class ApproxGeMM(torch.autograd.Function):
         lut: torch.Tensor,
         quant_params: "QuantizationParameters",
         htp_model: Optional[Callable],
+        traced_inputs: Optional["TracedGeMMInputs"],
     ) -> torch.Tensor:
         """
         Approximate forward operation
@@ -34,6 +38,9 @@ class ApproxGeMM(torch.autograd.Function):
         w_q = torch.round(
             (w / quant_params.w_scale[:, None]) + quant_params.w_zero_point[:, None]
         ).T
+
+        if traced_inputs:
+            traced_inputs.trace(x_q, w_q)
 
         if htp_model is None:
             y_q = approx(x_q.char(), w_q.char(), lut).float()
@@ -59,6 +66,7 @@ class ApproxGeMM(torch.autograd.Function):
             _,
             _,
             _,
+            _,
         ) = inputs
         ctx.save_for_backward(x, w)
 
@@ -80,4 +88,11 @@ class ApproxGeMM(torch.autograd.Function):
         #     grad_a = torch.sum(torch.matmul(grad, b.transpose(1, 2)), axis=0)
         # grad_b = torch.matmul(grad.transpose(1, 2), a).transpose(1, 2)
 
-        return grad_x, grad_w, None, None, None, None, None
+        return (
+            grad_x,
+            grad_w,
+            None,
+            None,
+            None,
+            None,
+        )

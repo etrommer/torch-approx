@@ -25,7 +25,7 @@ def test_compile(device, lut):
     x = torch.rand(128, 42).requires_grad_()
     quant.prepare_qat(w, {torch.nn.Linear: tal.ApproxLinear}, inplace=True)
 
-    w.wrapped.approx_op.lut = lut
+    w.wrapped.lut = lut
     w.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
     w_comp = torch.compile(w)
     w_comp(x)
@@ -217,7 +217,7 @@ def test_layer_empty_lut(device, layer):
     )
 
     layer.inference_mode = tal.InferenceMode.APPROXIMATE
-    layer.approx_op.lut = np.zeros((256, 256))
+    layer.lut = np.zeros((256, 256))
 
     x = torch.randint(-128, 128, size=input_dims, device=device, dtype=torch.float32)
     res = layer(
