@@ -68,7 +68,9 @@ class ApproxLayer(ABC):
         self.htp_model: Optional[Callable] = None
         self.traced_inputs: Optional[TracedGeMMInputs] = None
 
-        self._stdev: torch.Tensor = torch.tensor([0.0])
+        self._stdev: torch.nn.Parameter = torch.nn.Parameter(
+            torch.tensor(0.0), requires_grad=True
+        )
         self._mean: torch.Tensor = torch.tensor([0.0])
 
     @staticmethod
@@ -92,7 +94,7 @@ class ApproxLayer(ABC):
     @staticmethod
     def accurate_lut() -> npt.NDArray[np.int32]:
         x = np.arange(256)
-        x[x >= 128] -= 256
+        # x[x >= 128] -= 256
         xx, yy = np.meshgrid(x, x)
         return (xx * yy).astype(np.int32)
 
@@ -128,18 +130,19 @@ class ApproxLayer(ABC):
             )
 
     @property
-    def stdev(self) -> float:
+    def stdev(self) -> torch.nn.Parameter:
         """
         Perturbation Error Relative Standard Deviation
 
         Returns:
             Currently configured perturbation standard deviation
         """
-        return self._stdev.item()
+        return self._stdev
 
     @stdev.setter
     def stdev(self, val: float):
-        self._stdev = torch.tensor([val], device=self.weight.device)  # type: ignore
+        self._stdev = torch.nn.Parameter(torch.tensor(val), requires_grad=True)
+        # self._stdev = torch.tensor([val], device=self.weight.device)  # type: ignore
 
     @property
     def mean(self) -> float:
