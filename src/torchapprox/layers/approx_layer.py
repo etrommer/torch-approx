@@ -1,8 +1,9 @@
 # pylint: disable=missing-module-docstring
+import copy
 import enum
 import logging
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Callable, Optional, no_type_check, Union
+from typing import TYPE_CHECKING, Callable, List, Optional, no_type_check, Union
 from dataclasses import dataclass
 
 import torch
@@ -58,7 +59,7 @@ class ApproxLayer(ABC):
     """
 
     def __init__(
-        self, qconfig: Optional[tq.QConfig] = None, learnable_noise: bool = False
+        self,
     ):
         self.inference_mode: InferenceMode = InferenceMode.QUANTIZED
 
@@ -73,11 +74,15 @@ class ApproxLayer(ABC):
         )
         self._mean: torch.Tensor = torch.tensor([0.0])
 
+        self._shadow_luts: Optional[List[npt.NDArray]] = None
+        self._shadow_biases: Optional[List[torch.Parameter]] = None
+        self._mul_idx: Optional[int] = None
+
     @staticmethod
     def default_qconfig() -> tq.QConfig:
         act_qconfig = tq.FakeQuantize.with_args(
             observer=tq.HistogramObserver,
-            dtype=torch.quint8,
+            dtype=torch.qint8,
             qscheme=torch.per_tensor_affine,
             quant_min=0,
             quant_max=127,
@@ -172,6 +177,39 @@ class ApproxLayer(ABC):
         Number of multiplications for a single
         forward pass of this layer
         """
+
+    def init_shadow_luts(self, luts: List[npt.NDArray]):
+        """
+        Prepare layer for inference with multiple AMs
+
+        Args:
+            luts: List of LUTs, one for each multiplier
+        """
+        assert len(luts) >= 1, "LUTs can't be empty"
+        self._shadow_biases = [copy.deepcopy(self.bias) for _ in range(len(luts))]
+        self._shadow_luts = luts
+        self.mul_idx = 0
+
+    @property
+    def mul_idx(self) -> Optional[int]:
+        """Shadow Multiplier Index
+
+        Returns:
+            Index of the currently configured shadow multiplier
+        """
+        return self._mul_idx
+
+    @mul_idx.setter
+    def mul_idx(self, multi_idx: int):
+        if self._shadow_biases is None or self._shadow_luts is None:
+            raise ValueError(
+                "Multi-Retraining was not properly initialized. Call `init_shadow_luts()` first to set a list of LUTs."
+            )
+        if multi_idx >= len(self._shadow_luts):
+            raise ValueError(f"Bad index {multi_idx} for {len(self._shadow_luts)} LUTs")
+        self.bias = self._shadow_biases[multi_idx]
+        self.lut = self._shadow_luts[multi_idx]
+        self._mul_idx = multi_idx
 
     @abstractmethod
     def quant_fwd(
