@@ -29,7 +29,7 @@ def lut():
     x = np.arange(256)
     x[x >= 128] -= 256
     xx, yy = np.meshgrid(x, x)
-    return torch.from_numpy(xx * yy).short()
+    return torch.from_numpy(xx * yy).int()
 
 
 @pytest.fixture(params=networks)
@@ -46,5 +46,5 @@ def bench_architecture(request):
         model = models.resnet18()
     elif request.param == "resnet50":
         model = models.resnet50()
-    model.eval()
+    # model.eval()
     return model

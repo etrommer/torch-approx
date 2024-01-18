@@ -1,0 +1,37 @@
+site_name: TorchApprox Documentation
+
+theme:
+    name: "material"
+    palette:
+        primary: custom
+        accent: custom
+    logo: images/ta_logo.png
+    favicon: images/ta_favicon.png
+    features:
+        - content.code.copy
+
+extra_css:
+    - extra.css
+
+plugins:
+    - search
+    - mkdocstrings
+
+markdown_extensions:
+    - pymdownx.highlight:
+          anchor_linenums: true
+          line_spans: __span
+          pygments_lang_class: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+
+nav:
+    - Installation: install.md
+    - Quick Start: mwe.md
+    - Code Reference:
+        - Layers: reference/layers.md
+        - Operators: reference/operators.md
+        - Utilities: reference/utils.md
+    - Contribution Guidelines: contributing.md
+    - Code of Conduct: conduct.md
