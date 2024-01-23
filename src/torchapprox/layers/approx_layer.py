@@ -97,9 +97,11 @@ class ApproxLayer(ABC):
         return tq.QConfig(activation=act_qconfig, weight=weight_qconfig)
 
     @staticmethod
-    def accurate_lut() -> npt.NDArray[np.int32]:
-        x = np.arange(256)
-        # x[x >= 128] -= 256
+    def accurate_lut(signed: bool = False) -> npt.NDArray[np.int32]:
+        BITWIDTH = 8
+        x = np.arange(2**BITWIDTH)
+        if signed:
+            x[x >= (2 ** (BITWIDTH - 1))] -= 2**BITWIDTH
         xx, yy = np.meshgrid(x, x)
         return (xx * yy).astype(np.int32)
 
