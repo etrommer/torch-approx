@@ -43,8 +43,8 @@ def dwconv2d(
     """
     Approximate 2D Depthwise Convolution
     """
-    x = x.char()
-    w = w.char()
+    x = x.byte()
+    w = w.byte()
 
     assert x.device == w.device
     assert x.is_cuda

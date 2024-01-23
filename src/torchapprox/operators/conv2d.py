@@ -119,7 +119,7 @@ def _affine_requantize(x_q, w_q, y_q, quant_params, conv_args, out_dims):
         )
         # per-channel quantization only for weigths,
         # so correction factor for activations is the same for both modes
-        y_q[:, out_ch_lower:out_ch_upper] -= (
+        y_q[:, out_ch_lower:out_ch_upper] += (
             -quant_params.x_zero_point
             * kernels_flat.sum(axis=1).unsqueeze(0)[:, :, None].float()
         )
