@@ -19,13 +19,15 @@ def test_instantiate():
         tal.ApproxLayer()
 
 
-def test_compile(device, lut):
+# Disabled as compilation is currently not used
+# since it interferes with QAT by fixing the otherwise adjustable quantization parameters during compilation
+@pytest.mark.xfail
+def test_compile(device):
     layer = torch.nn.Linear(42, 23)
     w = tal.ApproxWrapper(layer)
     x = torch.rand(128, 42).requires_grad_()
     quant.prepare_qat(w, {torch.nn.Linear: tal.ApproxLinear}, inplace=True)
 
-    w.wrapped.lut = lut
     w.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
     w_comp = torch.compile(w)
     w_comp(x)
@@ -39,8 +41,8 @@ def test_conversion():
             self.linear = torch.nn.Linear(20, 10)
 
     mn = MiniNet()
-    utils.wrap_quantizable(mn)
-    utils.wrap_quantizable(mn)
+    utils.wrap_quantizable(mn, qconfig=qconfigs[0][0])
+    utils.wrap_quantizable(mn, qconfig=qconfigs[0][0])
     quant.prepare_qat(mn, tal.layer_mapping_dict(), inplace=True)
 
     assert isinstance(mn.conv.wrapped, tal.ApproxConv2d)
