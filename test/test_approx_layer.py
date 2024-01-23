@@ -88,38 +88,105 @@ def test_conv2d_from_super(device):
     assert torch.allclose(conv_layer.bias, wrapped_conv.wrapped.bias)
 
 
-weight_quant_configs = [
-    quant.FakeQuantize.with_args(
-        observer=quant.MinMaxObserver,
-        dtype=torch.qint8,
-        qscheme=torch.per_tensor_symmetric,
-        quant_min=-128,
-        quant_max=127,
+weight_quant_configs_uint = [
+    (
+        quant.FakeQuantize.with_args(
+            observer=quant.MinMaxObserver,
+            dtype=torch.quint8,
+            qscheme=torch.per_tensor_symmetric,
+            quant_min=0,
+            quant_max=255,
+        ),
+        "uint_symmetric",
     ),
-    quant.FakeQuantize.with_args(
-        observer=quant.MinMaxObserver,
-        dtype=torch.qint8,
-        qscheme=torch.per_tensor_affine,
-        quant_min=-128,
-        quant_max=127,
+    (
+        quant.FakeQuantize.with_args(
+            observer=quant.MinMaxObserver,
+            dtype=torch.quint8,
+            qscheme=torch.per_tensor_affine,
+            quant_min=0,
+            quant_max=255,
+        ),
+        "uint_affine",
     ),
-    quant.FakeQuantize.with_args(
-        observer=quant.MovingAveragePerChannelMinMaxObserver,
-        dtype=torch.qint8,
-        qscheme=torch.per_channel_affine,
-        quant_min=-128,
-        quant_max=127,
+    (
+        quant.FakeQuantize.with_args(
+            observer=quant.MovingAveragePerChannelMinMaxObserver,
+            dtype=torch.quint8,
+            qscheme=torch.per_channel_affine,
+            quant_min=0,
+            quant_max=255,
+        ),
+        "uint_per_channel_affine",
     ),
 ]
+act_quant_config_uint = quant.FakeQuantize.with_args(
+    observer=quant.MinMaxObserver,
+    dtype=torch.quint8,
+    qscheme=torch.per_tensor_affine,
+    quant_min=0,
+    quant_max=255,
+)
+
+weight_quant_configs_int = [
+    (
+        quant.FakeQuantize.with_args(
+            observer=quant.MinMaxObserver,
+            dtype=torch.qint8,
+            qscheme=torch.per_tensor_symmetric,
+            quant_min=-128,
+            quant_max=127,
+        ),
+        "int_symmetric",
+    ),
+    (
+        quant.FakeQuantize.with_args(
+            observer=quant.MinMaxObserver,
+            dtype=torch.qint8,
+            qscheme=torch.per_tensor_affine,
+            quant_min=-128,
+            quant_max=127,
+        ),
+        "int_affine",
+    ),
+    (
+        quant.FakeQuantize.with_args(
+            observer=quant.MovingAveragePerChannelMinMaxObserver,
+            dtype=torch.qint8,
+            qscheme=torch.per_channel_affine,
+            quant_min=-128,
+            quant_max=127,
+        ),
+        "int_per_channel_affine",
+    ),
+]
+act_quant_config_int = quant.FakeQuantize.with_args(
+    observer=quant.MinMaxObserver,
+    dtype=torch.qint8,
+    qscheme=torch.per_tensor_affine,
+    quant_min=-128,
+    quant_max=127,
+)
+qconfigs = [
+    (quant.QConfig(activation=act_quant_config_int, weight=wq), label)
+    for (wq, label) in weight_quant_configs_int
+] + [
+    (quant.QConfig(activation=act_quant_config_uint, weight=wq), label)
+    for (wq, label) in weight_quant_configs_uint
+]
+
 
 layer_configs = [
-    (torch.nn.Linear, (4, 20), (20, 10), {}),
-    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 1}),
-    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 2}),
-    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 4}),
-    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 8}),
-    (torch.nn.Conv2d, (2, 8, 4, 4), (8, 8, 3), {"groups": 8}),
-    (torch.nn.Conv2d, (2, 16, 32, 32), (16, 16, 3), {"groups": 16}),
+    ((torch.nn.Linear, (4, 20), (20, 10), {}), "linear"),
+    ((torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 1}), "conv2d"),
+    ((torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 2}), "dwconv2d_8_16_2"),
+    ((torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 4}), "dwconv2d_8_16_4"),
+    ((torch.nn.Conv2d, (2, 8, 4, 4), (8, 16, 3), {"groups": 8}), "dwconv2d_8_16_8"),
+    ((torch.nn.Conv2d, (2, 8, 4, 4), (8, 8, 3), {"groups": 8}), "dwconv2d_8_8_8"),
+    (
+        (torch.nn.Conv2d, (2, 16, 32, 32), (16, 16, 3), {"groups": 16}),
+        "dwconv2d_16_16_16",
+    ),
 ]
 
 # We use only the _accurate_ HTP models for testing
@@ -132,20 +199,14 @@ htp_models = [
 ]
 
 
-def generate_models(layer_config, device, weights_qconfig=None):
-    if weights_qconfig:
-        default_qconfig = tal.ApproxLayer.default_qconfig()
-        qconfig = quant.QConfig(
-            activation=default_qconfig.activation, weight=weights_qconfig
-        )
-    else:
-        qconfig = None
-
+def generate_models(layer_config, device, qconfig):
     layer_type, _, layer_args, layer_kwargs = layer_config
     layer = tal.ApproxWrapper(
         layer_type(*layer_args, **layer_kwargs, device=device), qconfig=qconfig
     )
     quant.prepare_qat(layer, tal.layer_mapping_dict(), inplace=True)
+    if qconfig[0].p.keywords["dtype"] == torch.qint8:
+        layer.wrapped.lut = tal.ApproxLayer.accurate_lut(signed=True)
     layer.wrapped.inference_mode = tal.InferenceMode.APPROXIMATE
     ref_layer = copy.deepcopy(layer)
     ref_layer.wrapped.inference_mode = tal.InferenceMode.QUANTIZED
@@ -153,11 +214,15 @@ def generate_models(layer_config, device, weights_qconfig=None):
     return layer, ref_layer
 
 
-@pytest.mark.parametrize("layer_config", layer_configs)
-@pytest.mark.parametrize("weight_qconfig", weight_quant_configs)
-def test_layer_fwd(device, layer_config, weight_qconfig):
+@pytest.mark.parametrize(
+    "layer_config", [c[0] for c in layer_configs], ids=[c[1] for c in layer_configs]
+)
+@pytest.mark.parametrize(
+    "qconfig", [q[0] for q in qconfigs], ids=[q[1] for q in qconfigs]
+)
+def test_layer_fwd(device, layer_config, qconfig):
     input_dims = layer_config[1]
-    layer, ref_layer = generate_models(layer_config, device, weight_qconfig)
+    layer, ref_layer = generate_models(layer_config, device, qconfig)
 
     x = torch.rand(input_dims, device=device)
     xref = copy.deepcopy(x)
@@ -169,10 +234,15 @@ def test_layer_fwd(device, layer_config, weight_qconfig):
 
 
 @pytest.mark.parametrize("htp_model", htp_models)
-@pytest.mark.parametrize("layer_config", layer_configs)
-def test_htp(device, layer_config, htp_model):
+@pytest.mark.parametrize(
+    "layer_config", [c[0] for c in layer_configs], ids=[c[1] for c in layer_configs]
+)
+@pytest.mark.parametrize(
+    "qconfig", [q[0] for q in qconfigs], ids=[q[1] for q in qconfigs]
+)
+def test_htp(device, layer_config, htp_model, qconfig):
     input_dims = layer_config[1]
-    layer, ref_layer = generate_models(layer_config, device)
+    layer, ref_layer = generate_models(layer_config, device, qconfig)
     layer.wrapped.htp_model = htp_model
 
     x = torch.rand(input_dims, device=device)
@@ -184,11 +254,15 @@ def test_htp(device, layer_config, htp_model):
     assert torch.allclose(y, yref, atol=1e-7)
 
 
-@pytest.mark.parametrize("layer_config", layer_configs)
-@pytest.mark.parametrize("weight_qconfig", weight_quant_configs)
-def test_layer_bwd(device, layer_config, weight_qconfig):
+@pytest.mark.parametrize(
+    "layer_config", [c[0] for c in layer_configs], ids=[c[1] for c in layer_configs]
+)
+@pytest.mark.parametrize(
+    "qconfig", [q[0] for q in qconfigs], ids=[q[1] for q in qconfigs]
+)
+def test_layer_bwd(device, layer_config, qconfig):
     input_dims = layer_config[1]
-    layer, ref_layer = generate_models(layer_config, device, weight_qconfig)
+    layer, ref_layer = generate_models(layer_config, device, qconfig)
 
     x1 = torch.rand(input_dims, device=device, requires_grad=True)
     x2 = copy.deepcopy(x1)
@@ -204,9 +278,11 @@ def test_layer_bwd(device, layer_config, weight_qconfig):
     )
 
 
-@pytest.mark.parametrize("layer", layer_configs)
-def test_layer_empty_lut(device, layer):
-    approx_type, input_dims, layer_args, layer_kwargs = layer
+@pytest.mark.parametrize(
+    "layer_config", [c[0] for c in layer_configs], ids=[c[1] for c in layer_configs]
+)
+def test_layer_empty_lut(device, layer_config):
+    approx_type, input_dims, layer_args, layer_kwargs = layer_config
     approx_type = tal.layer_mapping_dict()[approx_type]
     layer_kwargs["bias"] = False
     layer = approx_type(
@@ -219,7 +295,7 @@ def test_layer_empty_lut(device, layer):
     layer.inference_mode = tal.InferenceMode.APPROXIMATE
     layer.lut = np.zeros((256, 256))
 
-    x = torch.randint(-128, 128, size=input_dims, device=device, dtype=torch.float32)
+    x = torch.randint(0, 256, size=input_dims, device=device, dtype=torch.float32)
     res = layer(
         x, torch.tensor([1.0], device=device), torch.tensor([0.0], device=device)
     )
@@ -227,9 +303,11 @@ def test_layer_empty_lut(device, layer):
     assert torch.allclose(torch.zeros_like(res), res)
 
 
-@pytest.mark.parametrize("layer", layer_configs)
-def test_layer_noise(device, layer):
-    approx_type, input_dims, layer_args, layer_kwargs = layer
+@pytest.mark.parametrize(
+    "layer_config", [c[0] for c in layer_configs], ids=[c[1] for c in layer_configs]
+)
+def test_layer_noise(device, layer_config):
+    approx_type, input_dims, layer_args, layer_kwargs = layer_config
     approx_type = tal.layer_mapping_dict()[approx_type]
     layer = approx_type(
         *layer_args,
@@ -242,7 +320,7 @@ def test_layer_noise(device, layer):
     ref_layer = copy.deepcopy(layer)
     ref_layer.inference_mode = tal.InferenceMode.QUANTIZED
 
-    x = torch.randint(-128, 128, size=input_dims, device=device, dtype=torch.float32)
+    x = torch.randint(0, 256, size=input_dims, device=device, dtype=torch.float32)
     x_scale = torch.tensor([1.0], device=device)
     x_zero_point = torch.tensor([0.0], device=device)
 
