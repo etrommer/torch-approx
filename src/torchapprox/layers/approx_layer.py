@@ -203,15 +203,19 @@ class ApproxLayer(ABC):
 
     @mul_idx.setter
     def mul_idx(self, multi_idx: int):
-        if self._shadow_biases is None or self._shadow_luts is None:
-            raise ValueError(
-                "Multi-Retraining was not properly initialized. Call `init_shadow_luts()` first to set a list of LUTs."
-            )
-        if multi_idx >= len(self._shadow_luts):
-            raise ValueError(f"Bad index {multi_idx} for {len(self._shadow_luts)} LUTs")
-        self.bias = self._shadow_biases[multi_idx]
-        self.lut = self._shadow_luts[multi_idx]
-        self._mul_idx = multi_idx
+        if self._shadow_luts is not None:
+            assert multi_idx <= len(
+                self._shadow_luts
+            ), f"Bad index {multi_idx} for {len(self._shadow_luts)} LUTs"
+            self.lut = self._shadow_luts[multi_idx]
+            self._mul_idx = multi_idx
+        if self._shadow_biases is not None:
+            assert multi_idx <= len(
+                self._shadow_biases
+            ), f"Bad index {multi_idx} for {len(self._shadow_biases)} biases"
+            self.bias = self._shadow_biases[multi_idx]
+            self._mul_idx = multi_idx
+        return
 
     @abstractmethod
     def quant_fwd(

@@ -7,14 +7,12 @@ import torchapprox.layers as tal
 import torch.ao.quantization as tq
 
 
-def convert_batchnorms(
-    net: torch.nn.Module,
-) -> torch.nn.Module:
+def convert_batchnorms(net: torch.nn.Module, size: int) -> torch.nn.Module:
     replace_list = []
 
     def find_replacable_modules(parent_module):
         for name, child_module in parent_module.named_children():
-            if isinstance(child_module, torch.nn.modules._NormBase):
+            if isinstance(child_module, torch.nn.modules.batchnorm._BatchNorm):
                 replace_list.append((parent_module, name))
         for child in parent_module.children():
             find_replacable_modules(child)
@@ -23,7 +21,7 @@ def convert_batchnorms(
 
     for parent, name in replace_list:
         orig_layer = getattr(parent, name)
-        multi_norm = tal.MultiBatchNorm(orig_layer)
+        multi_norm = tal.MultiBatchNorm(orig_layer, size)
         setattr(parent, name, multi_norm)
     return net
 
