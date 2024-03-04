@@ -45,10 +45,10 @@ class TracedGeMMInputs:
     def trace(self, x_q: torch.Tensor, w_q: torch.Tensor):
         if self.features is None:
             self.features = x_q.detach().cpu().float()
-        else:
+        elif x_q is not None:
             self.features = torch.cat([self.features, x_q])
 
-        if self.weights is None:
+        if self.weights is None and x_q is not None:
             self.weights = w_q.detach().cpu().float()
 
 

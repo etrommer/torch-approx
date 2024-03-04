@@ -166,6 +166,9 @@ def _im2col_conv2d(
     )
 
     w_s8 = w_q.char()
+    if traced_inputs:
+        traced_inputs.trace(None, w_s8)
+
     for group in range(conv_args.groups):
         # Calculate lower and upper channel index for current group
         in_ch_lower, in_ch_upper = _group_limits(
@@ -194,8 +197,7 @@ def _im2col_conv2d(
         )
 
         if traced_inputs:
-            assert conv_args.groups == 1, "Tracing of depthwise Conv2D is not supported"
-            traced_inputs.trace(x_unfold_s8, w_flat_s8)
+            traced_inputs.trace(x_unfold_s8, None)
 
         # ApproxGeMM
         y_q[:, out_ch_lower:out_ch_upper] = approx(
